@@ -74,7 +74,7 @@ body {
 
 .modal-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     background: var(--color-background);
@@ -91,6 +91,21 @@ body {
 body.light-mode .modal-content {
   background: var(--color-light-background);
   color: var(--color-light-text);
+}
+
+.toggle-buttons{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+}
+
+.form-container {
+  display: none;
+}
+
+.form-container.active {
+  display: block;
 }
 
 .close {

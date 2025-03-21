@@ -1,44 +1,44 @@
 // Importamos el modelo de datos
-const Library = require('../models/Library');
+const userHistory= require('../models/userHistory');
 // const Library = require('../models/LibraryMongo');
 
 // Declaración de controladores 
 
-const getBooks = async (req, res) => {
+const getHistory = async (req, res) => {
     try {
         // Instanciamos un modelo Library
-        let library = new Library();
+        let user_history = new userHistory();
         // Lo usamos para listar libros
-        let books = await library.listAll();
-        res.json(books);
+        let history_items = await user_history.listAll();
+        res.json(history);
         library.close();
     }
     catch (err) {
-        console.log("Error getting books...", err);
-        res.status(500).json("Error getting books...");
+        console.log("Error getting user history...", err);
+        res.status(500).json("Error getting user history...");
     }
 }
 
-const createBook = async (req, res) => {
+const createItem = async (req, res) => {
     try {
-            let library = new Library();
+        let user_history = new userHistory();
 
-            let books = await library.listAll();
+        let history_items = await user_history.listAll();
 
             // Creamos un libro nuevo
-            const newBook = {
-                id: books.length + 1,
-                title: req.body.title,
-                author: req.body.author,
-                year: req.body.year
+            const newItem = {
+                id: user_history.length + 1,
+                name: req.body.name,
+                date: req.body.date,
+                favorite: req.body.favorite
             };
 
             // Usamos el modelo Library para crear libro
-            let created = await library.create(newBook);
+            let created = await user_history.create(newBook);
 
             if (created) {
-                console.log("Product created successfully");
-                res.json("Product created successfully");
+                console.log("History item created successfully");
+                res.json("History item created successfully");
             } else {
                 console.log("Error creating new book...");
                 res.status(400).json("Error creating new book...");
@@ -52,23 +52,23 @@ const createBook = async (req, res) => {
     }
 }
 
-const updateBook = async (req, res) => {
+const updateItem = async (req, res) => {
     try {
-            let library = new Library();
+        let user_history = new userHistory();
 
             // const bookID = req.body._id;
-            const bookID = req.body.id;
-            const updateBooks = {
-                title: req.body.title,
-                author: req.body.author,
-                year: req.body.year
+            const itemId = req.body.id;
+            const updateItem = {
+                name: req.body.name,
+                date: req.body.date,
+                favorite: req.body.favorite
             };
 
-            let updated = await library.update(updateBooks, bookID);
+            let updated = await user_history.update(updateItem, itemId);
 
             if (updated) {
-                console.log("Book updated successfully");
-                res.json("Book updated successfully");
+                console.log("History item updated successfully");
+                res.json("History item updated successfully");
             } else {
                 console.log("Error updating book...");
                 res.status(400).json("Error updating book...");
@@ -82,12 +82,12 @@ const updateBook = async (req, res) => {
     }
 }
 
-const deleteBook = async (req, res) => {
+const deleteItem = async (req, res) => {
     try {
-            let library = new Library();
+            let user_history= new userHistory();
 
             // let deleted = await library.delete(req.body._id);
-            let deleted = await library.delete(req.body.id);
+            let deleted = await user_history.delete(req.body.id);
 
             if (deleted) {
                 console.log("Book deleted successfully");
@@ -105,8 +105,8 @@ const deleteBook = async (req, res) => {
 }
 
 module.exports = {
-    getBooks: getBooks,
-    createBook: createBook,
-    updateBook: updateBook,
-    deleteBook: deleteBook
+    getHistory: getHistory,
+    createItem: createItem,
+    updateItem: updateItem,
+    deleteItem: deleteItem
 }

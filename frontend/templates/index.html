@@ -7,21 +7,47 @@
     <title>Document</title>
 </head>
 <body>
+
+    <div class="menu-desplegable">
+      <select></select>
+    </div>
     
     <!-- REGISTRO DE USUARIO  -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
           <span class="close" onclick="closeModal()">&times;</span>
-          <h2>Login</h2>
-          <form id="loginForm">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            <br><br>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            <br><br>
-            <button type="submit" class="modal-button">Login</button>
-          </form>
+
+          <div class="toggle-buttons">
+            <button id="showRegister" class="active"><h2>Register</h2></button>
+            <button id="showLogin" class="inactive"><h2>Login</h2></button>
+          </div>
+
+          <div class="loginUser" class="form-container hidden">
+            
+            <form id="loginForm">
+              <label for="log-user">Username:</label>
+              <input type="text" id="log-user" name="username" placeholder="Enter your username" required>
+              <br><br>
+              <label for="password">Password:</label>
+              <input type="password" id="log-passw" name="password" placeholder="Enter your password" required>
+              <br><br>
+              <button type="submit" class="modal-button">Login</button>
+            </form>
+          </div>
+          
+          <div class="registerUser" class="form-container">
+            
+            <form id="registerForm">
+              <label for="reg-user">Username:</label>
+              <input type="text" id="reg-user" name="username" placeholder="Enter your username" required>
+              <br><br>
+              <label for="password">Password:</label>
+              <input type="password" id="reg-passw" name="password" placeholder="Enter your password" required>
+              <br><br>
+              <button type="submit" class="modal-button">Register</button>
+            </form>
+          </div>
+          
         </div>
       </div>
     
@@ -36,7 +62,9 @@
 
 
 
-    <script type="module" src="../static/js/index.js"></script>
+    <!-- <script type="module" src="../static/js/index.js"></script> -->
+    <script type="module" src="../static/js/main.js"></script>
+
 </body>
 
 </html>

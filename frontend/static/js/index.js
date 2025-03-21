@@ -2,6 +2,27 @@ import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+  // gets values to login
+  document.querySelector('#loginForm').addEventListener('submit',(event)=>{
+      event.preventDefault();
+      const username = document.getElementById('log-user').value;
+      const password = document.getElementById('log-passw').value;
+      
+      login(email, password);
+  });
+
+  // gets values to register
+  document.querySelector('#register').addEventListener('submit', (event)=>{
+      event.preventDefault();
+      const username = document.getElementById('reg-user').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-passw').value;
+      
+      createUser(username, email, password);
+  });
+
+  // shows login modal
     function showModal() {
         const modal = document.getElementById('loginModal');
         modal.style.display = 'block';
@@ -28,24 +49,90 @@ document.addEventListener('DOMContentLoaded', () => {
     
       document.getElementById('loginForm').addEventListener('submit', (event) => {
         event.preventDefault();
+        // añadir modal de bienvenida
         alert('Login successful!');
         document.getElementById('loginModal').style.display = 'none';
       });
-    
-      // const input = document.createElement('input');
-      // input.type = 'text';
-      // input.placeholder = 'Ingrese un país';
-      // input.className = 'search-bar';
-      // document.body.appendChild(input);
 
 
-      // const searchButton = document.createElement('button');
-      // searchButton.type='submit';
-      // searchButton.className='search-btn';
-      // document.body.appendChild(searchButton);
+  //login donde se genera el token
 
-      // input.appendChild(searchButton);
+  async function login(email, password){
 
+    try {
+        const response = await fetch("http://localhost:5000/api/login", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('jwt', data.token);
+            const token = data.token;
+            // document.getElementById('reg-message').innerText = `TOKEN: ${token}`;
+            // Mostrar biblioteca
+
+            console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
+        } else {
+            console.error('Algo ha salido mal. Vuelve a intentarlo unos minutos más tarde');
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        mostrarBiblio.style.display = "none";
+    }
+}
+
+//registration
+
+async function createUser(username, email, password){
+
+  try{
+      const res = await fetch("http://localhost:5000/api/register", {
+          method:'POST',
+          headers:{
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({username, email, password}),
+      });
+      const data = await res.json();
+      if (res.ok){
+          console.log('user creado correctamente');
+          alert('user creado correctamente');
+      } else{
+          alert(data.message || 'error en el registro');
+      }
+  }catch(error){
+      console.error('error', error);
+  }
+}
+
+//auth del token
+
+function getToken() {
+  const userToken = localStorage.getItem('jwt');
+
+  const inputToken = document.getElementById('token').value;
+
+  if (!userToken || !inputToken) {
+      console.log('Token no proporcionado');
+      alert('Por favor, ingresa el token.');
+      return null;
+  }
+
+  if (userToken !== inputToken) {
+      console.log('Token no válido');
+      alert('Token no válido. Por favor, ingresa el token correcto.');
+      return null;
+  }
+
+  return {
+      'Authorization': `Bearer ${userToken}`,
+      'Content-Type': 'application/json',
+  };
+}
 })
 
 const scene = new THREE.Scene();
@@ -159,4 +246,35 @@ input.addEventListener('change', () => {
 });
 
 window.requestAnimationFrame(animation);
+
+/* BOTONES LOGIN Y REGISTER */
+
+document.addEventListener("DOMContentLoaded", function () {
+  const loginBtn = document.getElementById("showLogin");
+  const registerBtn = document.getElementById("showRegister");
+  const loginForm = document.getElementById("loginUser");
+  const registerForm = document.getElementById("registerUser");
+
+  // Mostrar solo el formulario de registro por defecto
+  registerForm.classList.add("active");
+
+  loginBtn.addEventListener("click", function () {
+      loginForm.classList.add("active");
+      registerForm.classList.remove("active");
+      loginBtn.classList.add("active");
+      registerBtn.classList.remove("active");
+      loginBtn.classList.remove("inactive");
+      registerBtn.classList.add("inactive");
+  });
+
+  registerBtn.addEventListener("click", function () {
+      registerForm.classList.add("active");
+      loginForm.classList.remove("active");
+      registerBtn.classList.add("active");
+      loginBtn.classList.remove("active");
+      registerBtn.classList.remove("inactive");
+      loginBtn.classList.add("inactive");
+  });
+});
+
 

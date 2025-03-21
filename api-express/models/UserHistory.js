@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const dbConfig = require("../config/config.js");
 
-class Library {
+class UserHistory {
   constructor() {
     // En el constructor, creamos una conexión a la base de datos
     // y la guardamos en la propiedad connection de la clase
@@ -33,13 +33,13 @@ class Library {
 
   // Listar todos los libros
   listAll = async () => {
-    const [results] = await this.connection.query("SELECT * FROM books");
+    const [results] = await this.connection.query("SELECT * FROM user_history");
     return results;
   }
   // Crear un nuevo libro
-  create = async (newBook) => {
+  create = async (newItem) => {
     try {
-      const [results] = await this.connection.query("INSERT INTO books SET ?", newBook);
+      const [results] = await this.connection.query("INSERT INTO user_history SET ?", newItem);
       return results.affectedRows;
     }
     catch (error) {
@@ -47,10 +47,10 @@ class Library {
     }
   };
   // Actualizar un libro
-  update = async (updatedBook, bookId) => {
+  update = async (updatedItem, itemId) => {
     try {
-      const [results] = await this.connection.query("UPDATE books SET ? WHERE id = ?",
-        [updatedBook, bookId]
+      const [results] = await this.connection.query("UPDATE user_history SET ? WHERE id = ?",
+        [updatedItem, itemId]
       );
       return results.affectedRows;
     }
@@ -59,9 +59,9 @@ class Library {
     }
   };
   // Eliminar un libro
-  delete = async (bookId) => {
+  delete = async (itemId) => {
     try {
-      const [results] = await this.connection.query("DELETE FROM books WHERE id = ?",[bookId]);
+      const [results] = await this.connection.query("DELETE FROM user_history WHERE id = ?",[itemId]);
       return results.affectedRows;
     }
     catch (error) {
@@ -70,4 +70,4 @@ class Library {
   }
 }
 
-module.exports = Library;
+module.exports = UserHistory;
