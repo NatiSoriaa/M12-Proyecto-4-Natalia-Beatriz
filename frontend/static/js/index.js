@@ -1,6 +1,13 @@
 import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 
+
+
+
+// REGISTRO Y LOGIN DE USUARIO
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     
   // gets values to login
@@ -135,6 +142,14 @@ function getToken() {
 }
 })
 
+
+
+
+// MAPA MUNDO 
+
+
+
+
 const scene = new THREE.Scene();
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -234,22 +249,104 @@ async function searchCountryLocation(country) {
   const data = await response.json();
   if (data.length > 0) {
     const { lat, lon } = data[0];
+    const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
+
+    // Crear el marcador en el mapa
     createMarker(parseFloat(lat), parseFloat(lon), country);
+
+    // Detener la rotación del mundo
+    orbitControls.autoRotate = false;
+
+    // Mover la cámara hacia el marcador con un poco de zoom
+    const zoomLevel = 1.5; // Ajusta el nivel de zoom
+    camera.position.set(
+      markerPosition.x * zoomLevel,
+      markerPosition.y * zoomLevel,
+      markerPosition.z * zoomLevel
+    );
+
+    // Apuntar la cámara hacia el marcador
+    camera.lookAt(markerPosition);
+
+    console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
   } else {
     alert('País no encontrado');
   }
 }
 
-const input = document.querySelector('#input');
-input.addEventListener('change', () => {
-  searchCountryLocation(input.value);
+// Seleccionar el botón de búsqueda
+const searchButton = document.querySelector('#searchButton');
+
+// Agregar evento al botón de busqueda
+searchButton.addEventListener('click', () => {
+  const country = document.querySelector('#input').value; // Obtener el valor del input
+  if (country.trim() !== '') {
+    searchCountryLocation(country); // Llamar a la funcion de busqueda
+  } else {
+    alert('Por favor, ingresa un país para buscar.');
+  }
 });
+
+
+// Seleccionar el campo de entrada
+const inputField = document.querySelector('#input');
+
+// Agregar evento al hacer clic en el campo de entrada
+inputField.addEventListener('focus', () => {
+  // Reanudar la rotación del mundo
+  orbitControls.autoRotate = true;
+
+  // Restablecer la posición y el zoom de la cámara
+  camera.position.set(0, 0, 3); // Ajusta la posición inicial de la cámara
+  camera.lookAt(0, 0, 0); // Apuntar al centro del mundo
+
+  // Eliminar el marcador del país seleccionado
+  removeMarkers();
+});
+
+
+function removeMarkers() {
+  const markers = [];
+  const labels = [];
+
+  // Recorrer todos los objetos en la escena
+  scene.traverse((object) => {
+    // Buscar marcadores (esferas rojas)
+    if (object.isMesh && object.geometry.type === 'SphereGeometry' && object.material.color.getHex() === 0xff0000) {
+      markers.push(object);
+    }
+
+    // Buscar etiquetas (sprites)
+    if (object.isSprite) {
+      labels.push(object);
+    }
+  });
+
+  // Eliminar marcadores
+  markers.forEach((marker) => {
+    scene.remove(marker);
+  });
+
+  // Eliminar etiquetas
+  labels.forEach((label) => {
+    scene.remove(label);
+  });
+}
 
 window.requestAnimationFrame(animation);
 
+
+
+
 /* BOTONES LOGIN Y REGISTER */
 
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
+  // Selección de elementos
+  const modal = document.getElementById("loginModal");
+  const closeModalBtn = document.querySelector(".close");
   const loginBtn = document.getElementById("showLogin");
   const registerBtn = document.getElementById("showRegister");
   const loginForm = document.getElementById("loginUser");
@@ -257,23 +354,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Mostrar solo el formulario de registro por defecto
   registerForm.classList.add("active");
+  loginForm.classList.remove("active");
 
+  // Alternar a formulario de Login
   loginBtn.addEventListener("click", function () {
-      loginForm.classList.add("active");
-      registerForm.classList.remove("active");
-      loginBtn.classList.add("active");
-      registerBtn.classList.remove("active");
-      loginBtn.classList.remove("inactive");
-      registerBtn.classList.add("inactive");
+    loginForm.classList.add("active");
+    registerForm.classList.remove("active");
+    loginBtn.classList.add("active");
+    registerBtn.classList.remove("active");
   });
 
+  // Alternar a formulario de Register
   registerBtn.addEventListener("click", function () {
-      registerForm.classList.add("active");
-      loginForm.classList.remove("active");
-      registerBtn.classList.add("active");
-      loginBtn.classList.remove("active");
-      registerBtn.classList.remove("inactive");
-      loginBtn.classList.add("inactive");
+    registerForm.classList.add("active");
+    loginForm.classList.remove("active");
+    registerBtn.classList.add("active");
+    loginBtn.classList.remove("active");
+  });
+
+  // Función para cerrar el modal
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  // Evento para cerrar el modal al hacer clic en la cruz
+  closeModalBtn.addEventListener("click", closeModal);
+
+  // Evento para cerrar el modal al hacer clic fuera del contenido
+  window.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+});
+
+
+
+
+// MENU DESPLEGABLE
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.getElementById("menuToggle");
+  const favoritesMenu = document.getElementById("favoritesMenu");
+
+  // Alternar la visibilidad del menú desplegable
+  menuToggle.addEventListener("click", function () {
+    favoritesMenu.classList.toggle("active");
   });
 });
 

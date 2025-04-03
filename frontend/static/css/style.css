@@ -1,15 +1,12 @@
+
+/* BODY */
+
 body{
     background-color: black;
     width:1800p
 }
 
-img{
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 30px;
-    height: 30px;
-}
+/* BUSCADOR */
 
 .search-bar{
     display:flex;
@@ -32,7 +29,10 @@ img{
     border-radius: 0px 10px 10px 0px;
     padding: 5px;
 }
-.search-btn:hover{
+
+.search-btn:hover,
+.favorites-button.search-btn:hover{
+    color: white;
     background-color: rgb(60, 91, 148);
 }
 
@@ -42,7 +42,7 @@ body {
     background-position: center center;
     overflow: hidden;
     background-size: cover;
-  }
+}
   
 #loginButton {
   font-family: 'Press Start', sans-serif;
@@ -74,7 +74,7 @@ body {
 
 .modal-content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background: var(--color-background);
@@ -96,8 +96,13 @@ body.light-mode .modal-content {
 .toggle-buttons{
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
+  gap: 30px;
+}
 
+.toggle-buttons button:hover{
+  background-color: white !important;
+  color: black;
 }
 
 .form-container {
@@ -145,4 +150,68 @@ body.light-mode .modal-content {
 .modal-content button:hover {
   background-color: var(--color-primary);
   transform: scale(1.05);
+}
+
+
+
+
+/* Contenedor del menú desplegable */
+.menu-desplegable {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botón de hamburguesa */
+.hamburger-menu {
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 5px;
+  box-shadow: none;
+  border: none;
+}
+
+/* Contenido del menú desplegable */
+.menu-content {
+  display: none; 
+  position: absolute;
+  width: 200px;
+  top: 60px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.favorites-button.search-btn {
+  color: white;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 0px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* Mostrar el menú cuando está activo */
+.menu-desplegable.active .menu-content {
+  display: block;
+}
+
+.hamburger-menu i {
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+.menu-icon {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
 }

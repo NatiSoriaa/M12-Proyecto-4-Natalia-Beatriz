@@ -4,57 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Document</title>
 </head>
 <body>
 
-    <div class="menu-desplegable">
-      <select></select>
+        <!-- Menú desplegable para imágenes favoritas -->
+    <div id="favoritesMenu" class="menu-desplegable">
+      <button id="menuToggle" class="hamburger-menu">
+        <i class="fas fa-globe"></i>
+      </button>
+      <div class="menu-content">
+        <button id="selectFavorites" class="favorites-button search-btn">Favoritos</button>
+        <button id="selectFavorites" class="favorites-button search-btn">Tu actividad</button>
+        <button id="selectFavorites" class="favorites-button search-btn">Paises visitados</button>
+        <button id="selectFavorites" class="favorites-button search-btn">Paises por visitar</button>
+      </div>
     </div>
     
     <!-- REGISTRO DE USUARIO  -->
     <div id="loginModal" class="modal">
-        <div class="modal-content">
+      <div class="modal-content">
           <span class="close" onclick="closeModal()">&times;</span>
-
+  
+          <!-- Botones para alternar entre Register y Login -->
           <div class="toggle-buttons">
-            <button id="showRegister" class="active"><h2>Register</h2></button>
-            <button id="showLogin" class="inactive"><h2>Login</h2></button>
+              <button id="showRegister" class="active">Register</button>
+              <button id="showLogin" class="inactive">Login</button>
           </div>
-
-          <div class="loginUser" class="form-container hidden">
-            
-            <form id="loginForm">
-              <label for="log-user">Username:</label>
-              <input type="text" id="log-user" name="username" placeholder="Enter your username" required>
-              <br><br>
-              <label for="password">Password:</label>
-              <input type="password" id="log-passw" name="password" placeholder="Enter your password" required>
-              <br><br>
-              <button type="submit" class="modal-button">Login</button>
-            </form>
+  
+          <!-- Formulario de Login -->
+          <div id="loginUser" class="form-container inactive">
+              <form id="loginForm">
+                  <label for="log-user">Username:</label>
+                  <input type="text" id="log-user" name="username" placeholder="Enter your username" required>
+                  <br><br>
+                  <label for="password">Password:</label>
+                  <input type="password" id="log-passw" name="password" placeholder="Enter your password" required>
+                  <br><br>
+                  <button type="submit" class="modal-button">Login</button>
+              </form>
           </div>
-          
-          <div class="registerUser" class="form-container">
-            
-            <form id="registerForm">
-              <label for="reg-user">Username:</label>
-              <input type="text" id="reg-user" name="username" placeholder="Enter your username" required>
-              <br><br>
-              <label for="password">Password:</label>
-              <input type="password" id="reg-passw" name="password" placeholder="Enter your password" required>
-              <br><br>
-              <button type="submit" class="modal-button">Register</button>
-            </form>
+  
+          <!-- Formulario de Register -->
+          <div id="registerUser" class="form-container active">
+              <form id="registerForm">
+                  <label for="reg-user">Username:</label>
+                  <input type="text" id="reg-user" name="username" placeholder="Enter your username" required>
+                  <br><br>
+                  <label for="reg-email">Email:</label>
+                  <input type="email" id="reg-email" name="email" placeholder="Enter your email" required>
+                  <br><br>
+                  <label for="password">Password:</label>
+                  <input type="password" id="reg-passw" name="password" placeholder="Enter your password" required>
+                  <br><br>
+                  <button type="submit" class="modal-button">Register</button>
+              </form>
           </div>
-          
-        </div>
       </div>
+  </div>
     
     <!-- NAVEGADOR BUSQUEDA PRINCIPAL  -->
     <div class="search-bar">
         <input id ="input" type="text" placeholder="Search...">
-            <button type="submit" value="" class="search-btn">
+            <button id="searchButton" type="submit" value="" class="search-btn">
                 <img src="../static/img/icono-buscador.png" alt="icono-buscador">
             </button>
       </div>
@@ -62,8 +75,8 @@
 
 
 
-    <!-- <script type="module" src="../static/js/index.js"></script> -->
-    <script type="module" src="../static/js/main.js"></script>
+    <script type="module" src="../static/js/index.js"></script>
+    <!-- <script type="module" src="../static/js/main.js"></script> -->
 
 </body>
 
