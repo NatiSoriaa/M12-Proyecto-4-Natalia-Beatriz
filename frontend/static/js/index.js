@@ -2,152 +2,7 @@ import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 
 
-
-
-// REGISTRO Y LOGIN DE USUARIO
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    
-  // gets values to login
-  document.querySelector('#loginForm').addEventListener('submit',(event)=>{
-      event.preventDefault();
-      const username = document.getElementById('log-user').value;
-      const password = document.getElementById('log-passw').value;
-      
-      login(email, password);
-  });
-
-  // gets values to register
-  document.querySelector('#register').addEventListener('submit', (event)=>{
-      event.preventDefault();
-      const username = document.getElementById('reg-user').value;
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-passw').value;
-      
-      createUser(username, email, password);
-  });
-
-  // shows login modal
-    function showModal() {
-        const modal = document.getElementById('loginModal');
-        modal.style.display = 'block';
-    }
-    document.querySelector('.close').addEventListener('click', closeModal);
-
-    function closeModal() {
-        const modal = document.getElementById('loginModal');
-        modal.style.display = 'none';
-    }
-
-    document.getElementById('modal-button').addEventListener('click', () => {
-        document.getElementById('loginModal').style.display = 'flex';
-      });
-      document.querySelector('.close').addEventListener('click', () => {
-        document.getElementById('loginModal').style.display = 'none';
-      });
-      window.addEventListener('click', (event) => {
-        const modal = document.getElementById('loginModal');
-        if (event.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
-    
-      document.getElementById('loginForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        // añadir modal de bienvenida
-        alert('Login successful!');
-        document.getElementById('loginModal').style.display = 'none';
-      });
-
-
-  //login donde se genera el token
-
-  async function login(email, password){
-
-    try {
-        const response = await fetch("http://localhost:5000/api/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('jwt', data.token);
-            const token = data.token;
-            // document.getElementById('reg-message').innerText = `TOKEN: ${token}`;
-            // Mostrar biblioteca
-
-            console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
-        } else {
-            console.error('Algo ha salido mal. Vuelve a intentarlo unos minutos más tarde');
-        }
-    } catch (error) {
-        console.error('Error en la solicitud:', error);
-        mostrarBiblio.style.display = "none";
-    }
-}
-
-//registration
-
-async function createUser(username, email, password){
-
-  try{
-      const res = await fetch("http://localhost:5000/api/register", {
-          method:'POST',
-          headers:{
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({username, email, password}),
-      });
-      const data = await res.json();
-      if (res.ok){
-          console.log('user creado correctamente');
-          alert('user creado correctamente');
-      } else{
-          alert(data.message || 'error en el registro');
-      }
-  }catch(error){
-      console.error('error', error);
-  }
-}
-
-//auth del token
-
-function getToken() {
-  const userToken = localStorage.getItem('jwt');
-
-  const inputToken = document.getElementById('token').value;
-
-  if (!userToken || !inputToken) {
-      console.log('Token no proporcionado');
-      alert('Por favor, ingresa el token.');
-      return null;
-  }
-
-  if (userToken !== inputToken) {
-      console.log('Token no válido');
-      alert('Token no válido. Por favor, ingresa el token correcto.');
-      return null;
-  }
-
-  return {
-      'Authorization': `Bearer ${userToken}`,
-      'Content-Type': 'application/json',
-  };
-}
-})
-
-
-
-
 // MAPA MUNDO 
-
-
 
 
 const scene = new THREE.Scene();
@@ -219,14 +74,85 @@ function latLonToVector3(lat, lon, radius = 1) {
   );
 }
 
+
+
+
+const markers = []; // Array para almacenar los marcadores
+
 function createMarker(lat, lon, name, color = 0xff0000) {
   const position = latLonToVector3(lat, lon);
   const markerGeometry = new THREE.SphereGeometry(0.02, 16, 16);
   const markerMaterial = new THREE.MeshBasicMaterial({ color });
   const marker = new THREE.Mesh(markerGeometry, markerMaterial);
   marker.position.copy(position);
+  marker.userData = { name, lat, lon }; // Guardar datos del marcador
   scene.add(marker);
+
+  markers.push(marker); // Agregar el marcador al array
   createLabel(name, position);
+
+  // Hacer que el marcador sea interactivo
+  marker.callback = () => {
+    openModal(marker.userData); // Abrir el modal con los datos del marcador
+  };
+}
+
+  // Agregar evento de clic al marcador
+  // Agregar evento de clic al marcador
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('click', (event) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(markers);
+  console.log('Intersecciones detectadas:', intersects); // Depuración
+
+  if (intersects.length > 0) {
+    const marker = intersects[0].object;
+    console.log('Marcador clickeado:', marker.userData); // Depuración
+    marker.callback();
+  }
+});
+
+
+// Función para abrir el modal con contenido dinámico
+function openModal(data) {
+  const modal = document.getElementById('infoModal');
+  modal.setAttribute('style', 'display: flex !important;');
+
+  const modalContent = document.getElementById('modalContent');
+  modalContent.innerHTML = `
+    <h2>${data.name}</h2>
+    <p>Latitud: ${data.lat}</p>
+    <p>Longitud: ${data.lon}</p>
+  `;
+}
+
+// Función para cerrar el modal al hacer clic en el botón de cierre
+document.querySelector('#infoModal .close').addEventListener('click', () => {
+  document.getElementById('infoModal').style.display = 'none';
+});
+
+// Cerrar el modal al hacer clic fuera del contenido
+window.addEventListener('click', (event) => {
+  const modal = document.getElementById('infoModal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+
+// Ejemplo de funciones para los botones
+function showInfo(data) {
+  alert(`Mostrando información de: ${data.name}`);
+}
+
+function showImages(data) {
+  alert(`Mostrando imágenes de: ${data.name}`);
 }
 
 function createLabel(text, position) {
@@ -338,72 +264,7 @@ window.requestAnimationFrame(animation);
 
 
 
-/* BOTONES LOGIN Y REGISTER */
 
 
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Selección de elementos
-  const modal = document.getElementById("loginModal");
-  const closeModalBtn = document.querySelector(".close");
-  const loginBtn = document.getElementById("showLogin");
-  const registerBtn = document.getElementById("showRegister");
-  const loginForm = document.getElementById("loginUser");
-  const registerForm = document.getElementById("registerUser");
-
-  // Mostrar solo el formulario de registro por defecto
-  registerForm.classList.add("active");
-  loginForm.classList.remove("active");
-
-  // Alternar a formulario de Login
-  loginBtn.addEventListener("click", function () {
-    loginForm.classList.add("active");
-    registerForm.classList.remove("active");
-    loginBtn.classList.add("active");
-    registerBtn.classList.remove("active");
-  });
-
-  // Alternar a formulario de Register
-  registerBtn.addEventListener("click", function () {
-    registerForm.classList.add("active");
-    loginForm.classList.remove("active");
-    registerBtn.classList.add("active");
-    loginBtn.classList.remove("active");
-  });
-
-  // Función para cerrar el modal
-  function closeModal() {
-    modal.style.display = "none";
-  }
-
-  // Evento para cerrar el modal al hacer clic en la cruz
-  closeModalBtn.addEventListener("click", closeModal);
-
-  // Evento para cerrar el modal al hacer clic fuera del contenido
-  window.addEventListener("click", function (event) {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-});
-
-
-
-
-// MENU DESPLEGABLE
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  const menuToggle = document.getElementById("menuToggle");
-  const favoritesMenu = document.getElementById("favoritesMenu");
-
-  // Alternar la visibilidad del menú desplegable
-  menuToggle.addEventListener("click", function () {
-    favoritesMenu.classList.toggle("active");
-  });
-});
 
 

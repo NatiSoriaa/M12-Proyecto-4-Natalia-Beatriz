@@ -1,21 +1,24 @@
-export function openModal() {
-    document.getElementById('loginModal').style.display = 'block';
-}
-
-export function closeModal() {
-    document.getElementById('loginModal').style.display = 'none';
-}
-
-// Alternar entre Login y Registro
-export function toggleForms(form) {
-    const loginForm = document.getElementById("loginUser");
-    const registerForm = document.getElementById("registerUser");
-    
-    if (form === 'login') {
-        loginForm.style.display = "block";
-        registerForm.style.display = "none";
-    } else {
-        loginForm.style.display = "none";
-        registerForm.style.display = "block";
+function openModal(data) {
+    const modal = document.getElementById('infoModal');
+    modal.setAttribute('style', 'display: flex !important;');
+  
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+      <h2>${data.name}</h2>
+      <p>Latitud: ${data.lat}</p>
+      <p>Longitud: ${data.lon}</p>
+    `;
+  }
+  
+  document.querySelector('#infoModal .close').addEventListener('click', () => {
+    document.getElementById('infoModal').style.display = 'none';
+  });
+  
+  window.addEventListener('click', (event) => {
+    const modal = document.getElementById('infoModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
     }
-}
+  });
+  
+  export { openModal };
