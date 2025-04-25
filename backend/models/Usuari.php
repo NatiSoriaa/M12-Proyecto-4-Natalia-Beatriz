@@ -8,8 +8,13 @@ class Usuari extends Model {
     
     // Creacion de usuario insertando los datos en la database
     public function crearUsuari($nom, $email, $contrasenya) {
-        $stmt = $this->pdo->prepare("INSERT INTO usuaris (nom, email, contrasenya) VALUES (?, ?, ?)");
-        return $stmt->execute([$nom, $email, $contrasenya]);
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO usuaris (nom, email, contrasenya) VALUES (?, ?, ?)");
+            return $stmt->execute([$nom, $email, $contrasenya]);
+        } catch(PDOException $e) {
+            return false;
+        }
+        
     }
 
     // Obtencion del usuario por su email 

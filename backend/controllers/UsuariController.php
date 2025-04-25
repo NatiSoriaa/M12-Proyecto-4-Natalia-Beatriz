@@ -20,21 +20,21 @@ class UsuariController {
     // Función de registro
     public function registre() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            
             // datos desde el body json 
             $data = json_decode(file_get_contents("php://input"), true);
             $nom = $data['nom'];
             $email = $data['email'];
-            // Encriptamos la contraseña
             $contrasenya = password_hash($data['contrasenya'], PASSWORD_BCRYPT);
 
             // Creación de usuario y redirigimos a login
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
-                // ('Location: /MP07UF2PROJ_Abad-Beatriz/public/index.php?action=login');
-                // exit();
-                echo json_decode(['success' => true, 'redirect' =>'/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=login']);
+                // envia json al frontend
+                echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
 
             } else {
-                echo json_decode(['success' => false, 'message' =>'Error en el registro.']);
+                echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
             }
             exit();
         }
@@ -63,10 +63,10 @@ class UsuariController {
 
                 // Redirigimos al usuario en función de su rol
                 if($_SESSION['rol'] === 'admin'){
-                    echo json_encode(['success' => true, 'redirect' => '/MP07UF2PROJ_Abad-Beatriz/public/admin.php']);
+                    echo json_encode(['success' => true, 'redirect' => 'M12-Proyecto-4-Natalia-Beatriz/backend/public/admin.php']);
 
                 }elseif($_SESSION['rol'] === 'normal'){
-                    echo json_encode(['success' => true, 'redirect' => '/MP07UF2PROJ_Abad-Beatriz/public/usuari.php']);
+                    echo json_encode(['success' => true, 'redirect' => 'M12-Proyecto-4-Natalia-Beatriz/backend/public/usuari.php']);
                 } 
             //  exit();  // Termina el script 
             }else {
@@ -81,7 +81,7 @@ class UsuariController {
     public function logout() {
         session_start(); // Iniciar o reanudar sesión 
         session_destroy(); // Cerrar sesión 
-        header('Location: /MP07UF2PROJ_Abad-Beatriz/public/index.php?action=login');
+        header('Location: M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login');
         exit();
     }
 }

@@ -59,12 +59,12 @@ class FavoritosController {
                 'usuari_id' => $_SESSION['usuari_id'] // Conocer el id del usuario que ha subido el anuncio
             ];
             // Solicitud POST a nuestra api anunci_api.php
-            $url = "http://localhost/MP07UF2PROJ_Abad-Beatriz/api/anunci_api.php";
+            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php";
             $response = $this->apiRequest($url, 'POST', $data);
 
             // Redirigir el usuario en función del estado de la respuesta
             if ($response && $response['status'] === 'success') { 
-                header('Location: http://localhost/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=anuncis');
+                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
                 exit();
             } else {
                 echo "Error en la creació de l'anunci.";
@@ -92,11 +92,11 @@ class FavoritosController {
             ];
 
             // Solicitud PUT a la api
-            $url = "http://localhost/MP07UF2PROJ_Abad-Beatriz/api/anunci_api.php?id=$id";
+            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php?id=$id";
             $response = $this->apiRequest($url, 'PUT', $data);
 
             if ($response && $response['status'] === 'success') {  
-                header('Location: http://localhost/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=anuncis');
+                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
                 exit();
             } else {
                 echo "Error en la modificación del anuncio.";
@@ -119,11 +119,11 @@ class FavoritosController {
     public function eliminar($id) {
         check_auth('admin'); // Verificación de permisos
         
-        $url = "http://localhost/MP07UF2PROJ_Abad-Beatriz/api/anunci_api.php?id=$id";
+        $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php?id=$id";
         $response = $this->apiRequest($url, 'DELETE');
 
         if ($response && $response['status'] === 'success') { 
-            header('Location: http://localhost/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=anuncis');
+            header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
             exit();
         } else {
             echo "Error en l'eliminació de l'anunci.";

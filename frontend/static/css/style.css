@@ -1,6 +1,6 @@
 
 /* BODY */
-
+@import url("https://fonts.googleapis.com/css2?family=Geist&display=swap");
 
 body {
   background-image: url("https://i.postimg.cc/br3g30GL/bg.jpg");
@@ -159,8 +159,6 @@ body.light-mode .modal-content {
   background-color: var(--color-primary);
   transform: scale(1.05);
 }
-
-
 
 /* MENU DESPLEGABLE */
 

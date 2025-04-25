@@ -18,7 +18,7 @@ $favoritosController = new FavoritosController();  // Controlador de anuncios
 
 // Procesa la acción solicitada
 switch ($action) {
-    case 'registre':  // Registra un nuevo usuario
+    case 'register':  // Registra un nuevo usuario
         $usuariController->registre();
         break;
     case 'login':  // Inicia sesión
@@ -50,7 +50,7 @@ switch ($action) {
         $favoritosController->index();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
-        header('Location:/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=anuncis');
+        header('Location:/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
         exit();  // Evita que se siga ejecutando el código
 }
 ?>
