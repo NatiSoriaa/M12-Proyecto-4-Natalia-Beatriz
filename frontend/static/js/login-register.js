@@ -35,11 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     }
 
-<<<<<<< Updated upstream
     document.getElementById('modal-button-login').addEventListener('click', () => {
-=======
-    document.querySelector('.modal-button').addEventListener('click', () => {
->>>>>>> Stashed changes
         document.getElementById('loginModal').style.display = 'flex';
       });
       document.querySelector('.close').addEventListener('click', () => {
@@ -97,12 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function createUser(username, email, password){
 
   try{
-<<<<<<< Updated upstream
-    //   const res = await fetch("http://localhost:5000/api/register", {
-    const res = await fetch("http://localhost/api/register", {
-=======
       const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=register", {
->>>>>>> Stashed changes
           method:'POST',
           headers:{
               'Content-Type': 'application/json',
@@ -154,28 +145,4 @@ async function createUser(username, email, password){
     };
     }
 
-<<<<<<< Updated upstream
-  return {
-      'Authorization': `Bearer ${userToken}`,
-      'Content-Type': 'application/json',
-  };
-}
-
-fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/api/anunci_api.php") // URL de la API PHP
-    .then(response => response.json()) // Convertimos la respuesta a JSON
-    .then(data => {
-        console.log(data); // Mostramos el mensaje en la consola
-        let html = "<ul>";
-        data.forEach(item => {
-            html += `<li><strong>${item.nom}</strong>: ${item.descripcio} (Categoría: ${item.categoria})</li>`;
-        });
-        html += "</ul>";
-    
-        document.getElementById("output").innerHTML = html;
-    })
-    .catch(error => console.error("Error en la petición:", error));
-    
-
-=======
->>>>>>> Stashed changes
 })
