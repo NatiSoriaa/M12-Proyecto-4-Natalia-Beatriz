@@ -24,6 +24,16 @@
             <button id="selectFavorites" class="favorites-button search-btn">Paises por visitar</button>
         </div>
     </div>
+
+    <div id="menuUsuario" class="menu-desplegable">
+        <button id="menuToggle" class="hamburger-menu">
+            <i class="fas fa-user"></i>
+            <div id="usuario-nombre"></div>
+        </button>
+        <div class="menu-content">
+            <button id="selectCerrarSesion" class="favorites-button search-btn">Cerrar Sesión</button>
+        </div>
+    </div>
     
     <!-- REGISTRO DE USUARIO  -->
 
@@ -70,8 +80,7 @@
           </div>
       </div>
     </div>
-    <div id='output'>
-    </div>
+
     <!-- NAVEGADOR BUSQUEDA PRINCIPAL  -->
 
     <div class="search-bar">
@@ -105,6 +114,18 @@
                 <button id="imagesButton">Imágenes</button>
             </div>
             
+        </div>
+
+    </div>
+    
+    <div id="apiModal" class="apiModal">
+        <span class="close">&times;</span>
+        <div id="content-images">
+            <div>hola soy una imagen</div>
+        </div>
+
+        <div id="content-info">
+            <div>info</div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

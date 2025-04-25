@@ -1,6 +1,7 @@
 import { scene, camera, renderer } from "./scene.js";
 import { orbitControls } from "./controls.js";
 import { searchCountryLocation } from "./search.js";
+import { loadToastr } from "./toastr.js";
 
 const animation = () => {
   orbitControls.update();
@@ -15,6 +16,6 @@ searchButton.addEventListener('click', () => {
   if (country.trim() !== '') {
     searchCountryLocation(country);
   } else {
-    alert('Por favor, ingresa un país para buscar.');
+    toastr.warning('No puedo hacer una búsqueda vacía...', 'Vacío');
   }
 });

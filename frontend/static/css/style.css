@@ -170,6 +170,7 @@ body.light-mode .modal-content {
 }
 
 .hamburger-menu {
+  color: white;
   background: transparent;
   cursor: pointer;
   display: flex;
@@ -337,4 +338,59 @@ body.light-mode .modal-content {
 
 #infoModal .pendiente-visitar img:hover {
   transform: scale(1.1); 
+}
+
+
+
+/* MODAL INFORMACION IMAGENES */
+
+
+#countryInfoModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  
+}
+
+#countryInfoModal .modal-content2 {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: scroll;
+  height: 40%;
+}
+
+#countryInfoModal .modal-content2 h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+#countryInfoModal .modal-content2 p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+}
+
+#countryInfoModal .close {
+  color: #333;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#countryInfoModal .close:hover {
+  color: red;
 }

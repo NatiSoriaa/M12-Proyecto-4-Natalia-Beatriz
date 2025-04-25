@@ -2,8 +2,10 @@ import { createMarker } from "./markers.js";
 import { latLonToVector3 } from "./utils.js";
 import { camera } from "./scene.js";
 import { orbitControls } from "./controls.js";
+import { loadToastr } from "./toastr.js";
 
 async function searchCountryLocation(country) {
+  loadToastr();
   const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
   const data = await response.json();
   if (data.length > 0) {
@@ -22,7 +24,7 @@ async function searchCountryLocation(country) {
     );
     camera.lookAt(markerPosition);
   } else {
-    alert('País no encontrado');
+    toastr.error('País no encontrado', 'Ups!')
   }
 }
 
