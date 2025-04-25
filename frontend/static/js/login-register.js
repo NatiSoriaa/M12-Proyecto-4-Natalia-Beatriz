@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     }
 
-    document.getElementById('modal-button-login').addEventListener('click', () => {
+    document.getElementById('modal-button-login').addEventListener('click', (event) => {
         document.getElementById('loginModal').style.display = 'flex';
       });
       document.querySelector('.close').addEventListener('click', () => {
@@ -114,10 +114,10 @@ async function createUser(username, email, password){
     }catch(error){
         console.error(error);
     }
-}
-    finally {
-        console.log('nose');
     }
+        finally {
+            console.log('nose');
+        }
 }
 
 //auth del token
