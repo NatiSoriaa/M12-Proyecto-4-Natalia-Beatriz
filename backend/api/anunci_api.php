@@ -1,7 +1,7 @@
 <?php
 // api/anunci_api.php
 
-require_once '../models/Anunci.php';
+require_once '../models/Favoritos.php';
 require_once '../includes/auth.php';
 require_once '../config/db.php';
 

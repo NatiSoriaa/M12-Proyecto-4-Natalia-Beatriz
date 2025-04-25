@@ -227,41 +227,116 @@ body.light-mode .modal-content {
 /* MODAL INFORMACION PAISES */
 
 
+/* Modal para información de países */
 #infoModal {
-  display: none; /* Oculto por defecto */
+  display: none; 
   position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
-#infoModal .modal-content {
-  background-color: #fff;
-  margin: 15% auto;
+#infoModal .modal-content2 {
+  background-color: rgba(0, 0, 0, 0.7);
+  margin: 10% auto; 
   padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
+  border-radius: 10px; 
+  width: 20%; 
   text-align: center;
-  color: black;
+  align-items: start;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  position: relative;
 }
 
 #infoModal .close {
-  color: black;
+  color: white;
   float: right;
-  font-size: 28px;
+  font-size: 40px;
   font-weight: bold;
   cursor: pointer;
 }
 
-#infoModal .canvas {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+#infoModal .close:hover {
+  color: red; 
+}
+
+#infoModal #modalContent {
+  margin: 50px;
+}
+
+#infoModal h2 {
+  font-size: 24px;
+  color: white;
+}
+
+#infoModal p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: white;
+}
+
+#infoModal .iconos {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+#infoModal img{
+  width: 30px;
+  height: 30px;
+}
+
+#infoModal .iconos button{
+  background-color: transparent;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+#infoModal .modalButtons{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+#infoModal .modalButtons button {
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    background: rgb(27, 27, 76);
+    transition: background-color 0.3s ease;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+#infoModal .modalButtons button:hover {
+    color: white;
+    background-color: rgb(60, 91, 148);
+}
+
+#infoModal .iconos img {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+
+#infoModal .favoritos:hover{
+  transform: scale(1.1); 
+}
+
+#infoModal .pendiente-visitar img:hover {
+  transform: scale(1.1); 
 }

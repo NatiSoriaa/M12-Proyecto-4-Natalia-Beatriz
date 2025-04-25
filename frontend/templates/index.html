@@ -47,7 +47,7 @@
                   <label for="password">Password:</label>
                   <input type="password" id="log-passw" name="password" placeholder="Enter your password" required>
                   <br><br>
-                  <button type="submit" class="modal-button">Login</button>
+                  <button type="submit" class="modal-button-login">Login</button>
               </form>
           </div>
   
@@ -64,13 +64,13 @@
                   <label for="password">Password:</label>
                   <input type="password" id="reg-passw" name="password" placeholder="Enter your password" required>
                   <br><br>
-                  <button type="submit" class="modal-button">Register</button>
+                  <button type="submit" class="modal-button-register">Register</button>
               </form>
           </div>
       </div>
     </div>
-    
-
+    <div id='output'>
+    </div>
     <!-- NAVEGADOR BUSQUEDA PRINCIPAL  -->
 
     <div class="search-bar">
@@ -84,13 +84,26 @@
     <!-- MODAL INFO PAIS -->
 
     <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modalButtons">
-            <button id="infoButton">Informacion</button>
-            <button id="imagesButton">Imágenes</button>
+        <div class="modal-content2">
+
+            <div class="iconos">
+
+                <button id="paises-favoritos" class="favoritos">
+                    <img  src="../static/img/favoritos.svg"></img>
+                </button>
+                <button id="visitado" class="pendiente-visitar">
+                    <img src="../static/img/pendiente-visitar.png" alt="pendiente por visitar" class="pendiente-icon">
+                </button>
+                
             </div>
+            
+            <span class="close">&times;</span>
             <div id="modalContent"></div>
+            <div class="modalButtons">
+                <button id="infoButton">Informacion</button>
+                <button id="imagesButton">Imágenes</button>
+            </div>
+            
         </div>
     </div>
 

@@ -50,7 +50,7 @@ try {
     $stmtFav->execute(['Paella', 'Arroz con cosas', 'Comida', 1]);
 
     echo "Base de datos y tablas creadas correctamente!<br>";
-    echo '<a href="http://localhost/MP07UF2PROJ_Abad-Beatriz/public/index.php">Ver anuncios</a>';
+    echo '<a href="http://localhost/M12-Proyecto-4-Natalia-Beatriz/public/index.php">Ver anuncios</a>';
 
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());

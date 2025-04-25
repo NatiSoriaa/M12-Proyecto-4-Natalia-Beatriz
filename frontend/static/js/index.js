@@ -121,15 +121,24 @@ window.addEventListener('click', (event) => {
 
 // Función para abrir el modal con contenido dinámico
 function openModal(data) {
-  const modal = document.getElementById('infoModal');
-  modal.setAttribute('style', 'display: flex !important;');
+    const modal = document.getElementById('infoModal');
+    modal.setAttribute('style', 'display: flex !important;');
 
-  const modalContent = document.getElementById('modalContent');
-  modalContent.innerHTML = `
-    <h2>${data.name}</h2>
-    <p>Latitud: ${data.lat}</p>
-    <p>Longitud: ${data.lon}</p>
-  `;
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+      <h2>${data.name}</h2>
+      <p>Latitud: ${data.lat}</p>
+      <p>Longitud: ${data.lon}</p>
+    `;
+
+    // Agregar eventos a los botones
+    document.getElementById('infoButton').addEventListener('click', () => {
+      showInfo(data); // Mostrar información del país
+    });
+
+    document.getElementById('imagesButton').addEventListener('click', () => {
+      showImages(data); // Mostrar imágenes del país
+    });
 }
 
 // Función para cerrar el modal al hacer clic en el botón de cierre
@@ -146,11 +155,12 @@ window.addEventListener('click', (event) => {
 });
 
 
-// Ejemplo de funciones para los botones
+// Función para mostrar información del país
 function showInfo(data) {
   alert(`Mostrando información de: ${data.name}`);
 }
 
+// Función para mostrar imágenes del país
 function showImages(data) {
   alert(`Mostrando imágenes de: ${data.name}`);
 }
@@ -184,7 +194,7 @@ async function searchCountryLocation(country) {
     orbitControls.autoRotate = false;
 
     // Mover la cámara hacia el marcador con un poco de zoom
-    const zoomLevel = 1.5; // Ajusta el nivel de zoom
+    const zoomLevel = 1.2; // Ajusta el nivel de zoom
     camera.position.set(
       markerPosition.x * zoomLevel,
       markerPosition.y * zoomLevel,
@@ -262,7 +272,29 @@ function removeMarkers() {
 window.requestAnimationFrame(animation);
 
 
+// corazon favoritos cambio de color
 
+const heartIcon = document.getElementById('paises-favoritos');
+
+heartIcon.addEventListener('click', () => {
+  heartIcon.classList.toggle('active'); 
+});
+
+
+// cambio icono pais visitado o no visitado 
+
+const visitToggle = document.getElementById('visitado');
+const visitIcon = visitToggle.querySelector('img');
+
+visitToggle.addEventListener('click', () => {
+  if (visitIcon.src.includes('pendiente-visitar.png')) {
+    visitIcon.src = '../static/img/check-visitado.png'; 
+    visitIcon.alt = 'check visitado';
+  } else {
+    visitIcon.src = '../static/img/pendiente-visitar.png'; 
+    visitIcon.alt = 'pendiente por visitar';
+  }
+});
 
 
 

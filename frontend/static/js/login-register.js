@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     }
 
-    document.getElementById('modal-button').addEventListener('click', () => {
+    document.getElementById('modal-button-login').addEventListener('click', () => {
         document.getElementById('loginModal').style.display = 'flex';
       });
       document.querySelector('.close').addEventListener('click', () => {
@@ -92,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function createUser(username, email, password){
 
   try{
-      const res = await fetch("http://localhost:5000/api/register", {
+    //   const res = await fetch("http://localhost:5000/api/register", {
+    const res = await fetch("http://localhost/api/register", {
           method:'POST',
           headers:{
               'Content-Type': 'application/json',
@@ -135,4 +136,20 @@ function getToken() {
       'Content-Type': 'application/json',
   };
 }
+
+fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/api/anunci_api.php") // URL de la API PHP
+    .then(response => response.json()) // Convertimos la respuesta a JSON
+    .then(data => {
+        console.log(data); // Mostramos el mensaje en la consola
+        let html = "<ul>";
+        data.forEach(item => {
+            html += `<li><strong>${item.nom}</strong>: ${item.descripcio} (Categoría: ${item.categoria})</li>`;
+        });
+        html += "</ul>";
+    
+        document.getElementById("output").innerHTML = html;
+    })
+    .catch(error => console.error("Error en la petición:", error));
+    
+
 })
