@@ -404,3 +404,16 @@ body.light-mode .modal-content {
 #countryInfoModal .close:hover {
   color: red;
 }
+
+/* LOADER */
+
+.ldBar {
+  background-color: rgb(255, 255, 255);
+  width: 0%;
+  height: 4px;
+  position:absolute;
+  bottom:0px;
+  z-index: 9999;
+  transition: width 0.10s ease-in-out; /* Hacemos la animación suave */
+}
+

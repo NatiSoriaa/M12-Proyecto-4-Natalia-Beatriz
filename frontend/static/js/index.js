@@ -109,11 +109,11 @@ window.addEventListener('click', (event) => {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(markers);
-  console.log('Intersecciones detectadas:', intersects); // Depuración
+  // console.log('Intersecciones detectadas:', intersects); // Depuración
 
   if (intersects.length > 0) {
     const marker = intersects[0].object;
-    console.log('Marcador clickeado:', marker.userData); // Depuración
+    // console.log('Marcador clickeado:', marker.userData); // Depuración
     marker.callback();
   }
 });

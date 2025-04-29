@@ -1,10 +1,7 @@
-
-
 /* BOTONES LOGIN Y REGISTER */
 
 
 document.addEventListener("DOMContentLoaded", function () {
-
     // Selección de elementos
     const modal = document.getElementById("loginModal");
     const closeModalBtn = document.querySelector(".close");
@@ -12,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const registerBtn = document.getElementById("showRegister");
     const loginForm = document.getElementById("loginUser");
     const registerForm = document.getElementById("registerUser");
-  
+
     // Mostrar solo el formulario de login por defecto
     // registerForm.classList.add("inactive");
     loginForm.classList.add("active");
@@ -45,6 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target === modal) {
             closeModal();
         }
-    });
+    }); 
 
 });

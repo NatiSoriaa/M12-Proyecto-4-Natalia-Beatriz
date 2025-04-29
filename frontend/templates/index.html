@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">  <!-- Cargar primero toastr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/loading-bar@0.1.1/dist/loading-bar.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/loadingio/ldloader@v1.0.0/dist/ldld.min.css" /> -->
     <link href="https://fonts.googleapis.com/css2?family=Geist&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style.css" type="text/css">  <!-- Cargar después de toastr -->
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css">
     <title>Earth-map</title>
 </head>
 <body>
-    </div>
+    
+    <!-- LOADING -->
+    <div class="ldBar" data-value="0"></div>
+
     <!-- MENU DESPLEGABLE-->
 
     <div id="favoritesMenu" class="menu-desplegable">
@@ -128,12 +133,15 @@
             <div>info</div>
         </div>
     </div>
+
+    <!-- LIBRARIES -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/loading-bar@0.1.1/dist/loading-bar.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/loadingio/ldloader@v1.0.0/dist/ldld.min.js"></script>
+
+    <!-- SCRIPTS -->
     <script type="module" src="../static/js/index.js"></script>
-
-    <!-- <script type="module" src="../static/js/main.js"></script> -->
-
     <script type="module" src="../static/js/menu.js"></script>
     <script type="module" src="../static/js/botones-login-register.js"></script>
     <script type="module" src="../static/js/login-register.js"></script>

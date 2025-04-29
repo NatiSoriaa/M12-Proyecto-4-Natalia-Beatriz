@@ -3,13 +3,14 @@ import { loadToastr } from "./toastr.js";
 // REGISTRO Y LOGIN DE USUARIO
 document.addEventListener('DOMContentLoaded', () => {
     loadToastr();
-   
+
   // gets values to login
   document.querySelector('#loginForm').addEventListener('submit',(event)=>{
       event.preventDefault();
       const email = document.getElementById('log-user').value;
       const password = document.getElementById('log-passw').value;
-      
+      showLoadingBar();
+    
       login(email, password);
   });
 
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = document.getElementById('reg-user').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-passw').value;
+      showLoadingBar();
       
       createUser(username, email, password);
   });
@@ -57,26 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({ email, contrasenya: password })
         });
+        const data = await response.json();
 
-        if (response.ok) {
-            const data = await response.json();
+        if (response.ok && data.succes) {
             // localStorage.setItem('jwt', data.token);
             // const token = data.token;
             closeModal();
             toastr.success(`Bienvenido/a,${email}`, 'Exito');
             console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
-        
-    
         } else {
             toastr.error('Hubo un error al registrar el usuario.', 'Error');
-            
-        
         }
     } catch (error) {
         console.error('Error en la solicitud:', error);
         
     }
 }
+
 
 //registration
 
@@ -93,13 +92,13 @@ async function createUser(username, email, password){
       });
 
     try {
-        const data = JSON.parse(text);
-        if (res.ok){
+        const data = await res.json();
+        if (res.ok && data.success){
+            closeModal();
             toastr.success('Se ha registrado correctamente', 'Éxito');
         } else{
             toastr.error(data.message || 'Error');
         }
-
         }catch(error){
             console.error(error);
         }
@@ -134,3 +133,29 @@ async function createUser(username, email, password){
     }
 
 })
+
+const loadBar = document.querySelector('.ldBar');
+
+// show loading bar
+function showLoadingBar() {
+    loadBar.style.width = '0%';
+    loadBar.classList.remove('complete');
+    loadBar.style.display = 'block';
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        loadBar.style.width = `${progress}%`;
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            loadBar.classList.add('complete');
+            // hide loading bar when complete
+            setTimeout(() => {
+                loadBar.style.display = 'none';
+            }, 300);
+        }
+    }, 100);
+}
+
+export {showLoadingBar};
