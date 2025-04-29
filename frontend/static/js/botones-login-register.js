@@ -13,9 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const loginForm = document.getElementById("loginUser");
     const registerForm = document.getElementById("registerUser");
   
-    // Mostrar solo el formulario de registro por defecto
-    registerForm.classList.add("active");
-    loginForm.classList.remove("active");
+    // Mostrar solo el formulario de login por defecto
+    // registerForm.classList.add("inactive");
+    loginForm.classList.add("active");
   
     // Alternar a formulario de Login
     loginBtn.addEventListener("click", function () {

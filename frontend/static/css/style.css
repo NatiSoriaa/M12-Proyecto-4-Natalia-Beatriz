@@ -113,12 +113,22 @@ body.light-mode .modal-content {
   color: black;
 }
 
+#showRegister.active, #showLogin.active{
+  background-color: white;
+  color:black;
+}
+
 .form-container {
   display: none;
 }
 
 .form-container.active {
   display: block;
+}
+
+#loginForm button, #registerForm button{
+  border-color: #fff;
+  border: 1px solid white;
 }
 
 .close {
