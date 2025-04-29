@@ -133,7 +133,7 @@ class UsuariController {
     public function logout() {
         session_start(); // Iniciar o reanudar sesión 
         session_destroy(); // Cerrar sesión 
-        header('Location: M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login');
+        header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/frontend/templates/index.html');
         exit();
     }
 }

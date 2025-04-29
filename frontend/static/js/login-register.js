@@ -117,29 +117,32 @@ async function createUser(username, email, password){
 //auth del token
 
     function getToken() {
-    const userToken = localStorage.getItem('jwt');
+        const userToken = localStorage.getItem('jwt');
 
-    const inputToken = document.getElementById('token').value;
+        const inputToken = document.getElementById('token').value;
 
-    if (!userToken || !inputToken) {
-        console.log('Token no proporcionado');
-        alert('Por favor, ingresa el token.');
-        return null;
-    }
+        if (!userToken || !inputToken) {
+            console.log('Token no proporcionado');
+            alert('Por favor, ingresa el token.');
+            return null;
+        }
 
-    if (userToken !== inputToken) {
-        console.log('Token no válido');
-        alert('Token no válido. Por favor, ingresa el token correcto.');
-        return null;
-    }
+        if (userToken !== inputToken) {
+            console.log('Token no válido');
+            alert('Token no válido. Por favor, ingresa el token correcto.');
+            return null;
+        }
 
-    return {
-        'Authorization': `Bearer ${userToken}`,
-        'Content-Type': 'application/json',
-    };
+        return {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+        };
     }
 
 })
+
+
+
 
 const loadBar = document.querySelector('.ldBar');
 
