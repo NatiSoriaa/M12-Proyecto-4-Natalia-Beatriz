@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       const email = document.getElementById('log-user').value;
       const password = document.getElementById('log-passw').value;
+
+      window.loggedEmail = email;
+      localStorage.setItem('loggedEmail', email);
       showLoadingBar();
     
       login(email, password);
@@ -65,9 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // localStorage.setItem('jwt', data.token);
             // const token = data.token;
             closeModal();
-            toastr.success(`Bienvenido/a,${email}`, 'Exito');
+            toastr.success(`Bienvenido/a, ${email}`, 'Exito');
             console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
-
+            localStorage.setItem('loggedEmail', email);
+            document.getElementById('usuario-nombre').textContent = email;
         } else {
             toastr.error('Hubo un error al iniciar sesión. Vuelve a intentarlo.', 'Error');
         }
@@ -96,6 +100,8 @@ async function createUser(username, email, password){
         const data = await res.json();
         if (res.ok && data.success){
             closeModal();
+            localStorage.setItem('loggedEmail', email);
+            document.getElementById('usuario-nombre').textContent = email;
             toastr.success('Se ha registrado correctamente', 'Éxito');
         } else{
             toastr.error(data.message || 'Error');
