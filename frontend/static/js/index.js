@@ -109,11 +109,11 @@ window.addEventListener('click', (event) => {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(markers);
-  // console.log('Intersecciones detectadas:', intersects); // Depuración
+  console.log('Intersecciones detectadas:', intersects); // Depuración
 
   if (intersects.length > 0) {
     const marker = intersects[0].object;
-    // console.log('Marcador clickeado:', marker.userData); // Depuración
+    console.log('Marcador clickeado:', marker.userData); // Depuración
     marker.callback();
   }
 });
@@ -206,7 +206,6 @@ async function searchCountryLocation(country) {
 
     console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
   } else {
-
     alert('País no encontrado');
   }
 }
@@ -299,5 +298,51 @@ visitToggle.addEventListener('click', () => {
 
 
 
+import { getCountryInfo } from './llamada-apis.js';
+
+// Seleccionar el botón de información
+const infoButton = document.getElementById('infoButton');
+
+// Manejar el clic en el botón de información
+infoButton.addEventListener('click', async () => {
+  const countryName = document.getElementById('modalContent').querySelector('h2').textContent;
+
+  // Obtener información del país
+  const countryInfo = await getCountryInfo(countryName);
+
+  // Mostrar el modal con la información
+  openInfoModal(countryName, countryInfo);
+});
+
+// Función para abrir el modal de información
+function openInfoModal(countryName, countryInfo) {
+  const infoModal = document.createElement('div');
+  infoModal.classList.add('modal');
+  infoModal.setAttribute('id', 'countryInfoModal');
+  infoModal.innerHTML = `
+    <div class="modal-content2">
+      <span class="close" id="closeInfoModal">&times;</span>
+      <h2>${countryName}</h2>
+      <p>${countryInfo}</p>
+    </div>
+  `;
+
+  document.body.appendChild(infoModal);
+
+  // Mostrar el modal
+  infoModal.style.display = 'flex';
+
+  // Cerrar el modal al hacer clic en la "X"
+  document.getElementById('closeInfoModal').addEventListener('click', () => {
+    infoModal.remove();
+  });
+
+  // Cerrar el modal al hacer clic fuera del contenido
+  window.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+      infoModal.remove();
+    }
+  });
+}
 
 
