@@ -204,6 +204,7 @@ body.light-mode .modal-content {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 10px;
   z-index: 1000;
+  transform: translateY(5px);
 }
 
 .favorites-button.search-btn {
@@ -414,6 +415,5 @@ body.light-mode .modal-content {
   position:absolute;
   bottom:0px;
   z-index: 9999;
-  transition: width 0.10s ease-in-out; /* Hacemos la animación suave */
+  transition: width 0.10s ease-in-out;
 }
-

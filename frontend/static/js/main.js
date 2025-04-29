@@ -1,7 +1,6 @@
 import { scene, camera, renderer } from "./scene.js";
 import { orbitControls } from "./controls.js";
 import { searchCountryLocation } from "./search.js";
-import { loadToastr } from "./toastr.js";
 
 const animation = () => {
   orbitControls.update();

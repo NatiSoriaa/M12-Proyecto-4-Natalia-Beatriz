@@ -158,4 +158,6 @@ function showLoadingBar() {
     }, 100);
 }
 
+
+
 export {showLoadingBar};
