@@ -61,14 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const data = await response.json();
 
-        if (response.ok && data.succes) {
+        if (response.ok && data.success) {
             // localStorage.setItem('jwt', data.token);
             // const token = data.token;
             closeModal();
             toastr.success(`Bienvenido/a,${email}`, 'Exito');
             console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
+
         } else {
-            toastr.error('Hubo un error al registrar el usuario.', 'Error');
+            toastr.error('Hubo un error al iniciar sesión. Vuelve a intentarlo.', 'Error');
         }
     } catch (error) {
         console.error('Error en la solicitud:', error);
