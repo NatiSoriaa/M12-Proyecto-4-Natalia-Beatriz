@@ -28,7 +28,7 @@ function validarAdjunt($file) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //recull lles dades del usuari
     $nom = $_POST['nom'];
-    $correu = $_POST['correu'];
+    $correu = $_POST['email'];
     $missatge = $_POST['missatge'];
     $adjunt = $_FILES['fitxer'];
 
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         //contingut del correu
         $mail->isHTML(true); //format HTML
-        $mail->Subject = 'TESTITO';
+        $mail->Subject = 'Welcome to Earth Explorer';
         $mail->Body = $missatge; //missatge a l'user
 
         //quan s'envia el correu, 

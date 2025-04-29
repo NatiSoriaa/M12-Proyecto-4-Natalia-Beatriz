@@ -1,10 +1,24 @@
 <?php
-// controllers/UsuariController.php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+require_once '../models/Usuari.php';
+require_once '../config/config.php';
+require_once '../config/twig.php';
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once '../models/Usuari.php';
-require_once '../config/twig.php';
+
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
 
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
@@ -32,12 +46,49 @@ class UsuariController {
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
                 // envia json al frontend
                 echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
+            //instanciem la classe PHPMailer
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            try {
+                //primer configurem PHPMailer per utilitzar SMTP
+                $mail->isSMTP(); //ús del protocol SMTP
+                $mail->Host = SMTP_HOST; //servidor SMTP
+                $mail->SMTPAuth = true; //autenticacio
+                $mail->Username = SMTP_USER; //username per a l'autenticacio
+                $mail->Password = SMTP_PASS; //contrassenya
+                //connexió segura amb STARTTLS
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = SMTP_PORT; //port SMTP per a STARTTLS
+                
+                //adreça del usuari com a remitent
+                $mail->setFrom($email, $nom);
+                $mail->addAddress('beatrizabadjim@gmail.com', 'bea');
 
-            } else {
-                echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
+                //contingut del correu
+                $mail->isHTML(true); //format HTML
+                $mail->Subject = 'Welcome to Earth Explorer';
+                $mail->Body = $missatge; //missatge a l'user
+                $missatge = "Hey there $nom! You just registered to get the best experience";
+                // //quan s'envia el correu, 
+                // if ($mail->send()) {
+                //     //redirigim a success.php
+                //     header("Location: http://localhost/MP07UF2PROJ_Abad-Beatriz/public/success.php");
+                //     exit();
+                // }
+            //en cas de sorgir errors al correu, 
+            } catch (Exception $e) {
+                //es registra a error.log
+                error_log("Error al enviar el correu: " . $mail->ErrorInfo, 3, '.logs/error.log');
+                $mail->SMTPDebug = 2; // Muestra información detallada de la conexión SMTP
+                $mail->Debugoutput = 'html';
+
+                header("Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/error.php?error=send_fail");
+                exit();
             }
-            exit();
-        }
+                } else {
+                    echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
+                }
+                exit();
+            }
         // Renderizamos registre.html.twig
         echo $this->twig->render('usuari/registre.html.twig');
 
@@ -53,6 +104,7 @@ class UsuariController {
             $contrasenya = $data['contrasenya'];
             // Miramos si el email insertado existe en la base de datos
             $usuari = $this->usuariModel->obtenirUsuariPerEmail($email);
+
             // Si el email y la contraseña coinciden, empieza la sesión
             if ($usuari && password_verify($contrasenya, $usuari['contrasenya'])) {
                 session_start();

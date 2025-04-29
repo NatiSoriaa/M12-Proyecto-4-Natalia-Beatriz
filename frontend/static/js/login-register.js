@@ -47,19 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
           modal.style.display = 'none';
         }
       });
-    
-    //   document.getElementById('loginForm').addEventListener('submit', (event) => {
-    //     event.preventDefault();
-    //     // añadir modal de bienvenida
-
-    //     alert('Login successful!');
-    //     document.getElementById('loginModal').style.display = 'none';
-    //   });
-    // Command: toastr["error"]("My name is Inigo Montoya. You killed my father. Prepare to die!", "error")
-
 
   async function login(email, password){
-
     try {
         const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login", {
             method: 'POST',
@@ -71,12 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem('jwt', data.token);
-            const token = data.token;
+            // localStorage.setItem('jwt', data.token);
+            // const token = data.token;
             closeModal();
             toastr.success(`Bienvenido/a,${email}`, 'Exito');
-
             console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
+        
+    
         } else {
             toastr.error('Hubo un error al registrar el usuario.', 'Error');
             
@@ -101,23 +91,21 @@ async function createUser(username, email, password){
           body: JSON.stringify({
             nom: username, email: email, contrasenya: password}),
       });
-      const text = await res.text();
-      console.log(text);
+
     try {
         const data = JSON.parse(text);
-        if (res.ok && data.success){
+        if (res.ok){
             toastr.success('Se ha registrado correctamente', 'Éxito');
         } else{
             toastr.error(data.message || 'Error');
         }
 
-    }catch(error){
-        console.error(error);
-    }
-    }
-        finally {
-            console.log('nose');
+        }catch(error){
+            console.error(error);
         }
+    }finally {
+        console.log();
+    }
 }
 
 //auth del token
