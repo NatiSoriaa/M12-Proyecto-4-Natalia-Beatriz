@@ -24,21 +24,24 @@
                 <i class="fas fa-globe"></i>
             </button>
             <div class="menu-content">
-                <button id="selectFavorites" class="favorites-button search-btn">Favoritos</button>
-                <button id="selectFavorites" class="favorites-button search-btn">Tu actividad</button>
-                <button id="selectFavorites" class="favorites-button search-btn">Paises visitados</button>
-                <button id="selectFavorites" class="favorites-button search-btn">Paises por visitar</button>
+                <button id="favoritos" class="favorites-button search-btn">Favoritos</button>
+                <ul id="menuFavoritos"></ul>
+                <button id="tuActividad" class="favorites-button search-btn">Tu actividad</button>
+                <button id="paisesVisitados" class="favorites-button search-btn">Paises visitados</button>
+                <button id="pendientesPorVisitar" class="favorites-button search-btn">Paises por visitar</button>
             </div>
         </div>
     
         <div id="menuUsuario" class="menu-desplegable">
-            <button id="userToggle" class="hamburger-menu">
+            <button id="userMenuToggle" class="hamburger-menu">
                 <i class="fas fa-user"></i>
+                <div id="usuario-nombre"></div>
             </button>
-            <span id="usuario-nombre"></span>
-
             <div class="menu-content">
-                <button id="selectCerrarSesion" class="favorites-button search-btn">Cerrar Sesión</button>
+                <button id="selectCerrarSesion" class="favorites-button search-btn">
+                    <img src="../static/img/cerrar-sesion.png" alt="icono cerrar sesion"> 
+                    <p>Cerrar Sesión</p>
+                </button>
             </div>
         </div>
     

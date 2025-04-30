@@ -272,16 +272,47 @@ function removeMarkers() {
 window.requestAnimationFrame(animation);
 
 
-// corazon favoritos cambio de color
+// AÑADIR A FAVORITOS Y CAMBIO DE COLOR ICONO AL HACER CLIC
 
-const heartIcon = document.getElementById('paises-favoritos');
+// Inicializar lista de favoritos
+const favoritos = [];
 
-heartIcon.addEventListener('click', () => {
-  heartIcon.classList.toggle('active'); 
+// Seleccionar el ícono del corazón
+const iconoFavoritos = document.getElementById('paises-favoritos');
+
+// Manejar el clic en el clic del corazon
+iconoFavoritos.addEventListener('click', () => {
+  const countryName = document.getElementById('modalContent').querySelector('h2').textContent;
+
+  if (!favoritos.includes(countryName)) {
+    // Agregar a favoritos
+    favoritos.push(countryName);
+    iconoFavoritos.classList.add('active'); // Cambiar a rojo
+    actualizarMenuFavoritos();
+  } else {
+    // Eliminar de favoritos
+    const index = favoritos.indexOf(countryName);
+    favoritos.splice(index, 1);
+    iconoFavoritos.classList.remove('active'); // Cambiar a blanco
+    actualizarMenuFavoritos();
+  }
 });
 
+function actualizarMenuFavoritos() {
+  const menuFavoritos = document.getElementById('menuFavoritos');
+  menuFavoritos.innerHTML = ''; 
 
-// cambio icono pais visitado o no visitado 
+  favoritos.forEach((pais) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = pais;
+    menuFavoritos.appendChild(listItem);
+  });
+}
+
+
+
+
+// CAMBIO ICONO PAIS VISITADO O NO VISITADO 
 
 const visitToggle = document.getElementById('visitado');
 const visitIcon = visitToggle.querySelector('img');

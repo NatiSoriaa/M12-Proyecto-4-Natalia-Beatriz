@@ -172,12 +172,12 @@ body.light-mode .modal-content {
 
 /* MENU DESPLEGABLE */
 
-.menu{
+/* .menu{
   display:flex;
   flex-direction:row;
   width:100%;
   
-}
+} */
 
 .menu-desplegable {
   position: relative;
@@ -235,6 +235,19 @@ body.light-mode .modal-content {
   width: 50px;
   height: 50px;
   cursor: pointer;
+}
+
+#menuUsuario .search-btn{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+}
+
+#menuUsuario .search-btn img{
+  filter: invert(1);
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 #menuToggle, #userToggle {
@@ -388,33 +401,35 @@ body.light-mode .modal-content {
 }
 
 #countryInfoModal .modal-content2 {
-  background-color: #fff;
+  background-color: rgba(0, 0, 0, 0.2);
   margin: 10% auto;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
   width: 50%;
   text-align: center;
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
-  overflow: scroll;
+  overflow-y: scroll;
   height: 40%;
+  border: 1px solid white;
 }
 
 #countryInfoModal .modal-content2 h2 {
   font-size: 24px;
   margin-bottom: 10px;
-  color: #333;
+  color: white;
 }
 
 #countryInfoModal .modal-content2 p {
   font-size: 16px;
-  line-height: 1.5;
-  color: #555;
+  line-height: 2;
+  color: white;
+  text-align: justify;
 }
 
 #countryInfoModal .close {
-  color: #333;
+  color: white;
   float: right;
   font-size: 24px;
   font-weight: bold;
@@ -423,6 +438,15 @@ body.light-mode .modal-content {
 
 #countryInfoModal .close:hover {
   color: red;
+}
+
+#paises-favoritos img {
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+#paises-favoritos.active img {
+  filter: none;
 }
 
 /* LOADER */
