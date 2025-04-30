@@ -172,12 +172,12 @@ body.light-mode .modal-content {
 
 /* MENU DESPLEGABLE */
 
-/* .menu{
+.menu{
   display:flex;
   flex-direction:row;
   width:100%;
   
-} */
+}
 
 .menu-desplegable {
   position: relative;
@@ -250,7 +250,7 @@ body.light-mode .modal-content {
   margin-bottom: auto;
 }
 
-#menuToggle, #userToggle {
+#menuToggle, #userMenuToggle {
   display:flex;
   flex-direction: row;
   align-items: center;
