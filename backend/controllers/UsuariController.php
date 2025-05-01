@@ -1,7 +1,9 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
+header("Access-Control-Allow-Credentials: true");
+
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, Cache-Control");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -19,6 +21,7 @@ if (session_status() == PHP_SESSION_NONE) {
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
+define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
 
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
@@ -42,10 +45,8 @@ class UsuariController {
             $email = $data['email'];
             $contrasenya = password_hash($data['contrasenya'], PASSWORD_BCRYPT);
 
-            // Creación de usuario y redirigimos a login
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
-                // envia json al frontend
-                echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
+
             //instanciem la classe PHPMailer
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             try {
@@ -62,35 +63,29 @@ class UsuariController {
                 //adreça del usuari com a remitent
                 $mail->setFrom($email, $nom);
                 $mail->addAddress('beatrizabadjim@gmail.com', 'bea');
+                $missatge = "Hey there $nom! You just registered to get the best experience";
 
                 //contingut del correu
                 $mail->isHTML(true); //format HTML
                 $mail->Subject = 'Welcome to Earth Explorer';
                 $mail->Body = $missatge; //missatge a l'user
-                $missatge = "Hey there $nom! You just registered to get the best experience";
-                // //quan s'envia el correu, 
-                // if ($mail->send()) {
-                //     //redirigim a success.php
-                //     header("Location: http://localhost/MP07UF2PROJ_Abad-Beatriz/public/success.php");
-                //     exit();
-                // }
-            //en cas de sorgir errors al correu, 
+                $mail->send();
+             
             } catch (Exception $e) {
                 //es registra a error.log
                 error_log("Error al enviar el correu: " . $mail->ErrorInfo, 3, '.logs/error.log');
-                $mail->SMTPDebug = 2; // Muestra información detallada de la conexión SMTP
-                $mail->Debugoutput = 'html';
-
-                header("Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/error.php?error=send_fail");
                 exit();
             }
+            // Creación de usuario y redirigimos a login
+            if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
+                // envia json al frontend
+                echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
                 } else {
                     echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
                 }
                 exit();
             }
-        // Renderizamos registre.html.twig
-        echo $this->twig->render('usuari/registre.html.twig');
+          }
 
     }
 
@@ -108,32 +103,71 @@ class UsuariController {
             // Si el email y la contraseña coinciden, empieza la sesión
             if ($usuari && password_verify($contrasenya, $usuari['contrasenya'])) {
                 session_start();
-                // Obtenemos el id, nombre y rol del usuario de aquella sesión
                 $_SESSION['usuari_id'] = $usuari['id'];
                 $_SESSION['nom'] = $usuari['nom'];
                 $_SESSION['rol'] = $usuari['rol'];
-
-                // Redirigimos al usuario en función de su rol
-                if($_SESSION['rol'] === 'admin'){
-                    echo json_encode(['success' => true, 'redirect' => 'M12-Proyecto-4-Natalia-Beatriz/backend/public/admin.php']);
-
-                }elseif($_SESSION['rol'] === 'normal'){
-                    echo json_encode(['success' => true, 'redirect' => 'M12-Proyecto-4-Natalia-Beatriz/backend/public/usuari.php']);
-                } 
-            //  exit();  // Termina el script 
-            }else {
-                echo json_encode(['success' => false, 'message' => 'Email o contrasenya incorrectes.']);
+            
+                // $redirect = ($_SESSION['rol'] === 'admin') 
+                //     ? BASE_URL . 'backend/public/admin.php'
+                //     : BASE_URL . 'backend/public/usuari.php';
+            
+                echo json_encode([
+                    'success' => true,
+                    'id' => $_SESSION['usuari_id'],
+                    'nom' => $_SESSION['nom'],
+                    'rol' => $_SESSION['rol'],
+                    'redirect' => $redirect
+                ]);
+                exit();
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Correo o contraseña incorrectos'
+                ]);
+                exit();
             }
-            exit();
         }
-        echo $this->twig->render('usuari/login.html.twig');
     }
+    
+    // check if session is active
+    public function checkSession() {
+        header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
+        header("Access-Control-Allow-Credentials: true");
+        header('Content-Type: application/json');
+        session_set_cookie_params([
+            'lifetime' => 3600,
+            'path' => '/',
+            'domain' => 'http://127.0.0.1:5500/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+        
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        } 
+        if(isset($_SESSION['usuari_id'])) {
+            echo json_encode([
+                'logged' => true,
+                'id' => $_SESSION['usuari_id'],
+                'nom' => $_SESSION['nom'],
+                'rol' => $_SESSION['rol']
+            ]);
+        } else {
+            // error_log("No se encontró sesión activa");
 
+            echo json_encode([
+                'logged' => false
+            ]);
+        }
+        exit();
+    }
     // Cerrar la sesión y redirige a login
     public function logout() {
         session_start(); // Iniciar o reanudar sesión 
         session_destroy(); // Cerrar sesión 
-        header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/frontend/templates/index.html');
+        header('Content-Type: application/json'); // responds with json
+        echo json_encode(['success' => true, 'message' => 'Sesión cerrada']);
         exit();
     }
 }

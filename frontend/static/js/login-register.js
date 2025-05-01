@@ -1,173 +1,330 @@
 import { loadToastr } from "./toastr.js";
 
-// REGISTRO Y LOGIN DE USUARIO
-document.addEventListener('DOMContentLoaded', () => {
-    loadToastr();
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeApp();
+});
 
-  // gets values to login
-  document.querySelector('#loginForm').addEventListener('submit',(event)=>{
-      event.preventDefault();
-      const email = document.getElementById('log-user').value;
-      const password = document.getElementById('log-passw').value;
-
-      window.loggedEmail = email;
-      localStorage.setItem('loggedEmail', email);
-      showLoadingBar();
+async function initializeApp() {
+    document.getElementById('usuario-nombre').style.visibility = 'hidden';
+    document.getElementById('selectIniciarSesion').style.display = 'none';
+    document.getElementById('selectCerrarSesion').style.display = 'none';
+    document.getElementById('loginModal').style.display = 'none';
     
-      login(email, password);
-  });
-
-  // gets values to register
-  document.querySelector('#registerForm').addEventListener('submit', (event)=>{
-      event.preventDefault();
-      const username = document.getElementById('reg-user').value;
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-passw').value;
-      showLoadingBar();
-      
-      createUser(username, email, password);
-  });
-
-  // shows login modal
-    function showModal() {
-        const modal = document.getElementById('loginModal');
-        modal.style.display = 'block';
+    loadToastr();
+    
+    try {
+        const session = await checkAndHandleSession();
+        setupFormEvents();
+        setupModalEvents();
+        setupLogoutButton();
+        
+        setTimeout(() => {
+            document.getElementById('usuario-nombre').style.visibility = 'visible';
+        }, 300);
+        
+    } catch (error) {
+        console.error('Error inicializando app:', error);
     }
-    document.querySelector('.close').addEventListener('click', closeModal);
+}
+async function checkAndHandleSession() {
+    try {
+        const session = await checkSession();
+        console.log("Estado de sesión:", session); 
 
-    function closeModal() {
         const modal = document.getElementById('loginModal');
-        modal.style.display = 'none';
-    }
+        const iniciarSesionBtn = document.getElementById('selectIniciarSesion');
+        const cerrarSesionBtn = document.getElementById('selectCerrarSesion');
+        const nombreUsuario = document.getElementById('usuario-nombre');
 
-    document.getElementById('modal-button-login').addEventListener('click', (event) => {
-        document.getElementById('loginModal').style.display = 'flex';
-      });
-      document.querySelector('.close').addEventListener('click', () => {
-        document.getElementById('loginModal').style.display = 'none';
-      });
-      window.addEventListener('click', (event) => {
-        const modal = document.getElementById('loginModal');
-        if (event.target === modal) {
-          modal.style.display = 'none';
+        if (session.logged) {
+            modal.style.display = 'none';
+            
+            gsap.fromTo(nombreUsuario, { opacity: 0, y: -20 }, { opacity: 1, y:0, duration: 0.5, ease:'power2.out', 
+                onStart: () => {
+                    nombreUsuario.textContent = session.nom;
+                    nombreUsuario.style.visibility = 'visible';
+                }
+             });
+
+            iniciarSesionBtn.style.display = 'none';
+            cerrarSesionBtn.style.display = 'block';
+
+        } else {
+
+            iniciarSesionBtn.style.display = 'block';
+            cerrarSesionBtn.style.display = 'none';
+            showModal();
         }
-      });
+        
+        return session;
+    } catch (error) {
+        console.error('Error al verificar sesión:', error);
+        document.getElementById('selectIniciarSesion').style.display = 'block';
+        document.getElementById('selectCerrarSesion').style.display = 'none';
+        return { logged: false };
+    }
+}
+function setupFormEvents() {
+    document.querySelector('#loginForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.getElementById('log-user').value;
+        const password = document.getElementById('log-passw').value;
+        window.loggedEmail = email;
+        localStorage.setItem('loggedEmail', email);
+        showLoadingBar(() => login(email, password)); 
+    });
 
-  async function login(email, password){
+    document.querySelector('#registerForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = document.getElementById('reg-user').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-passw').value;
+        showLoadingBar(() => createUser(username, email, password)); 
+    });
+}
+
+function setupModalEvents() {
+    const modal = document.getElementById('loginModal');
+    const closeModalBtn = document.querySelector('.close');
+    const loginBtn = document.getElementById("showLogin");
+    const registerBtn = document.getElementById("showRegister");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+
+    loginBtn.addEventListener("click", () => {
+        loginForm.classList.add("active");
+        registerForm.classList.remove("active");
+        loginBtn.classList.add("active");
+        registerBtn.classList.remove("active");
+    });
+
+    registerBtn.addEventListener("click", () => {
+        registerForm.classList.add("active");
+        loginForm.classList.remove("active");
+        registerBtn.classList.add("active");
+        loginBtn.classList.remove("active");
+    });
+
+    document.getElementById('selectIniciarSesion').addEventListener('click', async () => {
+        const session = await checkSession();
+        if (!session.logged) {
+            showModal();
+        }
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        closeModal();
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+function setupLogoutButton() {
+    document.querySelector('#selectCerrarSesion').addEventListener('click', () => {
+        showLoadingBar(() => logout());
+    });
+}
+
+function showModal() {
+    const modal = document.getElementById('loginModal');
+    if (modal.style.display === 'flex') return;
+    modal.style.display = 'flex';
+    gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+
+}
+
+function closeModal() {
+    const modal = document.getElementById('loginModal');
+    modal.style.display = 'none';
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = 'none';
+        }
+    });
+}
+async function login(email, password) {
+    const session = await checkSession();
+
+    if (session.logged) {
+        closeModal();
+        return;
+    }
+
     try {
         const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, contrasenya: password })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, contrasenya: password }),
+            credentials: 'include'
         });
+
         const data = await response.json();
 
         if (response.ok && data.success) {
-            // localStorage.setItem('jwt', data.token);
-            // const token = data.token;
-            closeModal();
-            toastr.success(`Bienvenido/a, ${email}`, 'Exito');
-            console.log(`Ha iniciado sesión correctamente. El token ${data.token} se ha guardado.`);
-            localStorage.setItem('loggedEmail', email);
-            document.getElementById('usuario-nombre').textContent = email;
+            const sessionCheck = await checkSession();
+
+            if (sessionCheck.logged) {
+                closeModal();
+                toastr.success(`Bienvenido/a, ${data.nom}`, 'Éxito');
+                // document.getElementById('usuario-nombre').textContent = data.nom;
+
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    await checkAndHandleSession();
+                }
+            } else {
+                toastr.error('La sesión no se inició correctamente', 'Error');
+            }
         } else {
-            toastr.error('Hubo un error al iniciar sesión. Vuelve a intentarlo.', 'Error');
+            toastr.error(data.message || 'Error al iniciar sesión', 'Error');
         }
     } catch (error) {
         console.error('Error en la solicitud:', error);
-        
+        toastr.error('Error de conexión', 'Error');
     }
 }
 
-
-//registration
-
-async function createUser(username, email, password){
-
-  try{
-      const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=register", {
-          method:'POST',
-          headers:{
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            nom: username, email: email, contrasenya: password}),
-      });
-
+async function createUser(username, email, password) {
     try {
+        const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=register", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nom: username, email: email, contrasenya: password })
+        });
+
         const data = await res.json();
-        if (res.ok && data.success){
+
+        if (res.ok && data.success) {
             closeModal();
-            localStorage.setItem('loggedEmail', email);
-            document.getElementById('usuario-nombre').textContent = email;
-            toastr.success('Se ha registrado correctamente', 'Éxito');
-        } else{
-            toastr.error(data.message || 'Error');
+            toastr.success(`Se ha registrado correctamente. Bienvenido/a ${email}`, 'Éxito');
+        } else {
+            toastr.error(data.message || 'Error al registrar usuario', 'Error');
         }
-        }catch(error){
-            console.error(error);
-        }
-    }finally {
-        console.log();
+    } catch (error) {
+        console.error('Error al registrar:', error);
+        toastr.error('Error de conexión', 'Error');
     }
 }
 
-//auth del token
+async function checkSession() {
+    try {
+        const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=checkSession", {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Cache-Control': 'no-cache' }
+        });
 
-    function getToken() {
-        const userToken = localStorage.getItem('jwt');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
-        const inputToken = document.getElementById('token').value;
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error al verificar sesión:', error);
+        return { logged: false };
+    }
+}
 
-        if (!userToken || !inputToken) {
-            console.log('Token no proporcionado');
-            alert('Por favor, ingresa el token.');
-            return null;
+async function logout() {
+    const session = await checkSession();
+    const nombreUsuario = document.getElementById('usuario-nombre');
+
+    if (session.logged) {
+        try {    
+            const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=logout", {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                toastr.success('Sesión cerrada correctamente', 'Éxito');
+                if (nombreUsuario) {
+
+                gsap.fromTo(nombreUsuario, 
+                    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 
+                    { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out', 
+                    
+                    onComplete: () => {
+                        nombreUsuario.style.visibility = 'hidden';
+                    }
+                });
+            }
+                await checkAndHandleSession();
+            } else {
+                toastr.error('Error al cerrar sesión', 'Error');
+            }
+        } catch (error) {
+            console.error('Error en logout:', error);
+            toastr.error('Error de conexión', 'Error');
         }
+    }
+}
 
-        if (userToken !== inputToken) {
-            console.log('Token no válido');
-            alert('Token no válido. Por favor, ingresa el token correcto.');
-            return null;
-        }
+function getToken() {
+    const userToken = localStorage.getItem('jwt');
+    const inputToken = document.getElementById('token').value;
 
-        return {
-            'Authorization': `Bearer ${userToken}`,
-            'Content-Type': 'application/json',
-        };
+    if (!userToken || !inputToken) {
+        alert('Por favor, ingresa el token.');
+        return null;
     }
 
-})
+    if (userToken !== inputToken) {
+        alert('Token no válido.');
+        return null;
+    }
+
+    return {
+        'Authorization': `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+    };
+}
 
 
-
-
-const loadBar = document.querySelector('.ldBar');
-
-// show loading bar
-function showLoadingBar() {
+function showLoadingBar(asyncFunction, minDuration = 800) {
+    const loadBar = document.querySelector('.ldBar');
     loadBar.style.width = '0%';
     loadBar.classList.remove('complete');
     loadBar.style.display = 'block';
-    
+
+    const startTime = Date.now();
     let progress = 0;
-    const interval = setInterval(() => {
-        progress += 10;
-        loadBar.style.width = `${progress}%`;
-        
-        if (progress >= 100) {
-            clearInterval(interval);
-            loadBar.classList.add('complete');
-            // hide loading bar when complete
-            setTimeout(() => {
-                loadBar.style.display = 'none';
-            }, 300);
-        }
+    
+    const progressInterval = setInterval(() => {
+        progress += 5;
+        loadBar.style.width = `${Math.min(progress, 90)}%`;
+        if (progress >= 90) clearInterval(progressInterval);
     }, 100);
+
+    Promise.all([
+        asyncFunction(),
+        new Promise(resolve => setTimeout(resolve, minDuration))
+    ])
+    .then(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = minDuration - elapsed;
+        
+        // Completar al 100%
+        loadBar.style.width = '100%';
+        loadBar.classList.add('complete');
+        
+        // Ocultar después de un breve retraso
+        setTimeout(() => {
+            loadBar.style.display = 'none';
+        }, remaining > 0 ? 300 : 0);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        loadBar.style.display = 'none';
+        clearInterval(progressInterval);
+    });
 }
-
-
-
-export {showLoadingBar};
+export { showLoadingBar };

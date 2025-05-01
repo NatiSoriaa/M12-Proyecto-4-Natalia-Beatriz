@@ -1,7 +1,8 @@
 <?php
 header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, Cache-Control");
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -10,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 if (session_status() == PHP_SESSION_NONE) {
     session_start();  // Comienza la sesión
 }
+define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
 
 // Incluye los controladores necesarios
 require_once '../controllers/UsuariController.php';  // Controlador de usuarios
@@ -30,6 +32,11 @@ switch ($action) {
     case 'login':  // Inicia sesión
         $usuariController->login();
         break;
+
+    case 'checkSession':
+        $usuariController->checkSession();
+        break;
+        
     case 'logout':  // Cierra sesión
         $usuariController->logout();
         break;
@@ -56,7 +63,7 @@ switch ($action) {
         $favoritosController->index();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
-        header('Location:/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
+        header('Location:frontend/templates/index.html');
         exit();  // Evita que se siga ejecutando el código
 }
 ?>

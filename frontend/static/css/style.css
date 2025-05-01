@@ -51,7 +51,11 @@ body {
 
 /* LOGIN Y REGISTER */
 
-
+/* #loginModal, 
+#selectCerrarSesion, 
+#selectIniciarSesion {
+    display: none !important;
+} */
 
 #loginButton {
   font-family: 'Press Start', sans-serif;
@@ -222,6 +226,9 @@ body.light-mode .modal-content {
   font-size: 18px;
 }
 
+.favorites-button.search-btn img{
+  vertical-align: middle;
+}
 .menu-desplegable.active .menu-content {
   display: block;
 }
