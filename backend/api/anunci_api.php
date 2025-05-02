@@ -4,6 +4,7 @@
 require_once '../models/Favoritos.php';
 require_once '../includes/auth.php';
 require_once '../config/db.php';
+require_once '../config/config.php';
 
 // Salida en formato JSON
 header('Content-Type: application/json');
@@ -24,8 +25,8 @@ switch ($method) {
     
     // Llistat d'anuncis
     case 'GET':
-        $favoritos = $favoritosModel->obtenirFavoritos();
-        echo json_encode($favoritos); // Devolver anuncios en format JSON
+        $favoritos = $favoritosModel->obtenerFavoritos();
+        echo json_encode(['success' => true, 'data' => $favoritos]);
         break;
     // Publicació
     case 'POST':

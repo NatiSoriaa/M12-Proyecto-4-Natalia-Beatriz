@@ -1,18 +1,11 @@
 <?php
-header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 // controllers/AnunciController.php
 
 require_once '../models/Favoritos.php';
 require_once '../config/twig.php';
 require_once '../includes/auth.php';
+require_once '../config/config.php';
 
 // Definimos la clase AnunciController que manejará las solicitudes 
 class FavoritosController {
@@ -48,12 +41,34 @@ class FavoritosController {
         return json_decode($result, true); 
     }
 
-    // Llistat d'anuncis
-    public function index() {
-        $favoritos = $this->favoritosModel->obtenirFavoritos();
-        // Renderiza la plantilla index.html.twig y pasa los anuncios a view
-        echo $this->twig->render('index.html.twig', ['favoritos' => $favoritos]);
-    }
+    // lista favoritos
+    public function obtenerFavoritos() {
+        header('Content-Type: application/json');
+        if (session_status() == PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'lifetime' => 86400,
+                'path' => '/',
+                'domain' => 'localhost',
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+            session_start();
+        }        
+        if (!isset($_SESSION['usuari_id'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Usuario no autenticado']);
+            exit();
+        }
+            try {
+                $favoritos = $this->favoritosModel->obtenerFavoritos();
+                echo json_encode(['success' => true, 'data' => $favoritos]);
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Error al obtener favoritos']);
+            }
+            exit();
+        }
 
     // Método que hace una solicitud POST para crear un anuncio
     public function crear() {
@@ -68,12 +83,12 @@ class FavoritosController {
                 'usuari_id' => $_SESSION['usuari_id'] // Conocer el id del usuario que ha subido el anuncio
             ];
             // Solicitud POST a nuestra api anunci_api.php
-            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php";
+            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/api/anunci_api.php";
             $response = $this->apiRequest($url, 'POST', $data);
 
             // Redirigir el usuario en función del estado de la respuesta
             if ($response && $response['status'] === 'success') { 
-                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
+                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=index');
                 exit();
             } else {
                 echo "Error en la creació de l'anunci.";

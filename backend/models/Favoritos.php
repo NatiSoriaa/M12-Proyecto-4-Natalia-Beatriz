@@ -10,7 +10,7 @@ class Favoritos extends Model {
         parent::__construct($pdo);
     }
     // Query SQL para obtener anuncios
-    public function obtenirFavoritos() {
+    public function obtenerFavoritos() {
         $stmt = $this->pdo->query("SELECT * FROM user_favorites");
         return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna un array asociativo 
     }

@@ -1,12 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: http://127.0.0.1");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, Cache-Control");
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+
 // Inicia la sesión si aún no se ha iniciado
 if (session_status() == PHP_SESSION_NONE) {
     session_start();  // Comienza la sesión
@@ -16,6 +9,7 @@ define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
 // Incluye los controladores necesarios
 require_once '../controllers/UsuariController.php';  // Controlador de usuarios
 require_once '../controllers/FavoritosController.php';  // Controlador de anuncios
+require_once '../config/config.php';
 
 // Obtiene la acción solicitada desde la URL, por defecto es 'index'
 $action = $_GET['action'] ?? 'index';  // Usa 'index' si no hay 'action'
@@ -59,8 +53,8 @@ switch ($action) {
             echo 'ID no proporcionado al intentar eliminar el anuncio';  // Error si no se pasa el 'id'
         }
         break;
-    case 'anuncis':  // Muestra el listado de anuncios
-        $favoritosController->index();
+    case 'obtenerFavoritos':  // Muestra el listado de anuncios
+        $favoritosController->obtenerFavoritos();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
     header('Location: ' . BASE_URL . 'frontend/templates/index.html');
