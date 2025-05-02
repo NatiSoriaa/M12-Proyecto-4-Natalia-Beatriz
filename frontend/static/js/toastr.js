@@ -12,7 +12,7 @@ function loadToastr() {
         newestOnTop: false,
         // progressBar: true,
         positionClass: "toast-top-center",
-        preventDuplicates: false,
+        preventDuplicates: true,
         onclick: null,
         showDuration: "300",
         hideDuration: "1000",
