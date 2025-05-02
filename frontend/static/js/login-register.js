@@ -330,4 +330,5 @@ function showLoadingBar(asyncFunction, minDuration = 800) {
         clearInterval(progressInterval);
     });
 }
-export { showLoadingBar };
+
+export { showLoadingBar, checkSession };
