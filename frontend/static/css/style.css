@@ -116,19 +116,28 @@ body.light-mode .modal-content {
   background-color: white !important;
   color: black;
 }
+#loginModal {
+  display: none;
+}
 
 #showRegister.active, #showLogin.active{
   background-color: white;
   color:black;
 }
-
-.form-container {
+#registerForm {
+  display: none;
+}
+#loginForm {
   display: none;
 }
 
-.form-container.active {
+#registerForm.active {
   display: block;
 }
+#loginForm.active {
+  display: block;
+}
+
 
 #loginForm button, #registerForm button{
   border-color: #fff;

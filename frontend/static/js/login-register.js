@@ -90,6 +90,9 @@ function setupModalEvents() {
     const registerBtn = document.getElementById("showRegister");
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
+    
+    // login as default
+    loginForm.classList.add("active");
 
     loginBtn.addEventListener("click", () => {
         loginForm.classList.add("active");
