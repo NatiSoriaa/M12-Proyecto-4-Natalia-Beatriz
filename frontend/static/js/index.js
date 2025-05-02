@@ -153,16 +153,26 @@ function openModal(data) {
     // Agregar eventos a los botones
     document.getElementById('infoButton').addEventListener('click', () => {
       showInfo(data); // Mostrar información del país
+      document.getElementById('modalContent').innerHTML = '';
+
     });
 
     document.getElementById('imagesButton').addEventListener('click', () => {
-      showImages(data); // Mostrar imágenes del país
+      showImages(data); 
+      // vaciar contenido del modal para mostrar images
+      document.querySelector('#modalContent').innerHTML = '';
+      document.querySelector('#modalContent').classList.add('active');
+      document.querySelector('.modal-content2').classList.add('active');
+
     });
 }
 
 // Función para cerrar el modal al hacer clic en el botón de cierre
 document.querySelector('#infoModal .close').addEventListener('click', () => {
   document.getElementById('infoModal').style.display = 'none';
+  document.querySelector('#modalContent').classList.remove('active');
+  document.querySelector('.modal-content2').classList.remove('active');
+  
 });
 
 // Cerrar el modal al hacer clic fuera del contenido
@@ -176,12 +186,14 @@ window.addEventListener('click', (event) => {
 
 // Función para mostrar información del país
 function showInfo(data) {
-  alert(`Mostrando información de: ${data.name}`);
+  toastr.info(`Información de ${data.name}`, `${data.name}`);
+  console.log(`Mostrando información de: ${data.name}`);
 }
 
 // Función para mostrar imágenes del país
 function showImages(data) {
-  alert(`Mostrando imágenes de: ${data.name}`);
+  toastr.info(`Imágenes de ${data.name}`, `${data.name}`);
+  console.log(`Mostrando imágenes de: ${data.name}`);
 }
 
 function createLabel(text, position) {

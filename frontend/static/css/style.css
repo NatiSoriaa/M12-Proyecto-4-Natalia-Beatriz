@@ -85,6 +85,7 @@ body {
 }
 
 .modal-content {
+  position:relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -138,7 +139,6 @@ body.light-mode .modal-content {
   display: block;
 }
 
-
 #loginForm button, #registerForm button{
   border-color: #fff;
   border: 1px solid white;
@@ -147,9 +147,9 @@ body.light-mode .modal-content {
 .close {
   font-size: 24px;
   cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: sticky;
+  display:flex;
+  justify-content: flex-end;
   color: var(--color-text);
 }
 
@@ -189,7 +189,8 @@ body.light-mode .modal-content {
   display:flex;
   flex-direction:row;
   width:100%;
-  
+  background: linear-gradient(to bottom, #000000 90%, transparent);
+
 }
 
 .menu-desplegable {
@@ -298,11 +299,14 @@ body.light-mode .modal-content {
 }
 
 #infoModal .modal-content2 {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.329);
   margin: 10% auto; 
   padding: 20px;
   border-radius: 10px; 
-  width: 20%; 
+  width: 300px; 
+  height:auto;
+  /* max-height: 340px; */
+  overflow-y:auto;
   text-align: center;
   align-items: start;
   color: white;
@@ -310,22 +314,47 @@ body.light-mode .modal-content {
   position: relative;
 }
 
-#infoModal .close {
-  color: white;
-  float: right;
-  font-size: 40px;
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 30px;
   font-weight: bold;
+  color: white;
   cursor: pointer;
+  z-index: 10;
 }
 
-#infoModal .close:hover {
-  color: red; 
+.modal-content .close:hover {
+  color: #aaa;
 }
 
-#infoModal #modalContent {
-  margin: 50px;
+#modalContent {
+  width:100%;
+  max-height: 90%;        
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content:center;
+  gap: 20px;
+  padding:10px;
+  box-sizing: border-box;
 }
-
+#infoModal .modal-content2.active {
+  width: 60%; 
+  height:70%;
+}
+#modalContent.active {
+  width:100%;
+  max-height: 90%;        
+  /* overflow-y: auto;          */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content:center;
+  gap: 20px;
+  padding:10px;
+  box-sizing: border-box;
+}
 #infoModal h2 {
   font-size: 24px;
   color: white;
@@ -341,7 +370,7 @@ body.light-mode .modal-content {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
 }
 
@@ -364,11 +393,14 @@ body.light-mode .modal-content {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-items:center;
   gap: 30px;
+  height:100px;
 }
 
 #infoModal .modalButtons button {
     color: white;
+    height:50px;
     padding: 10px;
     border-radius: 10px;
     cursor: pointer;
@@ -421,13 +453,15 @@ body.light-mode .modal-content {
   margin: 10% auto;
   padding: 30px;
   border-radius: 10px;
-  width: 50%;
+  width: 50vw;
+  max-width: 70vh; 
+  height: 50vh;
+  max-height:90vh;
   text-align: center;
   color: #333;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow-y: scroll;
-  height: 40%;
   border: 1px solid white;
 }
 
@@ -475,4 +509,24 @@ body.light-mode .modal-content {
   bottom:0px;
   z-index: 9999;
   transition: width 0.10s ease-in-out;
+}
+
+.apiModal {
+  display:flex;
+  background-color: blue;
+  position:absolute;
+}
+
+.image-card {
+  width:30%;
+}
+.image-card img{
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  display:flex;
+  margin: 0;
+  text-align: center;
+  position: relative; 
+  color: white;
+  object-fit: cover;
 }
