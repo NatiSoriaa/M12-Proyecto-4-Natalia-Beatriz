@@ -1,15 +1,4 @@
 <?php
-header("Access-Control-Allow-Origin: http://127.0.0.1");
-header("Access-Control-Allow-Credentials: true");
-
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, Cache-Control");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
 require_once '../config/twig.php';
@@ -131,13 +120,13 @@ class UsuariController {
     
     // check if session is active
     public function checkSession() {
-        header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
+        header("Access-Control-Allow-Origin: http://localhost");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
         session_set_cookie_params([
             'lifetime' => 3600,
             'path' => '/',
-            'domain' => 'http://127.0.0.1:5500/',
+            'domain' => 'http://localhost/',
             'secure' => false,
             'httponly' => true,
             'samesite' => 'Lax'
