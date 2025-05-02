@@ -11,7 +11,7 @@ include '../includes/auth.php';
 <body>
     <h1>Benvingut Usuari Normal! </h1>
     <!-- Accions del usuari normal -->
-    <a href="/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=anuncis">Veure llistat d'anuncis</a><br>
-    <a href="/MP07UF2PROJ_Abad-Beatriz/public/index.php?action=logout">Tancar la sessió</a>
+    <a href="http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos">Veure llistat d'anuncis</a><br>
+    <a href="http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=logout">Tancar la sessió</a>
 </body>
 </html>

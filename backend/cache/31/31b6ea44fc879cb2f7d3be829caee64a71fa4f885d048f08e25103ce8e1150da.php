@@ -72,7 +72,7 @@ class __TwigTemplate_7be4a6a110d05ad588acfb4c8da27e5092394007f353fc0b9108c1a90fa
     ";
         } else {
             // line 21
-            yield "        <p><a href=\"/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login\">Inicia sessió</a> per crear un anunci.</p>  <!-- Enlace para iniciar sesión -->
+            yield "        <p><a href=\"/M12-Proyecto-4-Natalia-Beatriz/frontend/public/index.php?action=login\">Inicia sessió</a> per crear un anunci.</p>  <!-- Enlace para iniciar sesión -->
     ";
         }
         // line 23
@@ -199,7 +199,7 @@ class __TwigTemplate_7be4a6a110d05ad588acfb4c8da27e5092394007f353fc0b9108c1a90fa
                 Tancar la sessió
             </a>  <!-- Enlace para cerrar sesión -->
     {% else %}
-        <p><a href=\"/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login\">Inicia sessió</a> per crear un anunci.</p>  <!-- Enlace para iniciar sesión -->
+        <p><a href=\"/M12-Proyecto-4-Natalia-Beatriz/frontend/public/index.php?action=login\">Inicia sessió</a> per crear un anunci.</p>  <!-- Enlace para iniciar sesión -->
     {% endif %}
 
     <p>{{ session.message }}</p>  <!-- Muestra un mensaje de sesión si existe -->
