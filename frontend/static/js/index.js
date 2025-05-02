@@ -91,6 +91,24 @@ function createMarker(lat, lon, name, color = 0xff0000) {
   markers.push(marker); // Agregar el marcador al array
   createLabel(name, position);
 
+  // bouncing effect for marker
+  let bounces = 4;
+  let duracionInicial = 0.3;
+  let amplitud = 0.03; // qué tanto se mueve
+
+  for (let i = 0; i < bounces; i++) {
+    gsap.to(marker.position, {
+      y: marker.position.y + amplitud,
+      duration: duracionInicial,
+      delay: i * duracionInicial * 2,
+      yoyo: true,
+      repeat: 1,
+      ease: "power2.out"
+    });
+    
+    amplitud *= 0.5;
+  }
+  
   // Hacer que el marcador sea interactivo
   marker.callback = () => {
     openModal(marker.userData); // Abrir el modal con los datos del marcador
@@ -110,14 +128,15 @@ window.addEventListener('click', (event) => {
 
   const intersects = raycaster.intersectObjects(markers);
   // console.log('Intersecciones detectadas:', intersects); // Depuración
+  
 
   if (intersects.length > 0) {
     const marker = intersects[0].object;
     // console.log('Marcador clickeado:', marker.userData); // Depuración
     marker.callback();
+
   }
 });
-
 
 // Función para abrir el modal con contenido dinámico
 function openModal(data) {
@@ -204,6 +223,7 @@ async function searchCountryLocation(country) {
     // Apuntar la cámara hacia el marcador
     camera.lookAt(markerPosition);
 
+    
     console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
   } else {
     alert('País no encontrado');
