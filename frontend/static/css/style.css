@@ -524,11 +524,7 @@ body.light-mode .modal-content {
   transition: width 0.10s ease-in-out;
 }
 
-.apiModal {
-  display:flex;
-  background-color: blue;
-  position:absolute;
-}
+/* IMAGES */
 
 .image-card {
   width:30%;
@@ -543,6 +539,8 @@ body.light-mode .modal-content {
   color: white;
   object-fit: cover;
 }
+
+/* CONTAINER FAVORITOS */
 .favorites-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -568,4 +566,25 @@ body.light-mode .modal-content {
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+}
+
+.password-toggle-icon {
+  cursor:pointer;
+}
+
+.passwContainer {
+  position:relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+}
+
+.password-toggle-icon:hover {
+  color: #ebebeb;
 }

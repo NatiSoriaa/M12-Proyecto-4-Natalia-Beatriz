@@ -151,6 +151,20 @@ function closeModal() {
         }
     });
 }
+
+function showHidePasswd() {
+    var password = document.getElementById("log-passw");
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+
+document.querySelector('.password-toggle-icon').addEventListener('click', () => {
+    showHidePasswd();
+})
+
 async function login(email, password) {
     const session = await checkSession();
 
