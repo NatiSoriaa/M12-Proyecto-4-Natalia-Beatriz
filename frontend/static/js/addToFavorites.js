@@ -17,18 +17,14 @@ async function getFavorites() {
             if(response.ok && data.success) {
 
                 // show images on modal
-                const infoModal = document.getElementById('infoModal');
-                const modalContent2 = document.querySelector('.modal-content2');
-                const modalContent = document.getElementById('modalContent');
+                const infoModal = document.getElementById('favoritosContainer');
                 const iconos = document.querySelector('.iconos');
                 const modalButtons = document.querySelector('.modalButtons');
                 
-                iconos.style.display = 'none';
-                modalButtons.style.display = 'none';
+                // iconos.style.display = 'none';
+                // modalButtons.style.display = 'none';
                 
                 infoModal.style.display = 'flex';
-                modalContent2.classList.add('active');
-                modalContent.classList.add('active');
                 
                 displayFavorites(data.data);
                 
@@ -47,14 +43,22 @@ async function getFavorites() {
 }
 
 function displayFavorites(favorites) {
-    const modalContent = document.querySelector('#modalContent');
-    modalContent.innerHTML = '<h2>Mis Favoritos</h2>';
+    const modalContent = document.querySelector('.fav-content');
     
+    const title = modalContent.querySelector('.fav-title');
+    title.textContent = 'Mis Favoritos';
+
     if (!favorites || favorites.length === 0) {
-        modalContent.innerHTML += '<p>No tienes favoritos guardados</p>';
+        title.textContent = 'No tienes favoritos';
         return;
     }
-    
+
+    const existingFavoritesContainer = modalContent.querySelector('.favorites-container');
+    if (existingFavoritesContainer) {
+        existingFavoritesContainer.remove();
+    }
+
+    // nuevo contenedor favoritos
     const favoritesContainer = document.createElement('div');
     favoritesContainer.className = 'favorites-container';
     
@@ -75,4 +79,17 @@ function displayFavorites(favorites) {
 
 document.querySelector('#favoritos').addEventListener('click', () => {
     getFavorites();
+});
+
+// Cerrar al hacer clickf fuera
+const favoritosContainer = document.getElementById('favoritosContainer');
+favoritosContainer.addEventListener('click', (event) => {
+    const modalContent = document.querySelector('.fav-content');
+    if (!modalContent.contains(event.target)) {
+        favoritosContainer.style.display = 'none';
+    }
+});
+
+document.querySelector('.close').addEventListener('click', () => {
+    favoritosContainer.style.display = 'none';
 });
