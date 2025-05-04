@@ -30,111 +30,142 @@ imagesButton.addEventListener('click', () => {
 });
 
 //busqueda de imagenes por commons
+// Función para buscar imágenes
 const searchByLocation = async (location) => {
-    const apiModalContent = document.getElementById("modalContent");
-    apiModalContent.innerHTML = ""; 
-
-    const imagesCommons = `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=images&titles=${encodeURIComponent(location)}&gimlimit=10&prop=imageinfo&iiprop=url`;
+    const imagesModal = document.getElementById('modalContent');
+    const imagesGrid = document.querySelector('.images-grid');
+    const imagesTitle = document.querySelector('.images-title');
+    
+    // Mostrar el contenedor
+    imagesModal.classList.add('active');
+    imagesTitle.textContent = `Imágenes de ${location}`;
+    imagesGrid.innerHTML = '';
 
     try {
-        const response = await fetch(imagesCommons);
+        const response = await fetch(
+            `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=images&titles=${encodeURIComponent(location)}&gimlimit=10&prop=imageinfo&iiprop=url`
+        );
         const data = await response.json();
 
-        if (data.query && data.query.pages) {
+        if (data.query?.pages) {
             let imagesFound = false;
-
+            
             Object.values(data.query.pages).forEach((page) => {
-                apiModal.innerHTML = `<h3>A la primera!! Estas son imágenes de Commons</h3>`;
-
-                if (page.imageinfo && page.imageinfo[0]) {
+                if (page.imageinfo?.[0]?.url) {
                     imagesFound = true;
-                    createImageCard(page.imageinfo[0].url, page.title, apiModalContent);
+                    createImageCard(page.imageinfo[0].url, page.title, imagesGrid);
                 }
             });
 
             if (!imagesFound) {
-                console.log("No se encontraron imágenes en Commons. Buscando en SerpAPI...");
-                apiModalContent.innerHTML = `<h3>No he encontrado imágenes en Commons. Voy a buscar en Serpapi...</h3>`;
-                // await fetchSerpApi(location, apiModal);
+                showImagesMessage('No se encontraron imágenes en Wikimedia Commons', imagesGrid);
             }
         } else {
-            console.log("No se encontraron imágenes en Commons. Buscando en SerpAPI...");
-            apiModalContent.innerHTML = `<h3>No he encontrado imágenes en Commons. Voy a buscar en Serpapi...</h3>`;
-            // await fetchSerpApi(location, apiModal);
+            showImagesMessage('No se encontraron resultados', imagesGrid);
         }
     } catch (error) {
-        console.error("Error buscando imágenes en Commons", error);
-        apiModalContent.innerHTML = `<h3>Error buscando en Commons...</h3>`;
-        // await fetchSerpApi(location, apiModal);
+        console.error("Error buscando imágenes:", error);
+        showImagesMessage('Error al buscar imágenes. Intente más tarde.', imagesGrid);
     }
-}
-function createImageCard(imageUrl, altText, container) {
-    const card = document.createElement("div");
-    card.className = "image-card";
-    // card.style.padding = "10px";
-    // card.style.margin = "10px";
-    card.style.textAlign = "center";
+};
 
-    const img = document.createElement("img");
+// Función para crear tarjetas de imagen
+function createImageCard(imageUrl, altText, container) {
+    const card = document.createElement('div');
+    card.className = 'image-card';
+
+    const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = altText;
-    img.style.width = "300px"; 
-    img.style.height = "230px";
-    img.style.borderRadius = "5px";
-    img.loading = "lazy"; //mejora el rendimiento
+    img.loading = 'lazy';
     card.appendChild(img);
 
-    //boton donde metemos las tres funciones
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.justifyContent = "center";
-    buttonContainer.style.gap = "10px";
-    buttonContainer.style.padding = "10px";
+    const actions = document.createElement('div');
+    actions.className = 'image-actions';
 
-    //API CLIPBOARD
-    const copyButton = createButton("📋", "Copiar URL", () => {
-        navigator.clipboard.writeText(img.src).then(() => {
-            alert("URL copiada al portapapeles: " + img.src);
-        });
+    // Botón copiar
+    const copyButton = createActionButton('📋', 'Copiar URL', () => {
+        navigator.clipboard.writeText(imageUrl)
+            .then(() => toastr.success('URL copiada al portapapeles'))
+            .catch(err => console.error('Error al copiar:', err));
     });
-    buttonContainer.appendChild(copyButton);
+    actions.appendChild(copyButton);
 
-    //API SHARE
-    const shareButton = createButton("🔗", "Compartir", () => {
-        navigator.share({
-            title: "Imagen de " + altText,
-            url: img.src,
-        }).catch((error) => {
-            console.error("Error al compartir la imagen", error);
-        });
-    });
-    buttonContainer.appendChild(shareButton);
-
-    //API FULLSCREEN para los distintos navegadores
-    const fullscreenButton = createButton("🔍", "Pantalla completa", () => {
-        if (img.requestFullscreen) {
-            img.requestFullscreen();
-        } else if (img.mozRequestFullScreen) { //firefox
-            img.mozRequestFullScreen();
-        } else if (img.webkitRequestFullscreen) { //chrome, safari, opera
-            img.webkitRequestFullscreen();
-        } else if (img.msRequestFullscreen) { //ie/edge
-            img.msRequestFullscreen();
+    // Botón compartir
+    const shareButton = createActionButton('🔗', 'Compartir', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: `Imagen de ${altText}`,
+                url: imageUrl
+            }).catch(err => console.error('Error al compartir:', err));
+        } else {
+            toastr.info('La función de compartir no está disponible en este navegador');
         }
     });
-    buttonContainer.appendChild(fullscreenButton);
+    actions.appendChild(shareButton);
 
-    card.appendChild(buttonContainer);
+    // Botón pantalla completa
+    const fullscreenButton = createActionButton('🔍', 'Pantalla completa', () => {
+        if (img.requestFullscreen) {
+            img.requestFullscreen();
+        } else if (img.webkitRequestFullscreen) {
+            img.webkitRequestFullscreen();
+        }
+    });
+    actions.appendChild(fullscreenButton);
+
+    const addToFavoritesButton = createButton("🤍", "Añadir a favoritos", () => {
+        const isFavorite = addToFavoritesButton.classList.toggle('favorito');
+      
+        if (isFavorite) {
+          addToFavoritesButton.textContent = "❤️"; // Ícono rojo
+        } else {
+          addToFavoritesButton.textContent = "🤍"; // Ícono blanco
+        }
+      });
+    
+    actions.appendChild(addToFavoritesButton);
+
+    card.appendChild(actions);
     container.appendChild(card);
 }
+
+// Función auxiliar para crear botones de acción
+function createActionButton(icon, tooltip, onClick) {
+    const button = document.createElement('button');
+    button.innerHTML = icon;
+    button.title = tooltip;
+    button.addEventListener('click', onClick);
+    return button;
+}
+
+// Función para mostrar mensajes
+function showImagesMessage(message, container) {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'images-message';
+    messageElement.textContent = message;
+    container.appendChild(messageElement);
+}
+
+// Cerrar el contenedor de imágenes
+document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('imagesModalContainer').style.display='none';
+});
+
+// Evento del botón de imágenes
+document.getElementById('imagesButton').addEventListener('click', () => {
+    const country = document.querySelector('#input').value;
+    if (country) {
+        searchByLocation(country);
+    } else {
+        toastr.warning('Por favor, ingrese un país primero');
+    }
+});
 function createButton(icon, tooltip, onClick) {
     const button = document.createElement("button");
     button.innerHTML = icon;
     button.title = tooltip;
-    button.style.border = "none";
-    button.style.background = "none";
-    button.style.cursor = "pointer";
-    button.style.fontSize = "20px";
     button.addEventListener("click", onClick);
     return button;
 }
+export { searchByLocation };

@@ -143,7 +143,7 @@ function openModal(data) {
     const modal = document.getElementById('infoModal');
     modal.setAttribute('style', 'display: flex !important;');
 
-    const modalContent = document.getElementById('modalContent');
+    const modalContent = document.getElementById('infoModalContent');
     modalContent.innerHTML = `
       <h2>${data.name}</h2>
       <p>Latitud: ${data.lat}</p>
@@ -153,16 +153,16 @@ function openModal(data) {
     // Agregar eventos a los botones
     document.getElementById('infoButton').addEventListener('click', () => {
       showInfo(data); // Mostrar información del país
-      document.getElementById('modalContent').innerHTML = '';
+      document.querySelector('#infoModal').style.display = 'none';
+
+      document.getElementById('infoModalContent').innerHTML = '';
 
     });
 
     document.getElementById('imagesButton').addEventListener('click', () => {
       showImages(data); 
       // vaciar contenido del modal para mostrar images
-      document.querySelector('#modalContent').innerHTML = '';
-      document.querySelector('#modalContent').classList.add('active');
-      document.querySelector('.modal-content2').classList.add('active');
+      document.querySelector('#infoModal').style.display = 'none';
 
     });
 }
@@ -170,8 +170,16 @@ function openModal(data) {
 // Función para cerrar el modal al hacer clic en el botón de cierre
 document.querySelector('#infoModal .close').addEventListener('click', () => {
   document.getElementById('infoModal').style.display = 'none';
-  document.querySelector('#modalContent').classList.remove('active');
+  document.querySelector('#infoModalContent').classList.remove('active');
   document.querySelector('.modal-content2').classList.remove('active');
+  
+});
+document.querySelector('.images-content .close').addEventListener('click', () => {
+  document.querySelector('#favoritosContainer').style.display = 'none';
+  
+});
+document.querySelector('.fav-content .close').addEventListener('click', () => {
+  document.querySelector('#modalContent').style.display = 'none';
   
 });
 
@@ -192,7 +200,7 @@ function showInfo(data) {
 
 // Función para mostrar imágenes del país
 function showImages(data) {
-  toastr.info(`Imágenes de ${data.name}`, `${data.name}`);
+  toastr.info(`${data.name}`, `${data.name}`);
   console.log(`Mostrando imágenes de: ${data.name}`);
 }
 
@@ -314,7 +322,13 @@ const iconoFavoritos = document.getElementById('paises-favoritos');
 
 // Manejar el clic en el clic del corazon
 iconoFavoritos.addEventListener('click', () => {
-  const countryName = document.getElementById('modalContent').querySelector('h2').textContent;
+  const modal = document.getElementById('infoModalContent');
+    if (modal) {
+      const countryName = modal.querySelector('h2')?.textContent;
+      console.log(countryName);
+    } else {
+      console.error('No se encontró el elemento con id "modalContent".');
+    }
 
   if (!favoritos.includes(countryName)) {
     // Agregar a favoritos
@@ -366,18 +380,7 @@ import { getCountryInfo } from './llamada-apis.js';
 // Seleccionar el botón de información
 const infoButton = document.getElementById('infoButton');
 
-// Manejar el clic en el botón de información
-infoButton.addEventListener('click', async () => {
-  const countryName = document.getElementById('modalContent').querySelector('h2').textContent;
-
-  // Obtener información del país
-  const countryInfo = await getCountryInfo(countryName);
-
-  // Mostrar el modal con la información
-  openInfoModal(countryName, countryInfo);
-});
-
-// Función para abrir el modal de información
+// Abrir el modal de información
 function openInfoModal(countryName, countryInfo) {
   const infoModal = document.createElement('div');
   infoModal.classList.add('modal');
@@ -391,16 +394,12 @@ function openInfoModal(countryName, countryInfo) {
   `;
 
   document.body.appendChild(infoModal);
-
-  // Mostrar el modal
   infoModal.style.display = 'flex';
 
-  // Cerrar el modal al hacer clic en la "X"
   document.getElementById('closeInfoModal').addEventListener('click', () => {
     infoModal.remove();
   });
 
-  // Cerrar el modal al hacer clic fuera del contenido
   window.addEventListener('click', (event) => {
     if (event.target === infoModal) {
       infoModal.remove();
@@ -408,4 +407,22 @@ function openInfoModal(countryName, countryInfo) {
   });
 }
 
-
+// Mostrar informacion del pais 
+infoButton.addEventListener('click', async () => {
+  const modal = document.getElementById('infoModalContent');
+  if (modal) {
+    const countryName = modal.querySelector('h2')?.textContent;
+    if (countryName) {
+      try {
+        const countryInfo = await getCountryInfo(countryName);
+        openInfoModal(countryName, countryInfo);
+        document.getElementById('infoModal').style.display = 'none';
+        document.getElementById('infoModalContent').innerHTML = '';
+      } catch (err) {
+        console.error('Error al obtener información del país:', err);
+      }
+    }
+  } else {
+    console.error('No se encontró el elemento con id "infoModalContent".');
+  }
+});

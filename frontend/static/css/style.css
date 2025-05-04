@@ -151,6 +151,7 @@ body.light-mode .modal-content {
   display:flex;
   justify-content: flex-end;
   color: var(--color-text);
+  color:white;
 }
 
 .close:hover {
@@ -359,13 +360,13 @@ body.light-mode .modal-content {
 
 #modalContent.active {
   width:100%;
-  max-height: 90%;        
+  max-height: 60vh;        
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  /* flex-direction: row; */
+  /* flex-wrap: wrap; */
   justify-content:center;
-  gap: 20px;
-  padding:10px;
+  /* gap: 20px; */
+  /* padding:10px; */
   box-sizing: border-box;
 }
 #infoModal h2 {
@@ -387,10 +388,10 @@ body.light-mode .modal-content {
   gap: 20px;
 }
 
-#infoModal img{
+/* #infoModal img{
   width: 30px;
   height: 30px;
-}
+} */
 
 #infoModal .iconos button{
   background-color: transparent;
@@ -446,7 +447,7 @@ body.light-mode .modal-content {
 
 
 
-/* MODAL INFORMACION IMAGENES */
+/* MODAL INFORMACION PAISES */
 
 
 #countryInfoModal {
@@ -524,40 +525,141 @@ body.light-mode .modal-content {
   transition: width 0.10s ease-in-out;
 }
 
-/* IMAGES */
+/* MOSTRAR IMAGES PAISES */
 
 .image-card {
-  width:30%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
 }
-.image-card img{
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  display:flex;
-  margin: 0;
-  text-align: center;
-  position: relative; 
-  color: white;
+.image-card img {
+  width: 100%;
+  height: 200px;
   object-fit: cover;
+  display: block;
+}
+.image-card img:hover {
+  transform: scale(1.03);
+}
+.image-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.image-actions button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-/* CONTAINER FAVORITOS */
-.favorites-container {
+.image-actions button:hover {
+  transform: scale(1.2);
+}
+
+/* Mensajes de estado */
+.images-message {
+  color: white;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  font-size: 1.1rem;
+}
+.images-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 1001;
+  display: none;
+  overflow-y: auto;
+  border: 2px solid #3a5b94;
+}
+
+.images-container.active {
+  display: block;
+}
+.images-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.images-title {
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+.images-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  padding: 15px;
-  overflow-y: auto;
-  max-height: 60vh;
+  gap: 20px;
+  width: 100%;
 }
-
-.favorite-item {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 15px;
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
   color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
+.image-card button {
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-size:20px;
+  padding:0;
+  margin:0;
+}
+/* CONTAINER FAVORITOS */
 
+#favoritosContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+.fav-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border:2px solid white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80%;
+  color:white;
+  overflow-y: auto;
+  position: relative;
+}
+.fav-content .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 .delete-favorite {
   background: #ff4757;
   color: white;
@@ -567,6 +669,8 @@ body.light-mode .modal-content {
   cursor: pointer;
   margin-top: 10px;
 }
+
+/* MOSTRAR CONTRASEÑA */
 
 .password-toggle-icon {
   cursor:pointer;
