@@ -167,22 +167,6 @@ function openModal(data) {
     });
 }
 
-// Función para cerrar el modal al hacer clic en el botón de cierre
-document.querySelector('#infoModal .close').addEventListener('click', () => {
-  document.getElementById('infoModal').style.display = 'none';
-  document.querySelector('#infoModalContent').classList.remove('active');
-  document.querySelector('.modal-content2').classList.remove('active');
-  
-});
-document.querySelector('.images-content .close').addEventListener('click', () => {
-  document.querySelector('#favoritosContainer').style.display = 'none';
-  
-});
-document.querySelector('.fav-content .close').addEventListener('click', () => {
-  document.querySelector('#modalContent').style.display = 'none';
-  
-});
-
 // Cerrar el modal al hacer clic fuera del contenido
 window.addEventListener('click', (event) => {
   const modal = document.getElementById('infoModal');
@@ -194,13 +178,13 @@ window.addEventListener('click', (event) => {
 
 // Función para mostrar información del país
 function showInfo(data) {
-  toastr.info(`Información de ${data.name}`, `${data.name}`);
+  toastr.info(`${data.name}`, `Información de`);
   console.log(`Mostrando información de: ${data.name}`);
 }
 
 // Función para mostrar imágenes del país
 function showImages(data) {
-  toastr.info(`${data.name}`, `${data.name}`);
+  toastr.info(`${data.name}`,`Imágenes de` );
   console.log(`Mostrando imágenes de: ${data.name}`);
 }
 
@@ -425,4 +409,17 @@ infoButton.addEventListener('click', async () => {
   } else {
     console.error('No se encontró el elemento con id "infoModalContent".');
   }
+});
+
+// document.getElementById('closeInfoModal').addEventListener('click', () => {
+//   document.getElementById('infoModal').style.display = 'none';
+// });
+
+
+document.getElementById('closeImagesModal').addEventListener('click', () => {
+  document.querySelector('.images-container').classList.remove('active');
+});
+
+document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+  document.getElementById('favoritosContainer').style.display = 'none';
 });

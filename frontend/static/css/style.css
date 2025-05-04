@@ -51,12 +51,6 @@ body {
 
 /* LOGIN Y REGISTER */
 
-/* #loginModal, 
-#selectCerrarSesion, 
-#selectIniciarSesion {
-    display: none !important;
-} */
-
 #loginButton {
   font-family: 'Press Start', sans-serif;
   font-size: 1rem;
@@ -339,6 +333,8 @@ body.light-mode .modal-content {
   gap: 20px;
   padding:10px;
   box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.7);
+
 }
 
 #modalContent h2 {
@@ -362,11 +358,8 @@ body.light-mode .modal-content {
   width:100%;
   max-height: 60vh;        
   display: flex;
-  /* flex-direction: row; */
-  /* flex-wrap: wrap; */
+  background-color: rgba(0, 0, 0, 0.7);
   justify-content:center;
-  /* gap: 20px; */
-  /* padding:10px; */
   box-sizing: border-box;
 }
 #infoModal h2 {
@@ -388,10 +381,6 @@ body.light-mode .modal-content {
   gap: 20px;
 }
 
-/* #infoModal img{
-  width: 30px;
-  height: 30px;
-} */
 
 #infoModal .iconos button{
   background-color: transparent;
@@ -571,30 +560,32 @@ body.light-mode .modal-content {
   font-size: 1.1rem;
 }
 .images-container {
+  display: none;
+}
+
+.images-container.active {
+  display: flex;
+  justify-content:center;
+  width: 100%;
+  height: 100%;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 900px;
-  max-height: 80vh;
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 10px;
   padding: 20px;
   z-index: 1001;
-  display: none;
-  overflow-y: auto;
-  border: 2px solid #3a5b94;
-}
-
-.images-container.active {
-  display: block;
 }
 .images-content {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
   position: relative;
-  width: 100%;
-  height: 100%;
+  border: 1px solid white;
 }
+
 .images-title {
   color: white;
   text-align: center;
@@ -692,3 +683,4 @@ body.light-mode .modal-content {
 .password-toggle-icon:hover {
   color: #ebebeb;
 }
+

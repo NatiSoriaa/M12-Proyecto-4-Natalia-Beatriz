@@ -5,8 +5,8 @@ loadToastr();
 checkSession();
 
 async function getFavorites() {
-    const session = await checkSession();
-    if (session.logged) {
+    // const session = await checkSession();
+    // if (session.logged) {
         try {
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
@@ -17,13 +17,7 @@ async function getFavorites() {
             if(response.ok && data.success) {
 
                 // show images on modal
-                const infoModal = document.getElementById('favoritosContainer');
-                const iconos = document.querySelector('.iconos');
-                const modalButtons = document.querySelector('.modalButtons');
-                
-                // iconos.style.display = 'none';
-                // modalButtons.style.display = 'none';
-                
+                const infoModal = document.getElementById('favoritosContainer');              
                 infoModal.style.display = 'flex';
                 
                 displayFavorites(data.data);
@@ -37,9 +31,9 @@ async function getFavorites() {
             toastr.error('Error al cargar favoritos');
             console.error(error);
         }
-    } else {
-        toastr.warning('Debes iniciar sesión para ver favoritos');
-    }
+    // } else {
+    //     toastr.warning('Debes iniciar sesión para ver favoritos');
+    // }
 }
 
 function displayFavorites(favorites) {
@@ -81,7 +75,7 @@ document.querySelector('#favoritos').addEventListener('click', () => {
     getFavorites();
 });
 
-// Cerrar al hacer clickf fuera
+// Cerrar al hacer click fuera
 const favoritosContainer = document.getElementById('favoritosContainer');
 favoritosContainer.addEventListener('click', (event) => {
     const modalContent = document.querySelector('.fav-content');
@@ -90,6 +84,3 @@ favoritosContainer.addEventListener('click', (event) => {
     }
 });
 
-document.querySelector('.close').addEventListener('click', () => {
-    favoritosContainer.style.display = 'none';
-});

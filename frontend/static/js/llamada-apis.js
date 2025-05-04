@@ -32,7 +32,7 @@ imagesButton.addEventListener('click', () => {
 //busqueda de imagenes por commons
 // Función para buscar imágenes
 const searchByLocation = async (location) => {
-    const imagesModal = document.getElementById('modalContent');
+    const imagesModal = document.getElementById('imagesModal');
     const imagesGrid = document.querySelector('.images-grid');
     const imagesTitle = document.querySelector('.images-title');
     
@@ -118,9 +118,9 @@ function createImageCard(imageUrl, altText, container) {
         const isFavorite = addToFavoritesButton.classList.toggle('favorito');
       
         if (isFavorite) {
-          addToFavoritesButton.textContent = "❤️"; // Ícono rojo
+          addToFavoritesButton.textContent = "❤️"; 
         } else {
-          addToFavoritesButton.textContent = "🤍"; // Ícono blanco
+          addToFavoritesButton.textContent = "🤍";
         }
       });
     
@@ -146,11 +146,6 @@ function showImagesMessage(message, container) {
     messageElement.textContent = message;
     container.appendChild(messageElement);
 }
-
-// Cerrar el contenedor de imágenes
-document.querySelector('.close').addEventListener('click', () => {
-    document.getElementById('imagesModalContainer').style.display='none';
-});
 
 // Evento del botón de imágenes
 document.getElementById('imagesButton').addEventListener('click', () => {

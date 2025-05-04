@@ -126,8 +126,6 @@
                 <button id="visitado" class="pendiente-visitar">
                     <img src="../static/img/pendiente-visitar.png" alt="pendiente por visitar" class="pendiente-icon">
                 </button>
-                <span class="close">&times;</span>
-
             </div>
             
             <div id="infoModalContent"></div>
@@ -140,17 +138,17 @@
 
     </div>
 
-    <div id="modalContent" class="images-container">
+    <div id="imagesModal" class="images-container">
         <div class="images-content">
             <h2 class="images-title"></h2>
             <div class="images-grid"></div>
-            <span class="close">&times;</span>
+            <span class="close" id="closeImagesModal">&times;</span>
         </div>
     </div>
 
     <div id="favoritosContainer" class="modal">
         <div class="fav-content">
-            <span class="close">&times;</span>
+            <span class="close" id="closeFavoritesModal">&times;</span>
             <h2 class="fav-title">Mis Favoritos</h2>
         </div>
       </div>
@@ -164,9 +162,8 @@
     <!-- SCRIPTS -->
     <script type="module" src="../static/js/index.js"></script>
     <script type="module" src="../static/js/menu.js"></script>
-    <!-- <script type="module" src="../static/js/botones-login-register.js"></script> -->
     <script type="module" src="../static/js/login-register.js"></script>
-    <script type="module" src="../static/js/addToFavorites.js"></script>
+    <script type="module" src="../static/js/userFavorites.js"></script>
 
 </body>
 
