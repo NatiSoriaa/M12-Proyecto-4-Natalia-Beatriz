@@ -1,6 +1,5 @@
 import {loadToastr} from './toastr.js';
 import { checkSession } from './login-register.js';
-const country = document.querySelector('#input').value;
 loadToastr();
 const session = await checkSession();
 
@@ -59,7 +58,6 @@ function displayFavorites(favorites) {
         const favElement = document.createElement('div');
         favElement.className = 'favorite-item';
         favElement.innerHTML = `
-            <h3>${fav.nom}</h3>
             <p>${fav.descripcio || 'Sin descripción'}</p>
             <p><strong>Categoría:</strong> ${fav.categoria}</p>
             <button class="delete-favorite" data-id="${fav.id}">Eliminar</button>
@@ -91,7 +89,11 @@ iconoFavoritos.addEventListener('click', async () => {
         toastr.warning('Debes iniciar sesión para guardar favoritos');
         return;
     }
-
+    const country = document.querySelector('#input').value.trim();
+    if (!country) {
+      toastr.warning('Debes ingresar un país');
+      return;
+    }
     // IMÁGENES
     const imagesModal = document.getElementById('imagesModal');
     if (!imagesModal) return console.error('No se encontró el modal');
@@ -103,9 +105,9 @@ iconoFavoritos.addEventListener('click', async () => {
     // NOMBRE PAIS
     const infoModal = document.getElementById('infoModal');
     if (!infoModal) return console.error("No se ha encontrado el modal");
+    const countryDescription = document.querySelector('#infoModalContent').innerHTML;
 
     country.replace('Nombre del país: ', '');
-
     try {
         const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito', {
             method: 'POST',
@@ -115,9 +117,9 @@ iconoFavoritos.addEventListener('click', async () => {
             },
             credentials: 'include',
             body: JSON.stringify({
-                nom: countryName,
-                descripcio: `País: ${countryName}`,
-                categoria: 'país',
+                nom: countryName || country,
+                descripcio: countryDescription,
+                categoria: 'País',
                 url: imageUrl
             })
         });
