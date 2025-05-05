@@ -140,12 +140,12 @@ function createImageCard(imageUrl, altText, container) {
                 })
             });
     
-            if (!response.ok || result.status !== 'success') {
-                throw new Error(result.message || 'Request failed');
+            if (!response.ok) {
+                throw new Error('Request failed');
             }
 
             addToFavoritesButton.textContent = "❤️";
-            toastr.success(result.message || 'Añadido a favoritos');
+            toastr.success('Añadido a favoritos', 'Éxito');
             
         } catch (error) {
             console.error('Error:', error);
