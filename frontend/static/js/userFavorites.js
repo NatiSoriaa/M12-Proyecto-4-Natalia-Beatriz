@@ -158,3 +158,71 @@ function actualizarMenuFavoritos() {
     menuFavoritos.appendChild(listItem);
   });
 }
+
+// DELETE ALL FAVORITES (SELECT ALL)
+
+// DELETE FAVORITE 
+async function deleteFavorito(favoritoId) {
+//   if (!confirm('¿Estás seguro de querer eliminar este favorito?')) {
+//     return;
+// }
+  try {
+      const response = await fetch(
+          `http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarFavorito`, 
+          {
+              method: 'DELETE',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify({ id: favoritoId })
+          }
+      );
+
+      if (response.status === 204) {
+          toastr.success('Favorito eliminado');
+          await getFavorites();
+          return;
+      }
+
+      const responseText = await response.text();
+      
+      if (!responseText) {
+          throw new Error('El servidor no respondió correctamente');
+      }
+
+      const result = JSON.parse(responseText);
+      
+      if (!response.ok) {
+          throw new Error(result.message || `Error ${response.status}`);
+      }
+
+      toastr.success(result.message || 'Favorito eliminado');
+      await getFavorites();
+      
+  } catch (error) {
+      console.error('Delete error:', error);
+      
+      if (error.message.includes('servidor')) {
+          toastr.error('Error del servidor. Intente más tarde.');
+      } else {
+          toastr.error(error.message || 'Error al eliminar favorito');
+      }
+      
+      if (confirm('¿Ver detalles del error?')) {
+          alert(`Error completo:\n${error.stack}`);
+      }
+  }
+}
+
+export {deleteFavorito};
+
+document.addEventListener('click', function(event) {
+  if (event.target.classList.contains('delete-favorite')) {
+    const favoritoId = event.target.getAttribute('data-id');
+    if (favoritoId) {
+      deleteFavorito(favoritoId);
+    }
+  }
+})
