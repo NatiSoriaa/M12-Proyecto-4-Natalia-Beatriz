@@ -1,6 +1,6 @@
 import {loadToastr} from './toastr.js';
 import { checkSession } from './login-register.js';
-
+const country = document.querySelector('#input').value;
 loadToastr();
 const session = await checkSession();
 
@@ -83,7 +83,7 @@ favoritosContainer.addEventListener('click', (event) => {
     }
 });
 
-// Add to favorites
+// Añadir a favoritos 
 
 const iconoFavoritos = document.getElementById('paises-favoritos');
 iconoFavoritos.addEventListener('click', async () => {
@@ -92,12 +92,19 @@ iconoFavoritos.addEventListener('click', async () => {
         return;
     }
 
+    // IMÁGENES
     const imagesModal = document.getElementById('imagesModal');
     if (!imagesModal) return console.error('No se encontró el modal');
 
     const countryName = imagesModal.querySelector('.images-title')?.textContent.replace('Imágenes de ', '');
     const imgElement = imagesModal.querySelector('img');
     const imageUrl = imgElement?.src || null;
+
+    // NOMBRE PAIS
+    const infoModal = document.getElementById('infoModal');
+    if (!infoModal) return console.error("No se ha encontrado el modal");
+
+    country.replace('Nombre del país: ', '');
 
     try {
         const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito', {
@@ -115,7 +122,22 @@ iconoFavoritos.addEventListener('click', async () => {
             })
         });
 
-        if (response.ok && result.status === 'success') {
+        const responseText = await response.text();
+        console.log('Raw server response:', responseText);
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Failed to parse JSON:', e);
+            throw new Error('Invalid server response');
+        }
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        if (result.status === 'success') {
             toastr.success(result.message || 'País añadido a favoritos');
             iconoFavoritos.classList.add('active');
         } else {
@@ -126,13 +148,13 @@ iconoFavoritos.addEventListener('click', async () => {
         toastr.error(err.message || 'Error al conectar con el servidor');
     }
 });
-// function actualizarMenuFavoritos() {
-//   const menuFavoritos = document.getElementById('menuFavoritos');
-//   menuFavoritos.innerHTML = ''; 
+function actualizarMenuFavoritos() {
+  const menuFavoritos = document.getElementById('menuFavoritos');
+  menuFavoritos.innerHTML = ''; 
 
-//   favoritos.forEach((pais) => {
-//     const listItem = document.createElement('li');
-//     listItem.textContent = pais;
-//     menuFavoritos.appendChild(listItem);
-//   });
-// }
+  favoritos.forEach((pais) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = pais;
+    menuFavoritos.appendChild(listItem);
+  });
+}
