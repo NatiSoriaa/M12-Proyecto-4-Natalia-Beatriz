@@ -299,45 +299,45 @@ window.requestAnimationFrame(animation);
 // AÑADIR A FAVORITOS Y CAMBIO DE COLOR ICONO AL HACER CLIC
 
 // Inicializar lista de favoritos
-const favoritos = [];
+// const favoritos = [];
 
-// Seleccionar el ícono del corazón
-const iconoFavoritos = document.getElementById('paises-favoritos');
+// // Seleccionar el ícono del corazón
+// const iconoFavoritos = document.getElementById('paises-favoritos');
 
-// Manejar el clic en el clic del corazon
-iconoFavoritos.addEventListener('click', () => {
-  const modal = document.getElementById('infoModalContent');
-    if (modal) {
-      const countryName = modal.querySelector('h2')?.textContent;
-      console.log(countryName);
-    } else {
-      console.error('No se encontró el elemento con id "modalContent".');
-    }
+// // Manejar el clic en el clic del corazon
+// iconoFavoritos.addEventListener('click', () => {
+//   const modal = document.getElementById('infoModalContent');
+//     if (modal) {
+//       const countryName = modal.querySelector('h2')?.textContent;
+//       console.log(countryName);
+//     } else {
+//       console.error('No se encontró el elemento con id "modalContent".');
+//     }
 
-  if (!favoritos.includes(countryName)) {
-    // Agregar a favoritos
-    favoritos.push(countryName);
-    iconoFavoritos.classList.add('active'); // Cambiar a rojo
-    actualizarMenuFavoritos();
-  } else {
-    // Eliminar de favoritos
-    const index = favoritos.indexOf(countryName);
-    favoritos.splice(index, 1);
-    iconoFavoritos.classList.remove('active'); // Cambiar a blanco
-    actualizarMenuFavoritos();
-  }
-});
+//   if (!favoritos.includes(countryName)) {
+//     // Agregar a favoritos
+//     favoritos.push(countryName);
+//     iconoFavoritos.classList.add('active'); // Cambiar a rojo
+//     actualizarMenuFavoritos();
+//   } else {
+//     // Eliminar de favoritos
+//     const index = favoritos.indexOf(countryName);
+//     favoritos.splice(index, 1);
+//     iconoFavoritos.classList.remove('active'); // Cambiar a blanco
+//     actualizarMenuFavoritos();
+//   }
+// });
 
-function actualizarMenuFavoritos() {
-  const menuFavoritos = document.getElementById('menuFavoritos');
-  menuFavoritos.innerHTML = ''; 
+// function actualizarMenuFavoritos() {
+//   const menuFavoritos = document.getElementById('menuFavoritos');
+//   menuFavoritos.innerHTML = ''; 
 
-  favoritos.forEach((pais) => {
-    const listItem = document.createElement('li');
-    listItem.textContent = pais;
-    menuFavoritos.appendChild(listItem);
-  });
-}
+//   favoritos.forEach((pais) => {
+//     const listItem = document.createElement('li');
+//     listItem.textContent = pais;
+//     menuFavoritos.appendChild(listItem);
+//   });
+// }
 
 
 
@@ -410,11 +410,6 @@ infoButton.addEventListener('click', async () => {
     console.error('No se encontró el elemento con id "infoModalContent".');
   }
 });
-
-// document.getElementById('closeInfoModal').addEventListener('click', () => {
-//   document.getElementById('infoModal').style.display = 'none';
-// });
-
 
 document.getElementById('closeImagesModal').addEventListener('click', () => {
   document.querySelector('.images-container').classList.remove('active');

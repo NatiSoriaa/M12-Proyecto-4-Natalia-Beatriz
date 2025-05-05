@@ -1,3 +1,6 @@
+import { checkSession } from './login-register.js';
+const session = await checkSession();
+
 // Función para obtener información del país desde Wikipedia
 async function getCountryInfo(countryName) {
     try {
@@ -18,8 +21,7 @@ async function getCountryInfo(countryName) {
     }
   }
   
-  // Exportar la función para usarla en otros archivos
-  export { getCountryInfo };
+export { getCountryInfo };
 
 
 const imagesButton = document.getElementById('imagesButton');
@@ -114,15 +116,43 @@ function createImageCard(imageUrl, altText, container) {
     });
     actions.appendChild(fullscreenButton);
 
-    const addToFavoritesButton = createButton("🤍", "Añadir a favoritos", () => {
-        const isFavorite = addToFavoritesButton.classList.toggle('favorito');
-      
-        if (isFavorite) {
-          addToFavoritesButton.textContent = "❤️"; 
-        } else {
-          addToFavoritesButton.textContent = "🤍";
+    // Botón añadir a favoritos
+    const addToFavoritesButton = createButton("🤍", "Añadir a favoritos", async () => {
+        if (!session.logged) {
+            toastr.warning('Debes iniciar sesión para guardar favoritos');
+            return;
         }
-      });
+
+        try {
+            
+            const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito", {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    nom: altText,
+                    descripcio: `Imagen: ${altText}`,
+                    categoria: 'imagen',
+                    url: imageUrl
+                })
+            });
+    
+            if (!response.ok || result.status !== 'success') {
+                throw new Error(result.message || 'Request failed');
+            }
+
+            addToFavoritesButton.textContent = "❤️";
+            toastr.success(result.message || 'Añadido a favoritos');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            addToFavoritesButton.textContent = "🤍";
+            toastr.error(error.message || 'Error al guardar favorito');
+        }
+    });
     
     actions.appendChild(addToFavoritesButton);
 
@@ -130,7 +160,7 @@ function createImageCard(imageUrl, altText, container) {
     container.appendChild(card);
 }
 
-// Función auxiliar para crear botones de acción
+// Añadir acciones de botones
 function createActionButton(icon, tooltip, onClick) {
     const button = document.createElement('button');
     button.innerHTML = icon;
@@ -139,7 +169,7 @@ function createActionButton(icon, tooltip, onClick) {
     return button;
 }
 
-// Función para mostrar mensajes
+// Mostrar mensajes
 function showImagesMessage(message, container) {
     const messageElement = document.createElement('div');
     messageElement.className = 'images-message';
@@ -147,7 +177,7 @@ function showImagesMessage(message, container) {
     container.appendChild(messageElement);
 }
 
-// Evento del botón de imágenes
+// Verificar que hay un país ingresado
 document.getElementById('imagesButton').addEventListener('click', () => {
     const country = document.querySelector('#input').value;
     if (country) {
@@ -156,6 +186,9 @@ document.getElementById('imagesButton').addEventListener('click', () => {
         toastr.warning('Por favor, ingrese un país primero');
     }
 });
+
+// Crear botones
+
 function createButton(icon, tooltip, onClick) {
     const button = document.createElement("button");
     button.innerHTML = icon;

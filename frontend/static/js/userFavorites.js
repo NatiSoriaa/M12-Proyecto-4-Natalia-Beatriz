@@ -2,11 +2,10 @@ import {loadToastr} from './toastr.js';
 import { checkSession } from './login-register.js';
 
 loadToastr();
-checkSession();
+const session = await checkSession();
 
 async function getFavorites() {
-    // const session = await checkSession();
-    // if (session.logged) {
+    if (session.logged) {
         try {
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
@@ -31,9 +30,9 @@ async function getFavorites() {
             toastr.error('Error al cargar favoritos');
             console.error(error);
         }
-    // } else {
-    //     toastr.warning('Debes iniciar sesión para ver favoritos');
-    // }
+    } else {
+        toastr.warning('Debes iniciar sesión para ver favoritos');
+    }
 }
 
 function displayFavorites(favorites) {
@@ -84,3 +83,56 @@ favoritosContainer.addEventListener('click', (event) => {
     }
 });
 
+// Add to favorites
+
+const iconoFavoritos = document.getElementById('paises-favoritos');
+iconoFavoritos.addEventListener('click', async () => {
+    if (!session.logged) {
+        toastr.warning('Debes iniciar sesión para guardar favoritos');
+        return;
+    }
+
+    const imagesModal = document.getElementById('imagesModal');
+    if (!imagesModal) return console.error('No se encontró el modal');
+
+    const countryName = imagesModal.querySelector('.images-title')?.textContent.replace('Imágenes de ', '');
+    const imgElement = imagesModal.querySelector('img');
+    const imageUrl = imgElement?.src || null;
+
+    try {
+        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                nom: countryName,
+                descripcio: `País: ${countryName}`,
+                categoria: 'país',
+                url: imageUrl
+            })
+        });
+
+        if (response.ok && result.status === 'success') {
+            toastr.success(result.message || 'País añadido a favoritos');
+            iconoFavoritos.classList.add('active');
+        } else {
+            throw new Error(result.message || 'No se pudo guardar el país');
+        }
+    } catch (err) {
+        console.error('Error guardando favorito:', err);
+        toastr.error(err.message || 'Error al conectar con el servidor');
+    }
+});
+// function actualizarMenuFavoritos() {
+//   const menuFavoritos = document.getElementById('menuFavoritos');
+//   menuFavoritos.innerHTML = ''; 
+
+//   favoritos.forEach((pais) => {
+//     const listItem = document.createElement('li');
+//     listItem.textContent = pais;
+//     menuFavoritos.appendChild(listItem);
+//   });
+// }
