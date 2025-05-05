@@ -151,21 +151,61 @@ class FavoritosController {
     }
 
     // Eliminar anunci
-    public function eliminar($id) {
-        check_auth('admin'); // Verificación de permisos
-        
-        $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php?id=$id";
-        $response = $this->apiRequest($url, 'DELETE');
-
-        if ($response && $response['status'] === 'success') { 
-            header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
-            exit();
-        } else {
-            echo "Error en l'eliminació de l'anunci.";
-            if ($response) {
-                echo " Detalls: " . $response['message']; 
+    public function eliminarFavorito($id) {
+        try {
+            // Verify session
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start([
+                    'cookie_lifetime' => 86400,
+                    'cookie_secure' => false,
+                    'cookie_httponly' => true,
+                    'cookie_samesite' => 'Lax'
+                ]);
             }
+            
+            if (!isset($_SESSION['usuari_id'])) {
+                throw new Exception('Usuario no autenticado', 401);
+            }
+    
+            // Validate input
+            if (!is_numeric($id)) {
+                throw new Exception('ID inválido', 400);
+            }
+    
+            // Delete from database
+            $deleted = $this->favoritosModel->eliminar($id, $_SESSION['usuari_id']);
+    
+            if (!$deleted) {
+                throw new Exception('No se encontró el favorito', 404);
+            }
+    
+            // Clean output and send response
+            ob_end_clean();
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Favorito eliminado',
+                'id' => $id
+            ]);
+            exit;
+    
+        } catch (PDOException $e) {
+            error_log("Database error: ".$e->getMessage());
+            $this->sendErrorResponse('Error en la base de datos', 500);
+        } catch (Exception $e) {
+            $this->sendErrorResponse($e->getMessage(), $e->getCode() ?: 500);
         }
     }
-}
+    
+    private function sendErrorResponse($message, $code = 500) {
+        ob_end_clean();
+        http_response_code($code);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'error',
+            'message' => $message
+        ]);
+        exit;
+    }
+}    
 ?>

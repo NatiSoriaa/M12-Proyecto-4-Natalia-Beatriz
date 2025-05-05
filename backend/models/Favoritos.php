@@ -28,11 +28,12 @@ class Favoritos extends Model {
         return $stmt->execute([$titol, $descripcio, $preu, $categoria, $usuari_id]);
     }
 
-    // Query SQL para eliminar un anunci
-    public function eliminarFavorito($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM user_favorites WHERE id = ?");
-        return $stmt->execute([$id]);
-    }
+    // Query SQL para eliminar un favorito
+        public function eliminar($id, $usuari_id) {
+            $stmt = $this->pdo->prepare("DELETE FROM user_favorites WHERE id = ? AND usuari_id = ?");
+            return $stmt->execute([$id, $usuari_id]);
+        }
+    
 
     // Query SQL paraactualitzar un anunci
     public function actualitzarFavorito($id, $nom, $descripcio, $categoria) {

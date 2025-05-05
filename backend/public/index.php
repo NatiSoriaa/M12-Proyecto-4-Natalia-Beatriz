@@ -45,14 +45,29 @@ switch ($action) {
             echo 'Id al intentar recuperar el id';  // Error si no se pasa el 'id'
         }
         break;
-    case 'eliminar':  // Elimina un anuncio
-        if (isset($_GET['id'])) {  // Verifica si 'id' está presente
-            $id = $_GET['id'];  // Obtiene el ID del anuncio
-            $favoritosController->eliminar($id);  // Llama al controlador para eliminar
-        } else {
-            echo 'ID no proporcionado al intentar eliminar el anuncio';  // Error si no se pasa el 'id'
-        }
-        break;
+
+    case 'eliminarFavorito': //Eliminar favorito
+        header('Content-Type: application/json');
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+                throw new Exception('Método no permitido', 405);
+            }
+            
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            if (!isset($data['id'])) {
+                throw new Exception('ID no proporcionado', 400);
+            }
+            
+            $favoritosController->eliminarFavorito($data['id']);
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+    }
+    break;
     case 'obtenerFavoritos':  // Obtener favoritos
         $favoritosController->obtenerFavoritos();
         break;
