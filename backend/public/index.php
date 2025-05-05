@@ -34,8 +34,8 @@ switch ($action) {
     case 'logout':  // Cierra sesión
         $usuariController->logout();
         break;
-    case 'crear-anunci':  // Crea un anuncio
-        $favoritosController->crear();
+    case 'añadirFavorito':  // Añadir a favorito
+        $favoritosController->añadirFavorito();
         break;
     case 'modificar':  // Modifica un anuncio
         if (isset($_GET['id'])){  // Verifica si 'id' está presente
@@ -53,7 +53,7 @@ switch ($action) {
             echo 'ID no proporcionado al intentar eliminar el anuncio';  // Error si no se pasa el 'id'
         }
         break;
-    case 'obtenerFavoritos':  // Muestra el listado de anuncios
+    case 'obtenerFavoritos':  // Obtener favoritos
         $favoritosController->obtenerFavoritos();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción

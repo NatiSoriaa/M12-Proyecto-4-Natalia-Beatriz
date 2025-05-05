@@ -6,7 +6,8 @@ require_once '../models/Favoritos.php';
 require_once '../config/twig.php';
 require_once '../includes/auth.php';
 require_once '../config/config.php';
-
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 // Definimos la clase AnunciController que manejará las solicitudes 
 class FavoritosController {
     private $favoritosModel;
@@ -70,37 +71,47 @@ class FavoritosController {
             exit();
         }
 
-    // Método que hace una solicitud POST para crear un anuncio
-    public function crear() {
-        check_auth('admin'); // Verificación de los permisos
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Recull les dades del formulari
-            $data = [
-                'titol' => $_POST['titol'],
-                'descripcio' => $_POST['descripcio'],
-                'categoria' => $_POST['categoria'],
-                'usuari_id' => $_SESSION['usuari_id'] // Conocer el id del usuario que ha subido el anuncio
-            ];
-            // Solicitud POST a nuestra api anunci_api.php
-            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/api/anunci_api.php";
-            $response = $this->apiRequest($url, 'POST', $data);
+    public function añadirFavorito() {
+        header('Content-Type: application/json');
 
-            // Redirigir el usuario en función del estado de la respuesta
-            if ($response && $response['status'] === 'success') { 
-                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=index');
-                exit();
-            } else {
-                echo "Error en la creació de l'anunci.";
-                if ($response) {
-                    echo " Detalls: " . $response['message'];  
-                }
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Método no permitido', 405);
             }
-        } else {
-            echo $this->twig->render('favoritos/crear.html.twig');
+            
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            if (!isset($data['nom'], $data['categoria'], $_SESSION['usuari_id'])) {
+                throw new Exception('Datos incompletos', 400);
+            }
+            
+            $result = $this->favoritosModel->añadirAFavoritos(
+                $data['nom'],
+                $data['descripcio'] ?? '',
+                $data['categoria'],
+                $data['url'] ?? null,
+                $_SESSION['usuari_id']
+            );
+            
+            if (!$result) {
+                throw new Exception('Error al guardar en base de datos', 500);
+            }
+            
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Favorito añadido correctamente'
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
         }
     }
-
     // Modificar anunci
     public function modificar($id){
         check_auth('admin');

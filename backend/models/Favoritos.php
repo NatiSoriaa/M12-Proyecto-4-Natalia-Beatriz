@@ -39,5 +39,11 @@ class Favoritos extends Model {
         $stmt = $this->pdo->prepare("UPDATE user_favorites SET nom = ?, descripcio = ?, preu = ?, categoria = ? WHERE id = ?");
         return $stmt->execute([$titol, $descripcio, $preu, $categoria, $id]);
     }
+    
+    // Query SQL para añadir elemento a favoritos
+    public function añadirAFavoritos($nom, $descripcio, $categoria, $url, $usuari_id) {
+        $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url, usuari_id) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$nom, $descripcio, $categoria, $url, $usuari_id]);
+    }
 }
 ?>
