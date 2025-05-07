@@ -1,16 +1,17 @@
 <?php
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
-require_once '../config/twig.php';
+// require_once '../config/twig.php';
 
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+    session_start([
+        'name' => 'EarthExplorerSess',
+        'cookie_lifetime' => 86400, 
+        'cookie_secure' => false,
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax'
+    ]);
 }
-
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-error_reporting(E_ALL);
-define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
 
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
@@ -20,7 +21,7 @@ class UsuariController {
     // Constructor del modelo Usuari y el motor Twig
     public function __construct() {
         $this->usuariModel = new Usuari();
-        $this->twig = require '../config/twig.php';
+        // $this->twig = require '../config/twig.php';
 
     }
     // Función de registro
@@ -105,7 +106,7 @@ class UsuariController {
                     'id' => $_SESSION['usuari_id'],
                     'nom' => $_SESSION['nom'],
                     'rol' => $_SESSION['rol'],
-                    'redirect' => $redirect
+                    // 'redirect' => $redirect
                 ]);
                 exit();
             } else {
@@ -120,6 +121,7 @@ class UsuariController {
     
     // check if session is active
     public function checkSession() {
+        if (ob_get_length()) ob_clean();
         header("Access-Control-Allow-Origin: http://localhost");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
@@ -143,8 +145,6 @@ class UsuariController {
                 'rol' => $_SESSION['rol']
             ]);
         } else {
-            // error_log("No se encontró sesión activa");
-
             echo json_encode([
                 'logged' => false
             ]);
