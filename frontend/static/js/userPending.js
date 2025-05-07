@@ -77,3 +77,74 @@ visitToggle.addEventListener('click', async () => {
     }
 });
   
+async function getVisited() {
+  if (session.logged) {
+      try {
+          const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerVisitados", {
+              method: 'GET',
+              credentials: 'include'
+          });
+      
+          const data = await response.json();
+          if(response.ok && data.success) {
+
+              // show images on modal
+              const infoModal = document.getElementById('favoritosContainer');              
+              infoModal.style.display = 'flex';
+              
+              displayVisited(data.data);
+              
+              // toastr.success('Favoritos cargados');
+          
+          } else {
+              toastr.warning('No tienes favoritos guardados');
+          }
+      } catch (error) {
+          toastr.error('Error al cargar favoritos');
+          console.error(error);
+      }
+  } else {
+      toastr.warning('Debes iniciar sesión para ver favoritos');
+  }
+}
+
+async function displayVisited(visited) {
+  const modalContent = document.querySelector('.fav-content');
+    
+    const title = modalContent.querySelector('.fav-title');
+    title.textContent = 'Mis visitados';
+
+    if (!visited || visited.length === 0) {
+        title.textContent = 'No tienes visitados';
+        return;
+    }
+
+    const existingFavoritesContainer = modalContent.querySelector('.favorites-container');
+    if (existingFavoritesContainer) {
+        existingFavoritesContainer.remove();
+    }
+
+    // contenedor visitados
+    const visitadosContainer = document.createElement('div');
+    visitadosContainer.className = 'favorites-container';
+    
+    // TODO: user can add the date they completed the visit
+    visited.forEach(v => {
+        const visitedElement = document.createElement('div');
+        visitedElement.className = 'visited-item';
+        visitedElement.innerHTML = `
+            <p>${v.descripcio || 'Sin descripción'}</p>
+            <p><strong>Categoría:</strong> ${v.categoria}</p>
+            <p><strong>Fecha completado:</strong> ${v.data_completat}</p>
+            <button class="delete-visitado" data-id="${v.id}">Eliminar</button>
+        `;
+        visitadosContainer.appendChild(visitedElement);
+    });
+    
+    modalContent.appendChild(visitadosContainer);
+}
+
+
+document.querySelector('#paisesVisitados').addEventListener('click', () => {
+  getVisited();
+});
