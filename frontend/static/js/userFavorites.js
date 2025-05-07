@@ -20,7 +20,7 @@ async function getFavorites() {
                 
                 displayFavorites(data.data);
                 
-                toastr.success('Favoritos cargados');
+                // toastr.success('Favoritos cargados');
             
             } else {
                 toastr.warning('No tienes favoritos guardados');
@@ -146,8 +146,12 @@ iconoFavoritos.addEventListener('click', async () => {
             throw new Error(result.message || 'No se pudo guardar el país');
         }
     } catch (err) {
+        if (err.message && err.message.includes("Integrity constraint violation")) {
+            toastr.warning("Ya está en tus favoritos!");
+        } else {
+            toastr.error(err.message || 'Error al conectar con el servidor');
+        }
         console.error('Error guardando favorito:', err);
-        toastr.error(err.message || 'Error al conectar con el servidor');
     }
 });
 function actualizarMenuFavoritos() {
@@ -162,6 +166,46 @@ function actualizarMenuFavoritos() {
 }
 
 // DELETE ALL FAVORITES (SELECT ALL)
+async function deleteAllFavoritos() {
+    if (!confirm('¿Estás seguro de querer eliminar todos los favoritos?')) {
+      return;
+  }
+  try {
+    const response = await fetch(`http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarAllFavoritos`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({id:favoritoId})
+    });
+    
+    if (response.status === 204) {
+      toastr.success('Todos tus favoritos se han eliminado');
+      await getFavorites();
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(result.message || `Error ${response.status}`);
+    }
+
+    toastr.success(result.message || 'Favoritos eliminados');
+    await getFavorites();
+    } catch (error) {
+      console.error('Delete error:', error);
+      
+      if (error.message.includes('servidor')) {
+          toastr.error('Error del servidor. Intente más tarde.');
+      } else {
+          toastr.error(error.message || 'Error al eliminar favorito');
+      }
+      
+      if (confirm('¿Ver detalles del error?')) {
+          alert(`Error completo:\n${error.stack}`);
+    }
+  }
+}
 
 // DELETE FAVORITE 
 async function deleteFavorito(favoritoId) {
