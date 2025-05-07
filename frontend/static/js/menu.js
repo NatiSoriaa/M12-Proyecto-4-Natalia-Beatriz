@@ -1,6 +1,6 @@
 // MENU DESPLEGABLE
 
-document.addEventListener("DOMContentLoaded", function () {
+export function Menu() {
 
     // fav menu
     const favoritesMenu = document.getElementById("favoritesMenu");
@@ -49,4 +49,4 @@ document.addEventListener("DOMContentLoaded", function () {
         hideMenu(userContent);
     });
 
-});
+};

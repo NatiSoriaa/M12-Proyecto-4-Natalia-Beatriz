@@ -280,8 +280,6 @@ body.light-mode .modal-content {
 
 /* MODAL INFORMACION PAISES */
 
-
-/* Modal para información de países */
 #infoModal {
   display: none; 
   position: fixed;

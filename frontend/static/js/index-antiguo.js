@@ -2,17 +2,7 @@ import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 
 
-
-// MENU DESPLEGABLE
-
-
-import { Menu } from './menu.js';
-Menu();
-
-
-
-// LIBRERIA MAPA DE THREE JS 
-
+// MAPA MUNDO 
 
 
 const scene = new THREE.Scene();
@@ -86,9 +76,6 @@ function latLonToVector3(lat, lon, radius = 1) {
 
 
 
-// CREAR MARCADORES DE PAISES
-
-
 
 const markers = []; // Array para almacenar los marcadores
 
@@ -121,17 +108,14 @@ function createMarker(lat, lon, name, color = 0xff0000) {
     
     amplitud *= 0.5;
   }
+  
   // Hacer que el marcador sea interactivo
   marker.callback = () => {
     openModal(marker.userData); // Abrir el modal con los datos del marcador
   };
 }
 
-
-
-// EVENTO CLIC MARCADOR
-
-
+  // Agregar evento de clic al marcador
   
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -144,6 +128,7 @@ window.addEventListener('click', (event) => {
 
   const intersects = raycaster.intersectObjects(markers);
   // console.log('Intersecciones detectadas:', intersects); // Depuración
+  
 
   if (intersects.length > 0) {
     const marker = intersects[0].object;
@@ -153,23 +138,70 @@ window.addEventListener('click', (event) => {
   }
 });
 
+// Función para abrir el modal con contenido dinámico
+function openModal(data) {
+    const modal = document.getElementById('infoModal');
+    modal.setAttribute('style', 'display: flex !important;');
+
+    const modalContent = document.getElementById('infoModalContent');
+    modalContent.innerHTML = `
+      <h2>${data.name}</h2>
+      <p>Latitud: ${data.lat}</p>
+      <p>Longitud: ${data.lon}</p>
+    `;
+
+    // Agregar eventos a los botones
+    document.getElementById('infoButton').addEventListener('click', () => {
+      showInfo(data); // Mostrar información del país
+      document.querySelector('#infoModal').style.display = 'none';
+
+      document.getElementById('infoModalContent').innerHTML = '';
+
+    });
+
+    document.getElementById('imagesButton').addEventListener('click', () => {
+      showImages(data); 
+      // vaciar contenido del modal para mostrar images
+      document.querySelector('#infoModal').style.display = 'none';
+
+    });
+}
+
+// Cerrar el modal al hacer clic fuera del contenido
+window.addEventListener('click', (event) => {
+  const modal = document.getElementById('infoModal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
 
 
-// MODAL DE INFO E IMAGENES DEL PAIS
+// Función para mostrar información del país
+function showInfo(data) {
+  toastr.info(`${data.name}`, `Información de`);
+  console.log(`Mostrando información de: ${data.name}`);
+}
 
+// Función para mostrar imágenes del país
+function showImages(data) {
+  toastr.info(`${data.name}`,`Imágenes de` );
+  console.log(`Mostrando imágenes de: ${data.name}`);
+}
 
+function createLabel(text, position) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = '30px Arial';
+  context.fillStyle = 'white';
+  context.fillText(text, 0, 30);
 
-// import { openModal, showInfo, showImages, createLabel } from './modal-info-images.js';
-// openModal();
-// showInfo();
-// showImages();
-// createLabel();
-
-
-
-// BUSCAR PAIS EN MAPA
-
-
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  sprite.position.copy(position);
+  sprite.scale.set(0.5, 0.25, 1);
+  scene.add(sprite);
+}
 
 async function searchCountryLocation(country) {
   const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
@@ -194,18 +226,13 @@ async function searchCountryLocation(country) {
 
     // Apuntar la cámara hacia el marcador
     camera.lookAt(markerPosition);
+
     
     console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
   } else {
     alert('País no encontrado');
   }
 }
-
-
-
-// ESCRIBIR PAIS EN EL INPUT Y BUSCAR
-
-
 
 // Seleccionar el botón de búsqueda
 const searchButton = document.querySelector('#searchButton');
@@ -219,6 +246,7 @@ searchButton.addEventListener('click', () => {
     alert('Por favor, ingresa un país para buscar.');
   }
 });
+
 
 // Seleccionar el campo de entrada
 const inputField = document.querySelector('#input');
@@ -235,11 +263,6 @@ inputField.addEventListener('focus', () => {
   // Eliminar el marcador del país seleccionado
   removeMarkers();
 });
-
-
-
-// REMOVER MARCADORES Y ETIQUETAS AL HACER CLIC EN EL INPUT NUEVAMENTE
-
 
 
 function removeMarkers() {
@@ -270,7 +293,128 @@ function removeMarkers() {
   });
 }
 
-
-
-
 window.requestAnimationFrame(animation);
+
+
+// AÑADIR A FAVORITOS Y CAMBIO DE COLOR ICONO AL HACER CLIC
+
+// Inicializar lista de favoritos
+// const favoritos = [];
+
+// // Seleccionar el ícono del corazón
+// const iconoFavoritos = document.getElementById('paises-favoritos');
+
+// // Manejar el clic en el clic del corazon
+// iconoFavoritos.addEventListener('click', () => {
+//   const modal = document.getElementById('infoModalContent');
+//     if (modal) {
+//       const countryName = modal.querySelector('h2')?.textContent;
+//       console.log(countryName);
+//     } else {
+//       console.error('No se encontró el elemento con id "modalContent".');
+//     }
+
+//   if (!favoritos.includes(countryName)) {
+//     // Agregar a favoritos
+//     favoritos.push(countryName);
+//     iconoFavoritos.classList.add('active'); // Cambiar a rojo
+//     actualizarMenuFavoritos();
+//   } else {
+//     // Eliminar de favoritos
+//     const index = favoritos.indexOf(countryName);
+//     favoritos.splice(index, 1);
+//     iconoFavoritos.classList.remove('active'); // Cambiar a blanco
+//     actualizarMenuFavoritos();
+//   }
+// });
+
+// function actualizarMenuFavoritos() {
+//   const menuFavoritos = document.getElementById('menuFavoritos');
+//   menuFavoritos.innerHTML = ''; 
+
+//   favoritos.forEach((pais) => {
+//     const listItem = document.createElement('li');
+//     listItem.textContent = pais;
+//     menuFavoritos.appendChild(listItem);
+//   });
+// }
+
+
+
+
+// CAMBIO ICONO PAIS VISITADO O NO VISITADO 
+
+const visitToggle = document.getElementById('visitado');
+const visitIcon = visitToggle.querySelector('img');
+
+visitToggle.addEventListener('click', () => {
+  if (visitIcon.src.includes('pendiente-visitar.png')) {
+    visitIcon.src = '../static/img/check-visitado.png'; 
+    visitIcon.alt = 'check visitado';
+  } else {
+    visitIcon.src = '../static/img/pendiente-visitar.png'; 
+    visitIcon.alt = 'pendiente por visitar';
+  }
+});
+
+
+
+import { getCountryInfo } from './llamada-apis.js';
+
+// Seleccionar el botón de información
+const infoButton = document.getElementById('infoButton');
+
+// Abrir el modal de información
+function openInfoModal(countryName, countryInfo) {
+  const infoModal = document.createElement('div');
+  infoModal.classList.add('modal');
+  infoModal.setAttribute('id', 'countryInfoModal');
+  infoModal.innerHTML = `
+    <div class="modal-content2">
+      <span class="close" id="closeInfoModal">&times;</span>
+      <h2>${countryName}</h2>
+      <p>${countryInfo}</p>
+    </div>
+  `;
+
+  document.body.appendChild(infoModal);
+  infoModal.style.display = 'flex';
+
+  document.getElementById('closeInfoModal').addEventListener('click', () => {
+    infoModal.remove();
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+      infoModal.remove();
+    }
+  });
+}
+
+// Mostrar informacion del pais 
+infoButton.addEventListener('click', async () => {
+  const modal = document.getElementById('infoModalContent');
+  if (modal) {
+    const countryName = modal.querySelector('h2')?.textContent;
+    if (countryName) {
+      try {
+        const countryInfo = await getCountryInfo(countryName);
+        openInfoModal(countryName, countryInfo);
+        document.getElementById('infoModal').style.display = 'none';
+        document.getElementById('infoModalContent').innerHTML = '';
+      } catch (err) {
+        console.error('Error al obtener información del país:', err);
+      }
+    }
+  } else {
+    console.error('No se encontró el elemento con id "infoModalContent".');
+  }
+});
+
+document.getElementById('closeImagesModal').addEventListener('click', () => {
+  document.querySelector('.images-container').classList.remove('active'); 
+});
+
+document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+  document.getElementById('favoritosContainer').style.display = 'none';
+});
