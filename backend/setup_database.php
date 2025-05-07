@@ -42,7 +42,11 @@ try {
         usuari_id INT NOT NULL,
         data_afegit DATETIME DEFAULT CURRENT_TIMESTAMP,
         url TEXT,
-        FOREIGN KEY (usuari_id) REFERENCES usuaris(id) ON DELETE CASCADE
+        visitado TINYINT(1) DEFAULT 0,
+        data_completat DATETIME NULL DEFAULT NULL,
+        FOREIGN KEY (usuari_id) REFERENCES usuaris(id),
+        UNIQUE KEY (usuari_id, nom)
+
     )");
 
     $stmtFav = $pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, usuari_id) VALUES (?, ?, ?, ?)");
