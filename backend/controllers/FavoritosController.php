@@ -2,23 +2,20 @@
 // ini_set('display_errors', '1');
 // ini_set('display_startup_errors', '1');
 // error_reporting(E_ALL);
-// controllers/AnunciController.php
-
 require_once '../models/Favoritos.php';
-require_once '../config/twig.php';
 require_once '../includes/auth.php';
 require_once '../config/config.php';
 
 // Definimos la clase AnunciController que manejará las solicitudes 
 class FavoritosController {
     private $favoritosModel;
-    private $twig;
+    // private $twig;
 
     // Inicializamos el modelo Anuncio y el motor Twig
     public function __construct() {
         global $pdo; 
         $this->favoritosModel = new Favoritos($pdo);
-        $this->twig = require '../config/twig.php';
+        // $this->twig = require '../config/twig.php';
     }
 
     // Método para hacer una solicitud API usando cURL
@@ -277,7 +274,39 @@ class FavoritosController {
             exit();
         }
     
-    private function sendErrorResponse($message, $code = 500) {
+    
+    public function obtenerPendientes() {
+        header('Content-Type: application/json');
+        if (session_status() == PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'lifetime' => 86400,
+                'path' => '/',
+                'domain' => 'localhost',
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+            session_start();
+        }
+    
+        if (!isset($_SESSION['usuari_id'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Usuario no autenticado']);
+            exit();
+        }
+    
+        try {
+            $usuari_id = $_SESSION['usuari_id'];
+            $pendientes = $this->favoritosModel->obtenerPendientes($usuari_id);
+            echo json_encode(['success' => true, 'data' => $pendientes]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Error al obtener pendientes']);
+        }
+        exit();
+    }
+        
+        private function sendErrorResponse($message, $code = 500) {
         ob_end_clean();
         http_response_code($code);
         header('Content-Type: application/json');
