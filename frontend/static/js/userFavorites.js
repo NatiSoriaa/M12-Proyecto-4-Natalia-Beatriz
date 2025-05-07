@@ -209,9 +209,9 @@ async function deleteAllFavoritos() {
 
 // DELETE FAVORITE 
 async function deleteFavorito(favoritoId) {
-//   if (!confirm('¿Estás seguro de querer eliminar este favorito?')) {
-//     return;
-// }
+  if (!confirm('¿Estás seguro de querer eliminar este favorito?')) {
+    return;
+}
   try {
       const response = await fetch(
           `http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarFavorito`, 
