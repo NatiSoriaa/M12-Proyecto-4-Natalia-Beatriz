@@ -1,8 +1,12 @@
 <?php
 
-// Inicia la sesión si aún no se ha iniciado
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();  // Comienza la sesión
+    session_start([
+        'cookie_lifetime' => 86400,
+        'cookie_secure' => false,
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax'
+    ]);  
 }
 define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
 
@@ -65,11 +69,20 @@ switch ($action) {
             echo json_encode([
                 'status' => 'error',
                 'message' => $e->getMessage()
-            ]);
-    }
+            ]);}
     break;
     case 'obtenerFavoritos':  // Obtener favoritos
         $favoritosController->obtenerFavoritos();
+        break;
+
+    // case 'obtenerPendientes':
+    //     echo json_encode($favoritoController->obtenerPendientes($usuari_id,0));
+    //     break;
+    // case 'obtenerVisitados':
+    //     echo json_encode($favoritoController->obtenerVisitados($usuari_id, 1));
+    //     break;
+    case 'actualizarEstadoVisita':
+        $favoritosController->actualizarEstadoVisita();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
     header('Location: ' . BASE_URL . 'frontend/templates/index.html');

@@ -1,4 +1,6 @@
 <?php
+// display_errors = Off
+// log_errors = On
 
 // controllers/AnunciController.php
 
@@ -6,8 +8,7 @@ require_once '../models/Favoritos.php';
 require_once '../config/twig.php';
 require_once '../includes/auth.php';
 require_once '../config/config.php';
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+
 // Definimos la clase AnunciController que manejará las solicitudes 
 class FavoritosController {
     private $favoritosModel;
@@ -196,6 +197,56 @@ class FavoritosController {
             $this->sendErrorResponse($e->getMessage(), $e->getCode() ?: 500);
         }
     }
+
+    // Visitados. por defecto 0 (pendiente)
+    public function actualizarEstadoVisita() {
+        header('Content-Type: application/json');
+        
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Método no permitido', 405);
+            }
+    
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+    
+            if (!isset($_SESSION['usuari_id'])) {
+                throw new Exception('Usuario no autenticado', 401);
+            }
+    
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            if (!isset($input['nom']) || !isset($input['visitado'])) {
+                throw new Exception('Datos incompletos', 400);
+            }
+    
+            $success = $this->favoritosModel->gestionarEstadoVisita(
+                $input['nom'],
+                $_SESSION['usuari_id'],
+                (int)$input['visitado']
+            );
+    
+            if (!$success) {
+                throw new Exception('Error al actualizar el estado', 500);
+            }
+    
+            echo json_encode([
+                'success' => true,
+                'message' => $input['visitado'] ? 'Marcado como visitado' : 'Marcado como pendiente'
+            ]);
+    
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error_code' => $e->getCode()
+            ]);
+        }
+        exit;
+    }
+
     
     private function sendErrorResponse($message, $code = 500) {
         ob_end_clean();

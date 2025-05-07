@@ -46,5 +46,34 @@ class Favoritos extends Model {
         $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url, usuari_id) VALUES (?, ?, ?, ?, ?)");
         return $stmt->execute([$nom, $descripcio, $categoria, $url, $usuari_id]);
     }
+    // Query SQL para añadir añadir, marcar como visitado o pendiente
+    public function gestionarEstadoVisita($nom, $usuari_id, $visitado) {
+        try {
+            $this->pdo->beginTransaction();
+            
+            // verify if it already exists
+            $stmt = $this->pdo->prepare("SELECT id FROM user_favorites WHERE nom = ? AND usuari_id = ?");
+            $stmt->execute([$nom, $usuari_id]);
+            
+            if ($stmt->fetch()) {
+                // if exists, changes visitado
+                $update = $this->pdo->prepare("UPDATE user_favorites SET visitado = ? WHERE nom = ? AND usuari_id = ?");
+                $update->execute([$visitado, $nom, $usuari_id]);
+            } else {
+                // inserts new data
+                $insert = $this->pdo->prepare("INSERT INTO user_favorites (nom, usuari_id, visitado, descripcio, categoria, url) VALUES (?, ?, ?, '', 'País', NULL)");
+                $insert->execute([$nom, $usuari_id, $visitado]);
+            }
+            
+            $this->pdo->commit();
+            return true;
+            
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            error_log("Error en gestión de estado: " . $e->getMessage());
+            return false;
+        }
+    }
+    
 }
 ?>
