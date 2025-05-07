@@ -1,5 +1,7 @@
 <?php
-
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 if (session_status() == PHP_SESSION_NONE) {
     session_start([
         'cookie_lifetime' => 86400,
@@ -78,9 +80,9 @@ switch ($action) {
     // case 'obtenerPendientes':
     //     echo json_encode($favoritoController->obtenerPendientes($usuari_id,0));
     //     break;
-    // case 'obtenerVisitados':
-    //     echo json_encode($favoritoController->obtenerVisitados($usuari_id, 1));
-    //     break;
+    case 'obtenerVisitados':
+        $favoritosController->obtenerVisitados();
+        break;
     case 'actualizarEstadoVisita':
         $favoritosController->actualizarEstadoVisita();
         break;

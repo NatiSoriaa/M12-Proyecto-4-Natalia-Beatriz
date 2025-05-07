@@ -74,6 +74,12 @@ class Favoritos extends Model {
             return false;
         }
     }
-    
+
+    // obtener visitados
+    public function obtenerVisitados($usuari_id) {
+        $stmt=$this->pdo->prepare("SELECT * FROM user_favorites WHERE usuari_id = ? AND visitado = 1");
+        $stmt->execute([$usuari_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
