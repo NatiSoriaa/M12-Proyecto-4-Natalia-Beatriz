@@ -46,7 +46,7 @@ class Favoritos extends Model {
     
     // Query SQL para añadir elemento a favoritos
     public function añadirAFavoritos($nom, $descripcio, $categoria, $url, $usuari_id) {
-        $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url, usuari_id) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url WHERE usuari_id = ?) VALUES (?, ?, ?, ?, ?)");
         return $stmt->execute([$nom, $descripcio, $categoria, $url, $usuari_id]);
     }
     // Query SQL para añadir añadir, marcar como visitado o pendiente

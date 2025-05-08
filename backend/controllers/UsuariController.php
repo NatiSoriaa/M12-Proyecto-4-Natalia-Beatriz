@@ -1,6 +1,7 @@
 <?php
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start([
         'name' => 'EarthExplorerSess',
@@ -11,6 +12,8 @@ if (session_status() == PHP_SESSION_NONE) {
     ]);
 }
 
+// define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
+
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
     private $usuariModel;
@@ -19,7 +22,6 @@ class UsuariController {
     // Constructor del modelo Usuari y el motor Twig
     public function __construct() {
         $this->usuariModel = new Usuari();
-        // $this->twig = require '../config/twig.php';
 
     }
     // Función de registro
@@ -70,7 +72,7 @@ class UsuariController {
                 echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
                 } else {
                     echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
-                }
+            }
                 exit();
             // }
           }

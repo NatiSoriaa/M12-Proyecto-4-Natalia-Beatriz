@@ -53,3 +53,5 @@ function createLabel(text, position) {
   sprite.scale.set(0.5, 0.25, 1);
   scene.add(sprite);
 }
+
+export {createLabel};

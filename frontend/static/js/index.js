@@ -270,7 +270,90 @@ function removeMarkers() {
   });
 }
 
-
-
-
 window.requestAnimationFrame(animation);
+
+// CAMBIO ICONO PAIS VISITADO O NO VISITADO 
+
+// const visitToggle = document.getElementById('visitado');
+// const visitIcon = visitToggle.querySelector('img');
+
+// visitToggle.addEventListener('click', () => {
+//   if (visitIcon.src.includes('pendiente-visitar.png')) {
+//     visitIcon.src = '../static/img/check-visitado.png'; 
+//     visitIcon.alt = 'check visitado';
+//     if (visitIcon.classList.contains('visitado') {
+//       return;
+
+//     }) else {
+      
+//     } 
+//   } else {
+//     visitIcon.src = '../static/img/pendiente-visitar.png'; 
+//     visitIcon.alt = 'pendiente por visitar';
+//     visitIcon.classList.remove('visitado');
+//     visitIcon.classList.add('pendiente');
+
+//   }
+// });
+
+
+
+import { getCountryInfo } from './llamada-apis.js';
+
+// Seleccionar el botón de información
+const infoButton = document.getElementById('infoButton');
+
+// Abrir el modal de información
+function openInfoModal(countryName, countryInfo) {
+  const infoModal = document.createElement('div');
+  infoModal.classList.add('modal');
+  infoModal.setAttribute('id', 'countryInfoModal');
+  infoModal.innerHTML = `
+    <div class="modal-content2">
+      <span class="close" id="closeInfoModal">&times;</span>
+      <h2>${countryName}</h2>
+      <p>${countryInfo}</p>
+    </div>
+  `;
+
+  document.body.appendChild(infoModal);
+  infoModal.style.display = 'flex';
+
+  document.getElementById('closeInfoModal').addEventListener('click', () => {
+    infoModal.remove();
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === infoModal) {
+      infoModal.remove();
+    }
+  });
+}
+
+// Mostrar informacion del pais 
+infoButton.addEventListener('click', async () => {
+  const modal = document.getElementById('infoModalContent');
+  if (modal) {
+    const countryName = modal.querySelector('h2')?.textContent;
+    if (countryName) {
+      try {
+        const countryInfo = await getCountryInfo(countryName);
+        openInfoModal(countryName, countryInfo);
+        document.getElementById('infoModal').style.display = 'none';
+        document.getElementById('infoModalContent').innerHTML = '';
+      } catch (err) {
+        console.error('Error al obtener información del país:', err);
+      }
+    }
+  } else {
+    console.error('No se encontró el elemento con id "infoModalContent".');
+  }
+});
+
+document.getElementById('closeImagesModal').addEventListener('click', () => {
+  document.querySelector('.images-container').classList.remove('active');
+});
+
+document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+  document.getElementById('favoritosContainer').style.display = 'none';
+});
