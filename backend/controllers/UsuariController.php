@@ -1,8 +1,6 @@
 <?php
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
-// require_once '../config/twig.php';
-
 if (session_status() == PHP_SESSION_NONE) {
     session_start([
         'name' => 'EarthExplorerSess',
@@ -35,37 +33,37 @@ class UsuariController {
             $email = $data['email'];
             $contrasenya = password_hash($data['contrasenya'], PASSWORD_BCRYPT);
 
-            if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
+            // if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
 
             //instanciem la classe PHPMailer
-            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            try {
-                //primer configurem PHPMailer per utilitzar SMTP
-                $mail->isSMTP(); //ús del protocol SMTP
-                $mail->Host = SMTP_HOST; //servidor SMTP
-                $mail->SMTPAuth = true; //autenticacio
-                $mail->Username = SMTP_USER; //username per a l'autenticacio
-                $mail->Password = SMTP_PASS; //contrassenya
-                //connexió segura amb STARTTLS
-                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = SMTP_PORT; //port SMTP per a STARTTLS
+            // $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            // try {
+            //     //primer configurem PHPMailer per utilitzar SMTP
+            //     $mail->isSMTP(); //ús del protocol SMTP
+            //     $mail->Host = SMTP_HOST; //servidor SMTP
+            //     $mail->SMTPAuth = true; //autenticacio
+            //     $mail->Username = SMTP_USER; //username per a l'autenticacio
+            //     $mail->Password = SMTP_PASS; //contrassenya
+            //     //connexió segura amb STARTTLS
+            //     $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            //     $mail->Port = SMTP_PORT; //port SMTP per a STARTTLS
                 
-                //adreça del usuari com a remitent
-                $mail->setFrom($email, $nom);
-                $mail->addAddress('beatrizabadjim@gmail.com', 'bea');
-                $missatge = "Hey there $nom! You just registered to get the best experience";
+            //     //adreça del usuari com a remitent
+            //     $mail->setFrom($email, $nom);
+            //     $mail->addAddress('beatrizabadjim@gmail.com', 'bea');
+            //     $missatge = "Hey there $nom! You just registered to get the best experience";
 
-                //contingut del correu
-                $mail->isHTML(true); //format HTML
-                $mail->Subject = 'Welcome to Earth Explorer';
-                $mail->Body = $missatge; //missatge a l'user
-                $mail->send();
+            //     //contingut del correu
+            //     $mail->isHTML(true); //format HTML
+            //     $mail->Subject = 'Welcome to Earth Explorer';
+            //     $mail->Body = $missatge; //missatge a l'user
+            //     $mail->send();
              
-            } catch (Exception $e) {
-                //es registra a error.log
-                error_log("Error al enviar el correu: " . $mail->ErrorInfo, 3, '.logs/error.log');
-                exit();
-            }
+            // } catch (Exception $e) {
+            //     //es registra a error.log
+            //     error_log("Error al enviar el correu: " . $mail->ErrorInfo, 3, '.logs/error.log');
+            //     exit();
+            // }
             // Creación de usuario y redirigimos a login
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
                 // envia json al frontend
@@ -74,7 +72,7 @@ class UsuariController {
                     echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
                 }
                 exit();
-            }
+            // }
           }
 
     }
