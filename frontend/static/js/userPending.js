@@ -214,6 +214,3 @@ async function displayPendiente(pendientes) {
     
     modalContent.appendChild(pendientesContainer);
 }
-document.querySelector('#pendientesPorVisitar').addEventListener('click', () => {
-  cargarPendientes();
-});
