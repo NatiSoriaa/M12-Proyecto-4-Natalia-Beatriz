@@ -8,7 +8,8 @@ async function getFavorites() {
         try {
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
-                credentials: 'include'
+                credentials: 'include',
+                cache: 'no-store' // no almacenar
             });
         
             const data = await response.json();
@@ -154,16 +155,6 @@ iconoFavoritos.addEventListener('click', async () => {
         console.error('Error guardando favorito:', err);
     }
 });
-function actualizarMenuFavoritos() {
-  const menuFavoritos = document.getElementById('menuFavoritos');
-  menuFavoritos.innerHTML = ''; 
-
-  favoritos.forEach((pais) => {
-    const listItem = document.createElement('li');
-    listItem.textContent = pais;
-    menuFavoritos.appendChild(listItem);
-  });
-}
 
 // DELETE ALL FAVORITES (SELECT ALL)
 async function deleteAllFavoritos() {
