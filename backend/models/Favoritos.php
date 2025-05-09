@@ -19,10 +19,16 @@ class Favoritos extends Model {
     }
 
     // Query SQL para obtener anuncio por id
-    public function obtenirFavoritoPerId($id){
-        $stmt = $this->pdo->prepare('SELECT * from user_favorites where id = ?');
-        $stmt->execute([$id]); // Consulta ejecutada con el id
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    // public function obtenirFavoritoPerId($id){
+    //     $stmt = $this->pdo->prepare('SELECT * from user_favorites where id = ?');
+    //     $stmt->execute([$id]); // Consulta ejecutada con el id
+    //     return $stmt->fetch(PDO::FETCH_ASSOC);
+    // }
+
+    public function obtenerFavoritosPorUsuario($usuari_id){
+        $stmt = $this->pdo->prepare('SELECT * from user_favorites where usuari_id = ?');
+        $stmt->execute([$usuari_id]); 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Query SQL para crear un anuncio
@@ -46,9 +52,10 @@ class Favoritos extends Model {
     
     // Query SQL para añadir elemento a favoritos
     public function añadirAFavoritos($nom, $descripcio, $categoria, $url, $usuari_id) {
-        $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url WHERE usuari_id = ?) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, url, usuari_id) VALUES (?, ?, ?, ?, ?)");
         return $stmt->execute([$nom, $descripcio, $categoria, $url, $usuari_id]);
     }
+
     // Query SQL para añadir añadir, marcar como visitado o pendiente
     public function gestionarEstadoVisita($nom, $usuari_id, $visitado) {
         try {
