@@ -255,31 +255,31 @@ function createLabel(text, position) {
   scene.add(sprite);
 }
 
-async function searchCountryLocation(country) {
+// Modificar searchCountryLocation para aceptar un indicador de país visitado
+async function searchCountryLocation(country, isVisited = false) {
   const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
   const data = await response.json();
   if (data.length > 0) {
     const { lat, lon } = data[0];
     const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
 
-    // Crear el marcador en el mapa
-    createMarker(parseFloat(lat), parseFloat(lon), country);
+    // Crear marcador en el mapa
+    createMarker(parseFloat(lat), parseFloat(lon), country, isVisited ? 0xffff00 : 0xff0000); // Amarillo para visitados
 
-    // Detener la rotación del mundo
+    if (!isVisited) {
+      saveVisitedCountry(country); // Guardar en localStorage si no es un país visitado
+    }
+
+    // Detener rotación y mover cámara
     orbitControls.autoRotate = false;
-
-    // Mover la cámara hacia el marcador con un poco de zoom
-    const zoomLevel = 1.2; // Ajusta el nivel de zoom
+    const zoomLevel = 1.2;
     camera.position.set(
       markerPosition.x * zoomLevel,
       markerPosition.y * zoomLevel,
       markerPosition.z * zoomLevel
     );
-
-    // Apuntar la cámara hacia el marcador
     camera.lookAt(markerPosition);
 
-    
     console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
   } else {
     alert('País no encontrado');
@@ -469,4 +469,82 @@ document.getElementById('closeImagesModal').addEventListener('click', () => {
 
 document.getElementById('closeFavoritesModal').addEventListener('click', () => {
   document.getElementById('favoritosContainer').style.display = 'none';
+});
+
+
+
+
+
+// ALMACENAR PAISES EN LOCALSTORAGE 
+
+// ...existing code...
+
+// Almacenar países visitados en localStorage
+function saveVisitedCountry(country) {
+  let visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
+  if (!visitedCountries.includes(country)) {
+    visitedCountries.push(country);
+    localStorage.setItem('visitedCountries', JSON.stringify(visitedCountries));
+  }
+}
+
+
+// Mostrar países visitados en el mapa
+function showVisitedCountries() {
+  const visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
+  visitedCountries.forEach(async (country) => {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
+    const data = await response.json();
+    if (data.length > 0) {
+      const { lat, lon } = data[0];
+      createMarker(parseFloat(lat), parseFloat(lon), country, 0xffff00); // Amarillo para visitados
+    } else {
+      console.warn(`No se pudo encontrar la ubicación para el país: ${country}`);
+    }
+  });
+}
+
+// Eliminar marcadores de países visitados
+function removeVisitedMarkers() {
+  const visitedMarkers = [];
+  const visitedLabels = [];
+  
+  // Recorrer todos los objetos en la escena
+  scene.traverse((object) => {
+    // Buscar marcadores (esferas amarillas)
+    if (object.isMesh && object.geometry.type === 'SphereGeometry' && object.material.color.getHex() === 0xffff00) {
+      visitedMarkers.push(object);
+    }
+
+    // Buscar etiquetas (sprites)
+    if (object.isSprite) {
+      visitedLabels.push(object);
+    }
+  });
+
+  // Eliminar marcadores
+  visitedMarkers.forEach((marker) => {
+    scene.remove(marker);
+  });
+
+  // Eliminar etiquetas
+  visitedLabels.forEach((label) => {
+    scene.remove(label);
+  });
+}
+
+// Manejar clic en el botón "Tu actividad"
+let showingVisited = false;
+const activityButton = document.getElementById('tuActividad');
+
+document.getElementById('tuActividad').addEventListener('click', () => {
+  if (!showingVisited) {
+    showVisitedCountries();
+    activityButton.textContent = 'Ocultar actividad';
+    showingVisited = true;
+  } else {
+    removeVisitedMarkers();
+    activityButton.textContent = 'Tu actividad';
+    showingVisited = false;
+  }
 });
