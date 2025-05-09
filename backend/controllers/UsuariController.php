@@ -81,7 +81,6 @@ class UsuariController {
 
     // Método login
     public function login() {
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // datos desde el frontend
             $data = json_decode(file_get_contents("php://input"), true);
@@ -89,24 +88,18 @@ class UsuariController {
             $contrasenya = $data['contrasenya'];
             // Miramos si el email insertado existe en la base de datos
             $usuari = $this->usuariModel->obtenirUsuariPerEmail($email);
-
+    
             // Si el email y la contraseña coinciden, empieza la sesión
             if ($usuari && password_verify($contrasenya, $usuari['contrasenya'])) {
-                session_start();
                 $_SESSION['usuari_id'] = $usuari['id'];
                 $_SESSION['nom'] = $usuari['nom'];
                 $_SESSION['rol'] = $usuari['rol'];
-            
-                // $redirect = ($_SESSION['rol'] === 'admin') 
-                //     ? BASE_URL . 'backend/public/admin.php'
-                //     : BASE_URL . 'backend/public/usuari.php';
-            
+    
                 echo json_encode([
                     'success' => true,
                     'id' => $_SESSION['usuari_id'],
                     'nom' => $_SESSION['nom'],
                     'rol' => $_SESSION['rol'],
-                    // 'redirect' => $redirect
                 ]);
                 exit();
             } else {
@@ -118,26 +111,20 @@ class UsuariController {
             }
         }
     }
-    
-    // check if session is active
+        
+        // check if session is active
+        
     public function checkSession() {
         if (ob_get_length()) ob_clean();
         header("Access-Control-Allow-Origin: http://localhost");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
-        session_set_cookie_params([
-            'lifetime' => 3600,
-            'path' => '/',
-            'domain' => 'http://localhost/',
-            'secure' => false,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
-        
+    
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         } 
-        if(isset($_SESSION['usuari_id'])) {
+    
+        if (isset($_SESSION['usuari_id'])) {
             echo json_encode([
                 'logged' => true,
                 'id' => $_SESSION['usuari_id'],
