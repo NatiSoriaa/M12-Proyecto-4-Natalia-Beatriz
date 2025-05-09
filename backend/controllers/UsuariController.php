@@ -1,4 +1,7 @@
 <?php
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
 
@@ -17,7 +20,7 @@ if (session_status() == PHP_SESSION_NONE) {
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
     private $usuariModel;
-    private $twig;
+    // private $twig;
 
     // Constructor del modelo Usuari y el motor Twig
     public function __construct() {
