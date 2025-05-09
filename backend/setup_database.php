@@ -49,8 +49,8 @@ try {
 
     )");
 
-    $stmtFav = $pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, usuari_id) VALUES (?, ?, ?, ?)");
-    $stmtFav->execute(['Paella', 'Arroz con cosas', 'Comida', 1]);
+    // $stmtFav = $pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, usuari_id) VALUES (?, ?, ?, ?)");
+    // $stmtFav->execute(['Paella', 'Arroz con cosas', 'Comida', 1]);
 
     echo "✅ Base de datos y tablas creadas correctamente!";
     header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/frontend/templates/index.html');
