@@ -109,7 +109,8 @@ async function getVisited() {
 
 async function displayVisited(visited) {
   const modalContent = document.querySelector('.fav-content');
-    
+  gsap.fromTo(modalContent, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+
     const title = modalContent.querySelector('.fav-title');
     title.textContent = 'Mis visitados';
 

@@ -1,5 +1,6 @@
 import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
+import { loadToastr } from "./toastr.js";
 
 // import { Menu } from './menu.js';
 // Menu();
@@ -433,11 +434,13 @@ function openInfoModal(countryName, countryInfo) {
   infoModal.style.display = 'flex';
 
   document.getElementById('closeInfoModal').addEventListener('click', () => {
+    gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
     infoModal.remove();
   });
 
   window.addEventListener('click', (event) => {
     if (event.target === infoModal) {
+      gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
       infoModal.remove();
     }
   });
@@ -464,10 +467,12 @@ infoButton.addEventListener('click', async () => {
 });
 
 document.getElementById('closeImagesModal').addEventListener('click', () => {
+  gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
   document.querySelector('.images-container').classList.remove('active'); 
 });
 
 document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+  gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
   document.getElementById('favoritosContainer').style.display = 'none';
 });
 
@@ -532,17 +537,19 @@ function removeVisitedMarkers() {
     scene.remove(label);
   });
 }
-
+loadToastr();
 // Manejar clic en el botón "Tu actividad"
 let showingVisited = false;
 const activityButton = document.getElementById('tuActividad');
 
 document.getElementById('tuActividad').addEventListener('click', () => {
   if (!showingVisited) {
+    toastr.info('Mostrando actividad');
     showVisitedCountries();
     activityButton.textContent = 'Ocultar actividad';
     showingVisited = true;
   } else {
+    toastr.info('Ocultando actividad');
     removeVisitedMarkers();
     activityButton.textContent = 'Tu actividad';
     showingVisited = false;

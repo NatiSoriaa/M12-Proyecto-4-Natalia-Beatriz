@@ -717,3 +717,9 @@ body.light-mode .modal-content {
   50% { transform: scale(1.6); }
   100% { transform: scale(1.5); }
 }
+
+.visited-item, .favorite-item {
+  padding:20px;
+  border-radius: 5px;
+  background-color: rgba(45, 45, 45, 0.2);
+}
