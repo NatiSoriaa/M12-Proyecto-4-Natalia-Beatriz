@@ -31,7 +31,7 @@ async function getFavorites() {
             console.error(error);
         }
     } else {
-        toastr.warning('Debes iniciar sesión para ver favoritos');
+        toastr.warning('Debes iniciar sesión para ver tus favoritos');
     }
 }
 
@@ -136,10 +136,6 @@ iconoFavoritos.addEventListener('click', async () => {
             throw new Error('Invalid server response');
         }
 
-        if (!response.ok) {
-            throw new Error(result.message || `HTTP error! status: ${response.status}`);
-        }
-
         if (result.status === 'success') {
             toastr.success(result.message || 'País añadido a favoritos');
             iconoFavoritos.classList.add('active');
@@ -152,7 +148,6 @@ iconoFavoritos.addEventListener('click', async () => {
         } else {
             toastr.error(err.message || 'Error al conectar con el servidor');
         }
-        console.error('Error guardando favorito:', err);
     }
 });
 
