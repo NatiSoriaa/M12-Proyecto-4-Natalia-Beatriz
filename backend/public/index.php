@@ -80,9 +80,6 @@ switch ($action) {
     case 'obtenerVisitados':
         $favoritosController->obtenerVisitados();
         break;
-    case 'obtenerPendientes':
-        $favoritosController->obtenerPendientes();
-        break;
     case 'actualizarEstadoVisita':
         $favoritosController->actualizarEstadoVisita();
         break;

@@ -227,7 +227,7 @@ class FavoritosController {
     //         exit();
     //     }
     
-    // Visitados. por defecto 0 (pendiente)
+    // Visitados. por defecto 0
     public function actualizarEstadoVisita() {
         header('Content-Type: application/json');
         
@@ -262,7 +262,7 @@ class FavoritosController {
     
             echo json_encode([
                 'success' => true,
-                'message' => $input['visitado'] ? 'Marcado como visitado' : 'Marcado como pendiente'
+                'message' => $input['visitado'] ? 'Marcado como visitado' : 'Desmarcado como visitado'
             ]);
     
         } catch (Exception $e) {
@@ -305,38 +305,6 @@ class FavoritosController {
             }
             exit();
         }
-    
-    
-    public function obtenerPendientes() {
-        header('Content-Type: application/json');
-        if (session_status() == PHP_SESSION_NONE) {
-            session_set_cookie_params([
-                'lifetime' => 86400,
-                'path' => '/',
-                'domain' => 'localhost',
-                'secure' => false,
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]);
-            session_start();
-        }
-    
-        if (!isset($_SESSION['usuari_id'])) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Usuario no autenticado']);
-            exit();
-        }
-    
-        try {
-            $usuari_id = $_SESSION['usuari_id'];
-            $pendientes = $this->favoritosModel->obtenerPendientes($usuari_id);
-            echo json_encode(['success' => true, 'data' => $pendientes]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Error al obtener pendientes']);
-        }
-        exit();
-    }
         
         private function sendErrorResponse($message, $code = 500) {
         ob_end_clean();
