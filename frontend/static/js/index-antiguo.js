@@ -1,6 +1,7 @@
 import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 import { loadToastr } from "./toastr.js";
+import { restCountryInfo } from "./randomCountryApi.js";
 
 // import { Menu } from './menu.js';
 // Menu();
@@ -106,9 +107,14 @@ window.addEventListener('resize', () => {
 });
 
 const orbitControls = new OrbitControls(camera, canvas);
+// configuracion de animacion del planeta
 orbitControls.autoRotate = true;
+orbitControls.autoRotateSpeed = 0.5; 
 orbitControls.enableDamping = true;
-orbitControls.enableZoom = false;
+orbitControls.dampingFactor = 0.05;
+orbitControls.minDistance = 1.2; 
+orbitControls.maxDistance = 5; 
+orbitControls.enableZoom = true;
 
 const animation = () => {
   orbitControls.update();
@@ -132,17 +138,22 @@ function latLonToVector3(lat, lon, radius = 1) {
 
 const markers = []; // Array para almacenar los marcadores
 
-function createMarker(lat, lon, name, color = 0xff0000) {
+function createMarker(lat, lon, name, countryInfo = null, color = 0xff0000) {
   const position = latLonToVector3(lat, lon);
   const markerGeometry = new THREE.SphereGeometry(0.02, 16, 16);
   const markerMaterial = new THREE.MeshBasicMaterial({ color });
   const marker = new THREE.Mesh(markerGeometry, markerMaterial);
   marker.position.copy(position);
-  marker.userData = { name, lat, lon }; // Guardar datos del marcador
+  marker.userData = { 
+    name: typeof name === 'string' ? name : name.name?.common || 'Unknown',
+    countryInfo: countryInfo || { name: typeof name === 'string' ? { common: name } : name },
+    lat, 
+    lon
+   }
   scene.add(marker);
 
   markers.push(marker); // Agregar el marcador al array
-  createLabel(name, position);
+  createLabel(marker.userData.name, position);
 
   // bouncing effect for marker
   let bounces = 4;
@@ -161,87 +172,172 @@ function createMarker(lat, lon, name, color = 0xff0000) {
     
     amplitud *= 0.5;
   }
-  
-  // Hacer que el marcador sea interactivo
-  marker.callback = () => {
-    openModal(marker.userData); // Abrir el modal con los datos del marcador
-  };
+    marker.geometry.computeBoundingSphere();
+    marker.userData.isMarker = true;
+      // Hacer que el marcador sea interactivo
+      marker.callback = function() {
+      if (this.userData.countryInfo) {
+        openModal(this.userData.countryInfo);
+      } else {
+        restCountryInfo(this.userData.name)
+          .then(info => openModal(info))
+          .catch(() => openModal({name: this.userData.name}));
+      }
+    };
+  return marker;
 }
 
-  // Agregar evento de clic al marcador
-  
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+// evento click marcador
+function setupMarkerClick() {
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
 
+  function onClick(event) {
+    if (event.target !== canvas) return;
+
+    // Calcular posición normalizada del ratón
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    // Actualizar el raycaster
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Buscar intersecciones con los marcadores
+    const intersects = raycaster.intersectObjects(markers, true);
+    
+    console.log('Intersecciones:', intersects);
+
+    if (intersects.length > 0) {
+      const marker = intersects[0].object;
+      console.log('Marcador clickeado:', marker.userData);
+      marker.callback();
+      event.stopPropagation();
+    }
+  }
+
+  canvas.addEventListener('click', onClick, false);
+  return () => canvas.removeEventListener('click', onClick);
+}
 window.addEventListener('click', (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(markers);
-  // console.log('Intersecciones detectadas:', intersects); // Depuración
-  
-
-  if (intersects.length > 0) {
-    const marker = intersects[0].object;
-    // console.log('Marcador clickeado:', marker.userData); // Depuración
-    marker.callback();
-
+  const modal = document.getElementById('infoModal');
+  if (event.target === modal) {
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = 'none';
+        }
+    });      
+    
   }
 });
 
 // Función para abrir el modal con contenido dinámico
-function openModal(data) {
-    const modal = document.getElementById('infoModal');
-    modal.setAttribute('style', 'display: flex !important;');
+function openModal(country) {
+  const modal = document.getElementById('infoModal');
+  const name = country.name?.common || 'No disponible';
+  const officialName = country.name?.official || 'No disponible';
+  const capital = country.capital?.[0] || 'No disponible';
+  const region = country.region || 'No disponible';
+  const subregion = country.subregion || 'No disponible';
+  const population = country.population ? country.population.toLocaleString() : 'No disponible';
+  const area = country.area ? `${country.area.toLocaleString()} km²` : 'No disponible';
+  const languages = country.languages ? Object.values(country.languages).join(', ') : 'No disponible';
+  const flag = country.flags?.svg || country.flags?.png || '';
 
-    const modalContent = document.getElementById('infoModalContent');
-    modalContent.innerHTML = `
-      <h2>${data.name}</h2>
-      <p>Latitud: ${data.lat}</p>
-      <p>Longitud: ${data.lon}</p>
-    `;
+  document.getElementById('infoModalContent').innerHTML = `
+    <div class="country-header">
+    
+      <h2>${name}</h2>
+      ${officialName !== name ? `<p class="official-name">${officialName}</p>` : ''}
+      <img src="${flag}" alt="Bandera de ${name}" class="country-flag">
+    </div>
+    
+    <div class="country-details">
+      <div class="details-column">
+        <p><strong>Capital:</strong> ${capital}</p>
+        <p><strong>Región:</strong> ${region}</p>
+        <p><strong>Subregión:</strong> ${subregion}</p>
+      </div>
+      
+      <div class="details-column">
+        <p><strong>Población:</strong> ${population}</p>
+        <p><strong>Área:</strong> ${area}</p>
+        <p><strong>Idiomas:</strong> ${languages}</p>
+      </div>
+    </div>
+  `;
+  gsap.fromTo(modal, 
+    { opacity: 0 },
+    { 
+      opacity: 1, 
+      y: 0,
+      duration: 0.8,
+      onStart: () => {
+        modal.style.display = 'flex';
+      }
+    }
+  );
+  document.getElementById('infoButton').addEventListener('click', () => {
+    showInfo(country);
+    gsap.fromTo(modal, 
+    { opacity: 1 },
+    { 
+      opacity: 0, 
+      y: 0,
+      duration: 0.8,
+      onComplete: () => {
+        modal.style.display = 'none';
+      }
+    }
+  );
+    
+  });
 
-    // Agregar eventos a los botones
-    document.getElementById('infoButton').addEventListener('click', () => {
-      showInfo(data); // Mostrar información del país
-      document.querySelector('#infoModal').style.display = 'none';
-
-      document.getElementById('infoModalContent').innerHTML = '';
-
-    });
-
-    document.getElementById('imagesButton').addEventListener('click', () => {
-      showImages(data); 
-      // vaciar contenido del modal para mostrar images
-      document.querySelector('#infoModal').style.display = 'none';
-
-    });
+  document.getElementById('imagesButton').addEventListener('click', () => {
+    showImages(country);
+   gsap.fromTo(modal, 
+    { opacity: 1 },
+    { 
+      opacity: 0, 
+      y: 0,
+      duration: 0.8,
+      onComplete: () => {
+        modal.style.display = 'none';
+      }
+    })
+  });
 }
 
 // Cerrar el modal al hacer clic fuera del contenido
 window.addEventListener('click', (event) => {
   const modal = document.getElementById('infoModal');
   if (event.target === modal) {
-    modal.style.display = 'none';
+          gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = 'none';
+        }
+    });
   }
 });
 
-
 // Función para mostrar información del país
 function showInfo(data) {
-  toastr.info(`${data.name}`, `Información de`);
-  console.log(`Mostrando información de: ${data.name}`);
+const name = data.name?.common || data.name || 'Este país';
+  toastr.info(`Información de ${name}`);  console.log(`Mostrando información de: ${data.name}`);
 }
 
 // Función para mostrar imágenes del país
 function showImages(data) {
-  toastr.info(`${data.name}`,`Imágenes de` );
-  console.log(`Mostrando imágenes de: ${data.name}`);
+  const name = data.name?.common || data.name || 'Este país';
+  toastr.info(`Imágenes de ${name}`);
 }
 
 function createLabel(text, position) {
+    const labelText = typeof text === 'string' ? text : text.name || 'Unknown';
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   context.font = '30px Arial';
@@ -256,64 +352,100 @@ function createLabel(text, position) {
   scene.add(sprite);
 }
 
-// Modificar searchCountryLocation para aceptar un indicador de país visitado
-async function searchCountryLocation(country, isVisited = false) {
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
-  const data = await response.json();
-  if (data.length > 0) {
-    const { lat, lon } = data[0];
-    const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
-
-    // Crear marcador en el mapa
-    createMarker(parseFloat(lat), parseFloat(lon), country, isVisited ? 0xffff00 : 0xff0000); // Amarillo para visitados
-
-    if (!isVisited) {
-      saveVisitedCountry(country); // Guardar en localStorage si no es un país visitado
+async function searchCountryLocation(countryName) {
+  try {
+    searchButton.disabled = true;
+    const countryInfo = await restCountryInfo(countryName);
+    
+    if (!countryInfo) {
+      throw new Error('No se encontró información para este país');
     }
 
-    // Detener rotación y mover cámara
-    orbitControls.autoRotate = false;
-    const zoomLevel = 1.2;
-    camera.position.set(
-      markerPosition.x * zoomLevel,
-      markerPosition.y * zoomLevel,
-      markerPosition.z * zoomLevel
-    );
-    camera.lookAt(markerPosition);
+    // coordenadas con api nominatim
+    const nominatimResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(countryInfo.name.common)}`);
+    const nominatimData = await nominatimResponse.json();
+    
+    if (nominatimData.length === 0) {
+      throw new Error('No se encontraron coordenadas para este país');
+    }
 
-    console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
-  } else {
-    alert('País no encontrado');
+    const { lat, lon } = nominatimData[0];
+    
+    // marcador en el mapa
+    createMarker(
+      parseFloat(lat),
+      parseFloat(lon),
+      countryInfo.name.common,
+      countryInfo,
+      0xff0000
+    );
+
+    // Mover cámara al país con animación suave
+    const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
+    
+    const zoomDistance = 1.8; 
+    orbitControls.autoRotate = false;
+    
+    // animacion encontrar pais
+    await new Promise(resolve => {
+          gsap.to(camera.position, {
+            x: markerPosition.x * zoomDistance,
+            y: markerPosition.y * zoomDistance,
+            z: markerPosition.z * zoomDistance,
+            duration: 2,
+            ease: "power2.inOut",
+            onUpdate: () => {
+              orbitControls.target.copy(markerPosition);
+              orbitControls.update();
+            },
+            onComplete: () => {
+              setTimeout(() => {
+                camera.lookAt(markerPosition);
+                resolve();
+              }, 300);
+            }
+          });
+      });
+  } catch (error) {
+    console.error('Error en la búsqueda:', error);
+    toastr.error(error.message, 'Error en la búsqueda');
+  } finally {
+    searchButton.disabled = false;
   }
 }
 
-// Seleccionar el botón de búsqueda
 const searchButton = document.querySelector('#searchButton');
+const searchInput = document.querySelector('#input');
 
-// Agregar evento al botón de busqueda
 searchButton.addEventListener('click', () => {
-  const country = document.querySelector('#input').value; // Obtener el valor del input
-  if (country.trim() !== '') {
-    searchCountryLocation(country); // Llamar a la funcion de busqueda
+  const country = searchInput.value.trim();
+  if (country) {
+    searchCountryLocation(country);
   } else {
-    alert('Por favor, ingresa un país para buscar.');
+    alert('Por favor ingresa un nombre de país');
+  }
+});
+
+// buscar con enter
+searchInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const country = searchInput.value.trim();
+    if (country) {
+      searchCountryLocation(country);
+    }
   }
 });
 
 
-// Seleccionar el campo de entrada
 const inputField = document.querySelector('#input');
 
-// Agregar evento al hacer clic en el campo de entrada
 inputField.addEventListener('focus', () => {
-  // Reanudar la rotación del mundo
   orbitControls.autoRotate = true;
 
-  // Restablecer la posición y el zoom de la cámara
-  camera.position.set(0, 0, 3); // Ajusta la posición inicial de la cámara
-  camera.lookAt(0, 0, 0); // Apuntar al centro del mundo
+  camera.position.set(0, 0, 3); // posicion inicial camara
+  camera.lookAt(0, 0, 0); // centro del mundo
 
-  // Eliminar el marcador del país seleccionado
+  // eliminar marcador
   removeMarkers();
 });
 
@@ -434,14 +566,19 @@ function openInfoModal(countryName, countryInfo) {
   infoModal.style.display = 'flex';
 
   document.getElementById('closeInfoModal').addEventListener('click', () => {
-    gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+    gsap.fromTo(infoModal, { opacity: 1 }, { opacity: 0, duration: 0.5 });
     infoModal.remove();
   });
 
   window.addEventListener('click', (event) => {
     if (event.target === infoModal) {
-      gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
-      infoModal.remove();
+      gsap.to(modal, {
+          opacity: 0,
+          duration: 0.5,
+          onComplete: () => {
+              infoModal.remove();
+          }
+      });      
     }
   });
 }

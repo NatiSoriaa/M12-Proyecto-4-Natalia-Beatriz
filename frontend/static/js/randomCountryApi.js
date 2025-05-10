@@ -45,3 +45,29 @@ function closeRandomModal() {
     }
   });
 }
+
+// randomCountryApi.js
+async function restCountryInfo(countryName) {
+  try {
+    // busqueda exacta
+    let response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`);
+    
+    // busqueda parcial
+    if (!response.ok) {
+      response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}`);
+    }
+    
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data[0]; 
+
+  } catch (error) {
+    console.error('Error al obtener datos del país:', error);
+    return null;
+  }
+}
+
+export { restCountryInfo };

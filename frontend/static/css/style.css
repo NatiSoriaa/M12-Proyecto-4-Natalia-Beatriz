@@ -731,3 +731,7 @@ body.light-mode .modal-content {
   border-radius: 5px;
   background-color: rgba(45, 45, 45, 0.2);
 }
+
+.country-flag {
+  width:300px;
+}
