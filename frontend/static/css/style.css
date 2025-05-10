@@ -683,3 +683,37 @@ body.light-mode .modal-content {
   color: #ebebeb;
 }
 
+/* RATING VISITED COUNTRIES */
+
+.emoji-rating {
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 30px;
+  padding:10px;
+  cursor: pointer;
+}
+
+.emoji {
+  transition: transform 0.3s ease;
+}
+
+.emoji:hover {
+  transform: scale(1.2);
+}
+
+.emoji.selected {
+  transform: scale(1.5);
+  filter: drop-shadow(0 0 4px gold);
+  animation: pop 0.2s ease;
+}
+
+.emoji:not(.selected) {
+  color: #ccc; 
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.6); }
+  100% { transform: scale(1.5); }
+}
