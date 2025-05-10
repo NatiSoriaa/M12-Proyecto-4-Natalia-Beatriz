@@ -396,18 +396,18 @@ window.requestAnimationFrame(animation);
 
 // CAMBIO ICONO PAIS VISITADO O NO VISITADO 
 
-const visitToggle = document.getElementById('visitado');
-const visitIcon = visitToggle.querySelector('img');
+// const visitToggle = document.getElementById('visitado');
+// const visitIcon = visitToggle.querySelector('img');
 
-visitToggle.addEventListener('click', () => {
-  if (visitIcon.src.includes('pendiente-visitar.png')) {
-    visitIcon.src = '../static/img/check-visitado.png'; 
-    visitIcon.alt = 'check visitado';
-  } else {
-    visitIcon.src = '../static/img/pendiente-visitar.png'; 
-    visitIcon.alt = 'pendiente por visitar';
-  }
-});
+// visitToggle.addEventListener('click', () => {
+//   if (visitIcon.src.includes('pendiente-visitar.png')) {
+//     visitIcon.src = '../static/img/check-visitado.png'; 
+//     visitIcon.alt = 'check visitado';
+//   } else {
+//     visitIcon.src = '../static/img/pendiente-visitar.png'; 
+//     visitIcon.alt = 'pendiente por visitar';
+//   }
+// });
 
 
 
