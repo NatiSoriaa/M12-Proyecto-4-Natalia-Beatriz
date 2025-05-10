@@ -148,14 +148,14 @@ async function displayVisited(visited) {
         <div class="emoji-rating" data-id="${v.id}">
           ${emojiHTML}
         </div>
-        <button class="delete-visitado" data-id="${v.id}">Eliminar</button>
+        <button class="delete-visitado" data-id="${v.id}" data-nom=${v.nom}>Eliminar</button>
     `;
 
       visitadosContainer.appendChild(visitedElement);
   });
   modalContent.appendChild(visitadosContainer);
   setupEmojiListeners();
-
+  setupDeleteVisitedListeners();
 }
 
 document.querySelector('#paisesVisitados').addEventListener('click', () => {
@@ -213,5 +213,42 @@ function setupEmojiListeners() {
         });
       });
     });
+  });
+}
+
+// set visited to 0 if user presses 'eliminar'
+function setupDeleteVisitedListeners() {
+  document.querySelector('.fav-content').addEventListener('click', async (event) => {
+    if (event.target.classList.contains('delete-visitado')) {
+      const button = event.target;
+
+      try {
+        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            nom, 
+            visitado: 0
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          toastr.error(result.message || 'Error al eliminar visitado');
+          return;
+        }
+        // remove from dom
+        button.closest('.visited-item').remove();
+        toastr.success('Marcado como no visitado');
+
+      } catch (error) {
+        console.error(error);
+        toastr.error('Error al comunicarse con el servidor');
+      }
+    }
   });
 }

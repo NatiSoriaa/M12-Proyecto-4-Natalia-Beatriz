@@ -650,7 +650,7 @@ body.light-mode .modal-content {
   border: none;
   cursor: pointer;
 }
-.delete-favorite {
+.delete-favorite, .delete-visitado {
   background: #ff4757;
   color: white;
   border: none;
