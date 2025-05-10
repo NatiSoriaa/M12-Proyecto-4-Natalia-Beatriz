@@ -219,36 +219,39 @@ function setupEmojiListeners() {
 // set visited to 0 if user presses 'eliminar'
 function setupDeleteVisitedListeners() {
   document.querySelector('.fav-content').addEventListener('click', async (event) => {
-    if (event.target.classList.contains('delete-visitado')) {
-      const button = event.target;
-
-      try {
-        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            nom, 
-            visitado: 0
-          })
-        });
-
-        const result = await response.json();
-
-        if (!result.success) {
-          toastr.error(result.message || 'Error al eliminar visitado');
-          return;
-        }
-        // remove from dom
-        button.closest('.visited-item').remove();
-        toastr.success('Marcado como no visitado');
-
-      } catch (error) {
-        console.error(error);
-        toastr.error('Error al comunicarse con el servidor');
-      }
+  if (event.target.classList.contains('delete-visitado')) {
+    const button = event.target;
+  if (!confirm('¿Estás seguro de querer eliminar este visitado?')) {
+      return;
     }
-  });
+    try {
+      const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          nom: '',
+          visitado: 0
+        })
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        toastr.error(result.message || 'Error al eliminar visitado');
+        return;
+      }
+
+      // remove form dom
+      button.closest('.visited-item').remove();
+      toastr.success('Desmarcado como visitado');
+
+    } catch (error) {
+      console.error(error);
+      toastr.error('Error al comunicarse con el servidor');
+    }
+  }
+});
 }
