@@ -91,6 +91,15 @@ class Favoritos extends Model {
         $stmt->execute([$usuari_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
+    // guardar puntuacion
+    public function guardarPuntuacion($id, $puntuacion, $usuari_id) {
+        $stmt = $this->pdo->prepare("UPDATE user_favorites SET puntuacion = ? WHERE id = ? AND usuari_id = ?");
+        if (!$stmt->execute([$puntuacion, $id, $usuari_id])) {
+            error_log("Error al guardar puntuación: " . print_r($stmt->errorInfo(), true));
+            return false;
+        }
+        return $stmt->rowCount() > 0; 
+    }
 }
 ?>

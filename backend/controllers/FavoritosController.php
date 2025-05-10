@@ -316,5 +316,54 @@ class FavoritosController {
         ]);
         exit;
     }
+    public function guardarPuntuacion() {
+        header('Content-Type: application/json');
+
+        try {
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+
+            // Verificar sesión primero
+            if (!isset($_SESSION['usuari_id'])) {
+                throw new Exception('Debes iniciar sesión para calificar', 401);
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Método no permitido', 405);
+            }
+            
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            if (!isset($data['id'], $data['puntuacion'])) {
+                throw new Exception('Datos incompletos', 400);
+            }
+            
+            $result = $this->favoritosModel->guardarPuntuacion(
+                $data['id'],  
+                $data['puntuacion'],
+                $_SESSION['usuari_id']
+            );
+            
+            if (!$result) {
+                throw new Exception('Error al guardar en base de datos: ' . $errorInfo[2], 500);
+            }
+            
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Puntuacion guardada correctamente',
+                'success' => true 
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            http_response_code($e->getCode() ?: 500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'success' => false
+            ]);
+        }
+    }
 }    
 ?>

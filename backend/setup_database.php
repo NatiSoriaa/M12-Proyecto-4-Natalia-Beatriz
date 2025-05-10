@@ -3,7 +3,7 @@
 
 $host = 'localhost';
 $user = 'root';
-$pass = '';
+$pass = 'root';
 $dbname = 'earth_explorer_db';
 
 try {
@@ -43,14 +43,12 @@ try {
         data_afegit DATETIME DEFAULT CURRENT_TIMESTAMP,
         url TEXT,
         visitado TINYINT(1) DEFAULT 0,
+        puntuacion TINYINT UNSIGNED DEFAULT 0,
         data_completat DATETIME NULL DEFAULT NULL,
         FOREIGN KEY (usuari_id) REFERENCES usuaris(id),
         UNIQUE KEY (usuari_id, nom)
 
     )");
-
-    // $stmtFav = $pdo->prepare("INSERT INTO user_favorites (nom, descripcio, categoria, usuari_id) VALUES (?, ?, ?, ?)");
-    // $stmtFav->execute(['Paella', 'Arroz con cosas', 'Comida', 1]);
 
     echo "✅ Base de datos y tablas creadas correctamente!";
     header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/frontend/templates/index.html');

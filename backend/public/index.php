@@ -83,6 +83,9 @@ switch ($action) {
     case 'actualizarEstadoVisita':
         $favoritosController->actualizarEstadoVisita();
         break;
+    case 'saveRating':
+        $favoritosController->guardarPuntuacion();
+        break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
     header('Location: ' . BASE_URL . 'frontend/templates/index.html');
     exit();  // Evita que se siga ejecutando el código
