@@ -3,6 +3,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist&display=swap");
 
 body {
+  font-family: 'Geist', sans-serif;
   background-image: url("https://i.postimg.cc/br3g30GL/bg.jpg");
   background-position: center center;
   overflow: hidden;
