@@ -434,23 +434,12 @@ searchInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     const country = searchInput.value.trim();
     if (country) {
+      removeMarkers();
       searchCountryLocation(country);
     }
   }
 });
 
-
-const inputField = document.querySelector('#input');
-
-inputField.addEventListener('focus', () => {
-  orbitControls.autoRotate = true;
-
-  camera.position.set(0, 0, 3); // posicion inicial camara
-  camera.lookAt(0, 0, 0); // centro del mundo
-
-  // eliminar marcador
-  removeMarkers();
-});
 
 
 function removeMarkers() {
@@ -482,68 +471,6 @@ function removeMarkers() {
 }
 
 window.requestAnimationFrame(animation);
-
-
-// AÑADIR A FAVORITOS Y CAMBIO DE COLOR ICONO AL HACER CLIC
-
-// Inicializar lista de favoritos
-// const favoritos = [];
-
-// // Seleccionar el ícono del corazón
-// const iconoFavoritos = document.getElementById('paises-favoritos');
-
-// // Manejar el clic en el clic del corazon
-// iconoFavoritos.addEventListener('click', () => {
-//   const modal = document.getElementById('infoModalContent');
-//     if (modal) {
-//       const countryName = modal.querySelector('h2')?.textContent;
-//       console.log(countryName);
-//     } else {
-//       console.error('No se encontró el elemento con id "modalContent".');
-//     }
-
-//   if (!favoritos.includes(countryName)) {
-//     // Agregar a favoritos
-//     favoritos.push(countryName);
-//     iconoFavoritos.classList.add('active'); // Cambiar a rojo
-//     actualizarMenuFavoritos();
-//   } else {
-//     // Eliminar de favoritos
-//     const index = favoritos.indexOf(countryName);
-//     favoritos.splice(index, 1);
-//     iconoFavoritos.classList.remove('active'); // Cambiar a blanco
-//     actualizarMenuFavoritos();
-//   }
-// });
-
-// function actualizarMenuFavoritos() {
-//   const menuFavoritos = document.getElementById('menuFavoritos');
-//   menuFavoritos.innerHTML = ''; 
-
-//   favoritos.forEach((pais) => {
-//     const listItem = document.createElement('li');
-//     listItem.textContent = pais;
-//     menuFavoritos.appendChild(listItem);
-//   });
-// }
-
-
-
-
-// CAMBIO ICONO PAIS VISITADO O NO VISITADO 
-
-// const visitToggle = document.getElementById('visitado');
-// const visitIcon = visitToggle.querySelector('img');
-
-// visitToggle.addEventListener('click', () => {
-//   if (visitIcon.src.includes('pendiente-visitar.png')) {
-//     visitIcon.src = '../static/img/check-visitado.png'; 
-//     visitIcon.alt = 'check visitado';
-//   } else {
-//     visitIcon.src = '../static/img/pendiente-visitar.png'; 
-//     visitIcon.alt = 'pendiente por visitar';
-//   }
-// });
 
 
 
@@ -622,7 +549,6 @@ document.getElementById('closeFavoritesModal').addEventListener('click', () => {
 
 // ALMACENAR PAISES EN LOCALSTORAGE 
 
-// ...existing code...
 
 // Almacenar países visitados en localStorage
 function saveVisitedCountry(country) {
@@ -678,7 +604,7 @@ function removeVisitedMarkers() {
   });
 }
 loadToastr();
-// Manejar clic en el botón "Tu actividad"
+
 let showingVisited = false;
 const activityButton = document.getElementById('tuActividad');
 
