@@ -2,7 +2,7 @@ import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
 import { loadToastr } from "./toastr.js";
 import { restCountryInfo } from "./randomCountryApi.js";
-
+import { generatePDF } from "./llamada-apis.js";
 // import { Menu } from './menu.js';
 // Menu();
 // MAPA MUNDO 
@@ -491,13 +491,18 @@ function openInfoModal(countryName, countryInfo) {
   infoModal.innerHTML = `
     <div class="modal-content2">
       <span class="close" id="closeInfoModal">&times;</span>
-      <h2>${countryName}</h2>
-      <p>${countryInfo}</p>
+      <div id="exportOnly">
+        <h2>${countryName}</h2>
+        <p>${countryInfo}</p>
+      </div>
+      <button id="generatePDF">Descargar en PDF</button>
+
     </div>
   `;
 
   document.body.appendChild(infoModal);
   infoModal.style.display = 'flex';
+  document.getElementById('generatePDF').addEventListener('click', generatePDF);
 
   document.getElementById('closeInfoModal').addEventListener('click', () => {
     gsap.fromTo(infoModal, { opacity: 1 }, { opacity: 0, duration: 0.5 });

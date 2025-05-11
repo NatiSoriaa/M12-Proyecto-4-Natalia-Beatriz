@@ -23,6 +23,24 @@ async function getCountryInfo(countryName) {
   
 export { getCountryInfo };
 
+function generatePDF() {
+    const element = document.getElementById('exportOnly');
+    if (!element) {
+        toastr.error('Nada por exportar');
+        return;
+    }
+    const opt = {
+        margin:       0.5,
+        filename:     'pais-info.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+
+export { generatePDF };
 
 const imagesButton = document.getElementById('imagesButton');
 const searchInput = document.getElementById('input');

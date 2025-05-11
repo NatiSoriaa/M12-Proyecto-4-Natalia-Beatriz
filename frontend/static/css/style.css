@@ -408,7 +408,7 @@ body.light-mode .modal-content {
   height:100px;
 }
 
-#infoModal .modalButtons button {
+#infoModal .modalButtons button, #generatePDF {
     color: white;
     height:50px;
     padding: 10px;
