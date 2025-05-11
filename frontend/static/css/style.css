@@ -673,6 +673,15 @@ body.light-mode .modal-content {
   border: none;
   cursor: pointer;
 }
+
+.favorites-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+
+}
 .delete-favorite, .delete-visitado {
   background: #ff4757;
   color: white;
@@ -712,7 +721,7 @@ body.light-mode .modal-content {
 /* RATING VISITED COUNTRIES */
 
 .emoji-rating {
-  width: 50%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   font-size: 30px;
@@ -746,11 +755,13 @@ body.light-mode .modal-content {
 
 .visited-item, .favorite-item {
   padding:20px;
+  text-align: center;
   border-radius: 5px;
   background-color: rgba(45, 45, 45, 0.2);
 }
 
 .country-flag {
+  padding:20px;
   width:300px;
 }
 
