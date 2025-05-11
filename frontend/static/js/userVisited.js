@@ -144,8 +144,6 @@ async function displayVisited(visited) {
     visitedElement.innerHTML = `
         <p>${v.descripcio || 'Sin descripción'}</p>
         <p><strong>Categoría:</strong> ${v.categoria}</p>
-        <p><strong>Fecha completado:</strong> ${v.data_completat}</p>
-
         <div class="emoji-rating" data-id="${v.id}">
           ${emojiHTML}
         </div>

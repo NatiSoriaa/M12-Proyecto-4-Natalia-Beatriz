@@ -44,7 +44,6 @@ try {
         url TEXT,
         visitado TINYINT(1) DEFAULT 0,
         puntuacion TINYINT UNSIGNED DEFAULT 0,
-        data_completat DATETIME NULL DEFAULT NULL,
         FOREIGN KEY (usuari_id) REFERENCES usuaris(id),
         UNIQUE KEY (usuari_id, nom)
 
