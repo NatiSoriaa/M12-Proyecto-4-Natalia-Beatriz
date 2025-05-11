@@ -219,6 +219,9 @@ function setupMarkerClick() {
   canvas.addEventListener('click', onClick, false);
   return () => canvas.removeEventListener('click', onClick);
 }
+
+setupMarkerClick();
+
 window.addEventListener('click', (event) => {
   const modal = document.getElementById('infoModal');
   if (event.target === modal) {
