@@ -128,7 +128,6 @@ async function displayVisited(visited) {
     const visitadosContainer = document.createElement('div');
     visitadosContainer.className = 'favorites-container';
     
-    // TODO: user can add the date they completed the visit
     visited.forEach(v => {
     const visitedElement = document.createElement('div');
     visitedElement.className = 'visited-item';
