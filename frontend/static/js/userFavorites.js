@@ -4,7 +4,7 @@ loadToastr();
 const session = await checkSession();
 
 async function getFavorites() {
-    if (session.logged) {
+    if (session.logged == true) {
         try {
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
@@ -20,9 +20,7 @@ async function getFavorites() {
                 infoModal.style.display = 'flex';
                 
                 displayFavorites(data.data);
-                
-                // toastr.success('Favoritos cargados');
-            
+                            
             } else {
                 toastr.warning('No tienes favoritos guardados');
             }
