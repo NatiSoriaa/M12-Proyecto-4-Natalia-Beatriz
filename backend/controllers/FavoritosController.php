@@ -3,41 +3,16 @@
 // ini_set('display_startup_errors', '1');
 // error_reporting(E_ALL);
 require_once '../models/Favoritos.php';
-require_once '../includes/auth.php';
 require_once '../config/config.php';
 
 // Definimos la clase AnunciController que manejará las solicitudes 
 class FavoritosController {
     private $favoritosModel;
-    // private $twig;
 
-    // Inicializamos el modelo Anuncio y el motor Twig
+    // Inicializamos el modelo FavoritosModel
     public function __construct() {
         global $pdo; 
         $this->favoritosModel = new Favoritos($pdo);
-        // $this->twig = require '../config/twig.php';
-    }
-
-    // Método para hacer una solicitud API usando cURL
-    private function apiRequest($url, $method, $data = null) {
-        $ch = curl_init();
-        
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    
-        if ($data) {
-            // Si hay datos se incluyen en la solicitud
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        }
-        
-        // Ejecución de la solicitud y cierre
-        $result = curl_exec($ch);
-        curl_close($ch);
-        
-        // Devuelve un array asociativo
-        return json_decode($result, true); 
     }
 
     // lista favoritos por usuario
@@ -110,43 +85,6 @@ class FavoritosController {
                 'status' => 'error',
                 'message' => $e->getMessage()
             ]);
-        }
-    }
-    // Modificar anunci
-    public function modificar($id){
-        check_auth('admin');
-        // Obtención del id a modificar
-        $favoritos = $this->favoritosModel->obtenirFavoritoPerId($id);
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Datos del formulario
-            $data = [
-                'titol' => $_POST['titol'],
-                'descripcio' => $_POST['descripcio'],
-                'categoria' => $_POST['categoria'],
-            ];
-
-            // Solicitud PUT a la api
-            $url = "http://localhost/M12-Proyecto-4-Natalia-Beatriz/api/anunci_api.php?id=$id";
-            $response = $this->apiRequest($url, 'PUT', $data);
-
-            if ($response && $response['status'] === 'success') {  
-                header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=anuncis');
-                exit();
-            } else {
-                echo "Error en la modificación del anuncio.";
-                if ($response) {
-                    echo " Detalls: " . $response['message'];  
-                }
-            }
-        } else {
-            $favoritos = $this->favoritosModel->obtenirFavoritoPerId($id);
-    
-            if ($anunci) {
-                echo $this->twig->render('anunci/modificar.html.twig', ['anunci' => $anunci]);
-            } else {
-                echo "El anuncio no fue encontrado.";
-            }
         }
     }
 

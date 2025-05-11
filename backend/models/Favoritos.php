@@ -15,15 +15,8 @@ class Favoritos extends Model {
     // Query SQL para obtener anuncios
     public function obtenerFavoritos() {
         $stmt = $this->pdo->query("SELECT * FROM user_favorites");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna un array asociativo 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
     }
-
-    // Query SQL para obtener anuncio por id
-    // public function obtenirFavoritoPerId($id){
-    //     $stmt = $this->pdo->prepare('SELECT * from user_favorites where id = ?');
-    //     $stmt->execute([$id]); // Consulta ejecutada con el id
-    //     return $stmt->fetch(PDO::FETCH_ASSOC);
-    // }
 
     public function obtenerFavoritosPorUsuario($usuari_id){
         $stmt = $this->pdo->prepare('SELECT * from user_favorites where usuari_id = ?');
@@ -43,12 +36,6 @@ class Favoritos extends Model {
             return $stmt->execute([$id, $usuari_id]);
         }
     
-
-    // Query SQL paraactualitzar un anunci
-    public function actualitzarFavorito($id, $nom, $descripcio, $categoria) {
-        $stmt = $this->pdo->prepare("UPDATE user_favorites SET nom = ?, descripcio = ?, preu = ?, categoria = ? WHERE id = ?");
-        return $stmt->execute([$titol, $descripcio, $preu, $categoria, $id]);
-    }
     
     // Query SQL para añadir elemento a favoritos
     public function añadirAFavoritos($nom, $descripcio, $categoria, $url, $usuari_id) {
