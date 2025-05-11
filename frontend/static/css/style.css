@@ -683,6 +683,9 @@ body.light-mode .modal-content {
   margin-top: 10px;
 }
 
+.fav-title {
+  text-align:center;
+}
 /* MOSTRAR CONTRASEÑA */
 
 .password-toggle-icon {
