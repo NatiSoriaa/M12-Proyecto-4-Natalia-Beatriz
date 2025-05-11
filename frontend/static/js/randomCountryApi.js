@@ -48,26 +48,41 @@ function closeRandomModal() {
 
 // randomCountryApi.js
 async function restCountryInfo(countryName) {
+  const normalized = countryName.trim().toLowerCase();
+
   try {
-    // busqueda exacta
-    let response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`);
-    
-    // busqueda parcial
-    if (!response.ok) {
-      response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}`);
-    }
-    
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+    // Paso 1: buscar traducciones
+    let response = await fetch(`https://restcountries.com/v3.1/translation/${encodeURIComponent(normalized)}`);
+    let data = [];
+
+    if (response.ok) {
+      data = await response.json();
+
+      // Filtrar país cuya traducción sea exacta
+      const exactMatch = data.find(country => {
+        const translations = country.translations || {};
+        return Object.values(translations).some(t =>
+          t.common?.toLowerCase() === normalized
+        );
+      });
+
+      if (exactMatch) return exactMatch;
     }
 
-    const data = await response.json();
-    return data[0]; 
+    // Paso 2: fallback: buscar por nombre parcial
+    response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(normalized)}`);
+    if (response.ok) {
+      data = await response.json();
+      return data[0];
+    }
+
+    throw new Error('No se encontró el país');
 
   } catch (error) {
     console.error('Error al obtener datos del país:', error);
     return null;
   }
 }
+
 
 export { restCountryInfo };
