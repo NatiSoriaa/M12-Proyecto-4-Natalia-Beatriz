@@ -857,3 +857,48 @@ body.light-mode .modal-content {
 .remove-preview:hover {
   background: darkred;
 }
+
+
+
+/* RESPOSIVE */
+
+
+
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .menu-desplegable .menu-content {
+    position: static;
+    box-shadow: none;
+    background: none;
+    display: none;
+  }
+
+  .menu-desplegable:hover .menu-content {
+    display: block;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar input[type="text"] {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .modal-content2 {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .modalButtons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
