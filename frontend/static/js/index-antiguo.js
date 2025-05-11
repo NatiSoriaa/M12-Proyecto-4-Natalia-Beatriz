@@ -329,13 +329,15 @@ window.addEventListener('click', (event) => {
 
 // Función para mostrar información del país
 function showInfo(data) {
-const name = data.name?.common || data.name || 'Este país';
+  const name = data.name?.common || data.name || 'Este país';
+  toastr.clear();
   toastr.info(`Información de ${name}`);  console.log(`Mostrando información de: ${data.name}`);
 }
 
 // Función para mostrar imágenes del país
 function showImages(data) {
   const name = data.name?.common || data.name || 'Este país';
+  toastr.clear();
   toastr.info(`Imágenes de ${name}`);
 }
 
