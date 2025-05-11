@@ -364,6 +364,8 @@ async function searchCountryLocation(countryName) {
       throw new Error('No se encontró información para este país');
     }
 
+    saveVisitedCountry(countryInfo.name.common);
+
     // coordenadas con api nominatim
     const nominatimResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(countryInfo.name.common)}`);
     const nominatimData = await nominatimResponse.json();
@@ -568,7 +570,7 @@ function showVisitedCountries() {
     const data = await response.json();
     if (data.length > 0) {
       const { lat, lon } = data[0];
-      createMarker(parseFloat(lat), parseFloat(lon), country, 0xffff00); // Amarillo para visitados
+      createMarker(parseFloat(lat), parseFloat(lon), country, null, 0xffff00); // Amarillo para visitados
     } else {
       console.warn(`No se pudo encontrar la ubicación para el país: ${country}`);
     }
