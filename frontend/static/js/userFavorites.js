@@ -126,7 +126,9 @@ iconoFavoritos.addEventListener('click', async () => {
 
         const responseText = await response.text();
         console.log('Raw server response:', responseText);
-        
+        if (responseText.includes("Integrity constraint violation")) {
+            toastr.warning("Ya está en tus favoritos!");
+        }
         let result;
         try {
             result = JSON.parse(responseText);
@@ -149,48 +151,6 @@ iconoFavoritos.addEventListener('click', async () => {
         }
     }
 });
-
-// DELETE ALL FAVORITES (SELECT ALL)
-async function deleteAllFavoritos() {
-    if (!confirm('¿Estás seguro de querer eliminar todos los favoritos?')) {
-      return;
-  }
-  try {
-    const response = await fetch(`http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarAllFavoritos`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify({id:favoritoId})
-    });
-    
-    if (response.status === 204) {
-      toastr.success('Todos tus favoritos se han eliminado');
-      await getFavorites();
-      return;
-    }
-
-    if (!response.ok) {
-      throw new Error(result.message || `Error ${response.status}`);
-    }
-
-    toastr.success(result.message || 'Favoritos eliminados');
-    await getFavorites();
-    } catch (error) {
-      console.error('Delete error:', error);
-      
-      if (error.message.includes('servidor')) {
-          toastr.error('Error del servidor. Intente más tarde.');
-      } else {
-          toastr.error(error.message || 'Error al eliminar favorito');
-      }
-      
-      if (confirm('¿Ver detalles del error?')) {
-          alert(`Error completo:\n${error.stack}`);
-    }
-  }
-}
 
 // DELETE FAVORITE 
 async function deleteFavorito(favoritoId) {
