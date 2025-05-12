@@ -26,7 +26,7 @@ async function getFavorites() {
             }
         } catch (error) {
             toastr.error('Error al cargar favoritos');
-            console.error(error);
+            // console.error(error);
         }
     } else {
         toastr.warning('Debes iniciar sesión para ver tus favoritos');
@@ -125,7 +125,6 @@ iconoFavoritos.addEventListener('click', async () => {
         });
 
         const responseText = await response.text();
-        console.log('Raw server response:', responseText);
         if (responseText.includes("Integrity constraint violation")) {
             toastr.warning("Ya está en tus favoritos!");
         }
