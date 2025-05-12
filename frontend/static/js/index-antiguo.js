@@ -3,9 +3,14 @@ import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControl
 import { loadToastr } from "./toastr.js";
 import { restCountryInfo } from "./randomCountryApi.js";
 import { generatePDF } from "./llamada-apis.js";
-// import { Menu } from './menu.js';
-// Menu();
-// MAPA MUNDO 
+
+
+
+
+// SUBMENU
+
+
+
 
 export function Menu() {
 
@@ -59,6 +64,15 @@ export function Menu() {
 };
 
 Menu();
+
+
+
+
+// ESCENA MUNDO
+
+
+
+
 const scene = new THREE.Scene();
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -136,7 +150,12 @@ function latLonToVector3(lat, lon, radius = 1) {
 
 
 
-const markers = []; // Array para almacenar los marcadores
+// MARCADORES Y ETIQUETAS EN EL MAPA
+
+
+
+
+const markers = []; 
 
 function createMarker(lat, lon, name, countryInfo = null, color = 0xff0000) {
   const position = latLonToVector3(lat, lon);
@@ -152,13 +171,13 @@ function createMarker(lat, lon, name, countryInfo = null, color = 0xff0000) {
    }
   scene.add(marker);
 
-  markers.push(marker); // Agregar el marcador al array
+  markers.push(marker); 
   createLabel(marker.userData.name, position);
 
-  // bouncing effect for marker
+  // animacion rebote
   let bounces = 4;
   let duracionInicial = 0.3;
-  let amplitud = 0.03; // qué tanto se mueve
+  let amplitud = 0.03; 
 
   for (let i = 0; i < bounces; i++) {
     gsap.to(marker.position, {
@@ -187,7 +206,14 @@ function createMarker(lat, lon, name, countryInfo = null, color = 0xff0000) {
   return marker;
 }
 
-// evento click marcador
+
+
+
+// CLIC MARCADOR
+
+
+
+
 function setupMarkerClick() {
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
@@ -236,7 +262,14 @@ window.addEventListener('click', (event) => {
   }
 });
 
-// Función para abrir el modal con contenido dinámico
+
+
+
+// ABRIR MODAL CON CONTENIDO 
+
+
+
+
 function openModal(country) {
   const modal = document.getElementById('infoModal');
   const name = country.name?.common || 'No disponible';
@@ -327,19 +360,33 @@ window.addEventListener('click', (event) => {
   }
 });
 
-// Función para mostrar información del país
+
+
+
+// MOSTRAR INFORMACION E IMAGENES DEL PAIS
+
+
+
+
 function showInfo(data) {
   const name = data.name?.common || data.name || 'Este país';
   toastr.clear();
   toastr.info(`Información de ${name}`);  console.log(`Mostrando información de: ${data.name}`);
 }
 
-// Función para mostrar imágenes del país
 function showImages(data) {
   const name = data.name?.common || data.name || 'Este país';
   toastr.clear();
   toastr.info(`Imágenes de ${name}`);
 }
+
+
+
+
+// ETIQUETAS EN EL MAPA
+
+
+
 
 function createLabel(text, position) {
     const labelText = typeof text === 'string' ? text : text.name || 'Unknown';
@@ -356,6 +403,13 @@ function createLabel(text, position) {
   sprite.scale.set(0.5, 0.25, 1);
   scene.add(sprite);
 }
+
+
+
+// BUSCADOR DE PAISES LLAMANDO A LA API REST Y CALCULO DE COORDENADAS
+
+
+
 
 async function searchCountryLocation(countryName) {
   try {
@@ -421,6 +475,14 @@ async function searchCountryLocation(countryName) {
   }
 }
 
+
+
+
+// BOTON DE BUSQUEDA E INGRESO DE TEXTO
+
+
+
+
 const searchButton = document.querySelector('#searchButton');
 const searchInput = document.querySelector('#input');
 
@@ -443,6 +505,12 @@ searchInput.addEventListener('keypress', (e) => {
     }
   }
 });
+
+
+
+
+// ELIMINAR MARCADORES Y ETIQUETAS DEL MAPA
+
 
 
 
@@ -474,7 +542,21 @@ function removeMarkers() {
   });
 }
 
+
+
+
+// ANIMACION DEL PLANETA
+
+
+
+
 window.requestAnimationFrame(animation);
+
+
+
+
+// GENERAR PDF DE INFORMACION DEL PAIS
+
 
 
 
@@ -522,7 +604,14 @@ function openInfoModal(countryName, countryInfo) {
   });
 }
 
-// Mostrar informacion del pais 
+
+
+
+// MOSTRAR INFORMACION RECOGIDA DE API REST
+
+
+
+
 infoButton.addEventListener('click', async () => {
   const modal = document.getElementById('infoModalContent');
   if (modal) {
@@ -555,11 +644,11 @@ document.getElementById('closeFavoritesModal').addEventListener('click', () => {
 
 
 
-
 // ALMACENAR PAISES EN LOCALSTORAGE 
 
 
-// Almacenar países visitados en localStorage
+
+
 function saveVisitedCountry(country) {
   let visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
   if (!visitedCountries.includes(country)) {
@@ -569,7 +658,13 @@ function saveVisitedCountry(country) {
 }
 
 
-// Mostrar países visitados en el mapa
+
+
+// MOSTRAR PAISES DE BUSQUEDA RECIENTE EN EL MAPA (TU ACTIVIDAD)
+
+
+
+
 function showVisitedCountries() {
   const visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
   visitedCountries.forEach(async (country) => {
@@ -577,26 +672,31 @@ function showVisitedCountries() {
     const data = await response.json();
     if (data.length > 0) {
       const { lat, lon } = data[0];
-      createMarker(parseFloat(lat), parseFloat(lon), country, null, 0xffff00); // Amarillo para visitados
+      createMarker(parseFloat(lat), parseFloat(lon), country, null, 0xffff00); 
     } else {
       console.warn(`No se pudo encontrar la ubicación para el país: ${country}`);
     }
   });
 }
 
-// Eliminar marcadores de países visitados
+
+
+
+// ELIMINAR PAISES DE BUSQUEDA RECIENTE DEL MAPA (OCULTAR ACTIVIDAD)
+
+
+
+
 function removeVisitedMarkers() {
   const visitedMarkers = [];
   const visitedLabels = [];
   
-  // Recorrer todos los objetos en la escena
   scene.traverse((object) => {
     // Buscar marcadores (esferas amarillas)
     if (object.isMesh && object.geometry.type === 'SphereGeometry' && object.material.color.getHex() === 0xffff00) {
       visitedMarkers.push(object);
     }
 
-    // Buscar etiquetas (sprites)
     if (object.isSprite) {
       visitedLabels.push(object);
     }
@@ -613,6 +713,14 @@ function removeVisitedMarkers() {
   });
 }
 loadToastr();
+
+
+
+
+// INTERCALAR MENSAJES DE ACTIVIDAD
+
+
+
 
 let showingVisited = false;
 const activityButton = document.getElementById('tuActividad');
