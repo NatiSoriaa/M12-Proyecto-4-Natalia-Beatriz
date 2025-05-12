@@ -41,7 +41,6 @@ class UsuariController {
                     echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
             }
                 exit();
-            // }
           }
 
     }
@@ -69,7 +68,6 @@ class UsuariController {
                     'id' => $_SESSION['usuari_id'],
                     'nom' => $_SESSION['nom'],
                     'rol' => $_SESSION['rol'],
-                    // 'redirect' => $redirect
                 ]);
                 exit();
             } else {
@@ -91,7 +89,7 @@ class UsuariController {
         session_set_cookie_params([
             'lifetime' => 3600,
             'path' => '/',
-            'domain' => 'http://localhost/',
+            'domain' => 'localhost',
             'secure' => false,
             'httponly' => true,
             'samesite' => 'Lax'
