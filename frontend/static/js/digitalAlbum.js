@@ -2,10 +2,8 @@ import { checkSession } from "./login-register.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const session = await checkSession();
-
   const userId = session.id;
   const storageKey = `user_album_${userId}`;
-  console.log("Usuario:", userId, "Storage Key:", storageKey); 
 
   const openBtn = document.getElementById("openImageModal");
   const closeBtn = document.getElementById("closeAlbumModal");

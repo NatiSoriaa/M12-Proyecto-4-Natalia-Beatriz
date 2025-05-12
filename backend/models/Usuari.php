@@ -20,7 +20,7 @@ class Usuari extends Model {
     public function obtenirUsuariPerEmail($email) {
         $stmt = $this->pdo->prepare("SELECT * FROM usuaris WHERE email = ?");
         $stmt->execute([$email]);
-        return $stmt->fetch(PDO::FETCH_ASSOC); // Retorna un array asociativo
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 ?>
