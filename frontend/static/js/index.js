@@ -1,17 +1,75 @@
 import * as THREE from "https://esm.sh/three";
 import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControls.js";
+import { loadToastr } from "./toastr.js";
+import { restCountryInfo } from "./randomCountryApi.js";
+import { generatePDF } from "./llamada-apis.js";
 
 
 
-// MENU DESPLEGABLE
+
+// SUBMENU
 
 
-import { Menu } from './menu.js';
+
+
+export function Menu() {
+
+  // fav menu
+  const favoritesMenu = document.getElementById("favoritesMenu");
+  const favoritesToggle = favoritesMenu.querySelector("#menuToggle");
+  const favoritesContent = favoritesMenu.querySelector(".menu-content");
+  
+  // user menu
+  const userMenu = document.getElementById("menuUsuario");
+  const userToggle = userMenu.querySelector("#userToggle");
+  const userContent = userMenu.querySelector(".menu-content");
+  
+  // uses gsap library to show or hide menu
+  function showMenu(menuContent) {
+      gsap.to(menuContent, {
+          duration: 0.05,
+          opacity: 1,
+          y: 0,
+          display: "block",
+          ease: "power2.out"
+      });
+  }
+  
+  function hideMenu(menuContent) {
+      gsap.to(menuContent, {
+          duration: 0.05,
+          opacity: 0,
+          y: 10,
+          display: "none",
+          ease: "power2.in"
+      });
+  }
+  
+  favoritesMenu.addEventListener("mouseenter", () => {
+      showMenu(favoritesContent);
+  });
+  
+  favoritesMenu.addEventListener("mouseleave", () => {
+      hideMenu(favoritesContent);
+  });
+  
+  userMenu.addEventListener("mouseenter", () => {
+      showMenu(userContent);
+  });
+  
+  userMenu.addEventListener("mouseleave", () => {
+      hideMenu(userContent);
+  });
+
+};
+
 Menu();
 
 
 
-// LIBRERIA MAPA DE THREE JS 
+
+// ESCENA MUNDO
+
 
 
 
@@ -63,9 +121,14 @@ window.addEventListener('resize', () => {
 });
 
 const orbitControls = new OrbitControls(camera, canvas);
+// configuracion de animacion del planeta
 orbitControls.autoRotate = true;
+orbitControls.autoRotateSpeed = 0.5; 
 orbitControls.enableDamping = true;
-orbitControls.enableZoom = false;
+orbitControls.dampingFactor = 0.05;
+orbitControls.minDistance = 1.2; 
+orbitControls.maxDistance = 5; 
+orbitControls.enableZoom = true;
 
 const animation = () => {
   orbitControls.update();
@@ -86,28 +149,35 @@ function latLonToVector3(lat, lon, radius = 1) {
 
 
 
-// CREAR MARCADORES DE PAISES
+
+// MARCADORES Y ETIQUETAS EN EL MAPA
 
 
 
-const markers = []; // Array para almacenar los marcadores
 
-function createMarker(lat, lon, name, color = 0xff0000) {
+const markers = []; 
+
+function createMarker(lat, lon, name, countryInfo = null, color = 0xff0000) {
   const position = latLonToVector3(lat, lon);
   const markerGeometry = new THREE.SphereGeometry(0.02, 16, 16);
   const markerMaterial = new THREE.MeshBasicMaterial({ color });
   const marker = new THREE.Mesh(markerGeometry, markerMaterial);
   marker.position.copy(position);
-  marker.userData = { name, lat, lon }; // Guardar datos del marcador
+  marker.userData = { 
+    name: typeof name === 'string' ? name : name.name?.common || 'Unknown',
+    countryInfo: countryInfo || { name: typeof name === 'string' ? { common: name } : name },
+    lat, 
+    lon
+   }
   scene.add(marker);
 
-  markers.push(marker); // Agregar el marcador al array
-  createLabel(name, position);
+  markers.push(marker); 
+  createLabel(marker.userData.name, position);
 
-  // bouncing effect for marker
+  // animacion rebote
   let bounces = 4;
   let duracionInicial = 0.3;
-  let amplitud = 0.03; // qué tanto se mueve
+  let amplitud = 0.03; 
 
   for (let i = 0; i < bounces; i++) {
     gsap.to(marker.position, {
@@ -121,124 +191,326 @@ function createMarker(lat, lon, name, color = 0xff0000) {
     
     amplitud *= 0.5;
   }
-  // Hacer que el marcador sea interactivo
-  marker.callback = () => {
-    openModal(marker.userData); // Abrir el modal con los datos del marcador
-  };
+    marker.geometry.computeBoundingSphere();
+    marker.userData.isMarker = true;
+      // Hacer que el marcador sea interactivo
+      marker.callback = function() {
+      if (this.userData.countryInfo) {
+        openModal(this.userData.countryInfo);
+      } else {
+        restCountryInfo(this.userData.name)
+          .then(info => openModal(info))
+          .catch(() => openModal({name: this.userData.name}));
+      }
+    };
+  return marker;
 }
 
 
 
-// EVENTO CLIC MARCADOR
+
+// CLIC MARCADOR
 
 
-  
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+
+
+function setupMarkerClick() {
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  function onClick(event) {
+    if (event.target !== canvas) return;
+
+    // Calcular posición normalizada del ratón
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    // Actualizar el raycaster
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Buscar intersecciones con los marcadores
+    const intersects = raycaster.intersectObjects(markers, true);
+    
+    console.log('Intersecciones:', intersects);
+
+    if (intersects.length > 0) {
+      const marker = intersects[0].object;
+      console.log('Marcador clickeado:', marker.userData);
+      marker.callback();
+      event.stopPropagation();
+    }
+  }
+
+  canvas.addEventListener('click', onClick, false);
+  return () => canvas.removeEventListener('click', onClick);
+}
+
+setupMarkerClick();
 
 window.addEventListener('click', (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(markers);
-  // console.log('Intersecciones detectadas:', intersects); // Depuración
-
-  if (intersects.length > 0) {
-    const marker = intersects[0].object;
-    // console.log('Marcador clickeado:', marker.userData); // Depuración
-    marker.callback();
-
+  const modal = document.getElementById('infoModal');
+  if (event.target === modal) {
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = 'none';
+        }
+    });      
+    
   }
 });
 
 
 
-// MODAL DE INFO E IMAGENES DEL PAIS
+
+// ABRIR MODAL CON CONTENIDO 
 
 
 
-// import { openModal, showInfo, showImages, createLabel } from './modal-info-images.js';
-// openModal();
-// showInfo();
-// showImages();
-// createLabel();
+
+function openModal(country) {
+  const modal = document.getElementById('infoModal');
+  const name = country.name?.common || 'No disponible';
+  const officialName = country.name?.official || 'No disponible';
+  const capital = country.capital?.[0] || 'No disponible';
+  const region = country.region || 'No disponible';
+  const subregion = country.subregion || 'No disponible';
+  const population = country.population ? country.population.toLocaleString() : 'No disponible';
+  const area = country.area ? `${country.area.toLocaleString()} km²` : 'No disponible';
+  const languages = country.languages ? Object.values(country.languages).join(', ') : 'No disponible';
+  const flag = country.flags?.svg || country.flags?.png || '';
+
+  document.getElementById('infoModalContent').innerHTML = `
+    <div class="country-header">
+    
+      <h2>${name}</h2>
+      ${officialName !== name ? `<p class="official-name">${officialName}</p>` : ''}
+      <img src="${flag}" alt="Bandera de ${name}" class="country-flag">
+    </div>
+    
+    <div class="country-details">
+      <div class="details-column">
+        <p><strong>Capital:</strong> ${capital}</p>
+        <p><strong>Región:</strong> ${region}</p>
+        <p><strong>Subregión:</strong> ${subregion}</p>
+      </div>
+      
+      <div class="details-column">
+        <p><strong>Población:</strong> ${population}</p>
+        <p><strong>Área:</strong> ${area}</p>
+        <p><strong>Idiomas:</strong> ${languages}</p>
+      </div>
+    </div>
+  `;
+  gsap.fromTo(modal, 
+    { opacity: 0 },
+    { 
+      opacity: 1, 
+      y: 0,
+      duration: 0.8,
+      onStart: () => {
+        modal.style.display = 'flex';
+      }
+    }
+  );
+  document.getElementById('infoButton').addEventListener('click', () => {
+    showInfo(country);
+    gsap.fromTo(modal, 
+    { opacity: 1 },
+    { 
+      opacity: 0, 
+      y: 0,
+      duration: 0.8,
+      onComplete: () => {
+        modal.style.display = 'none';
+      }
+    }
+  );
+    
+  });
+
+  document.getElementById('imagesButton').addEventListener('click', () => {
+    showImages(country);
+   gsap.fromTo(modal, 
+    { opacity: 1 },
+    { 
+      opacity: 0, 
+      y: 0,
+      duration: 0.8,
+      onComplete: () => {
+        modal.style.display = 'none';
+      }
+    })
+  });
+}
+
+// Cerrar el modal al hacer clic fuera del contenido
+window.addEventListener('click', (event) => {
+  const modal = document.getElementById('infoModal');
+  if (event.target === modal) {
+          gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = 'none';
+        }
+    });
+  }
+});
 
 
 
-// BUSCAR PAIS EN MAPA
+
+// MOSTRAR INFORMACION E IMAGENES DEL PAIS
 
 
 
-async function searchCountryLocation(country) {
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
-  const data = await response.json();
-  if (data.length > 0) {
-    const { lat, lon } = data[0];
-    const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
 
-    // Crear el marcador en el mapa
-    createMarker(parseFloat(lat), parseFloat(lon), country);
+function showInfo(data) {
+  const name = data.name?.common || data.name || 'Este país';
+  toastr.clear();
+  toastr.info(`Información de ${name}`);  console.log(`Mostrando información de: ${data.name}`);
+}
 
-    // Detener la rotación del mundo
-    orbitControls.autoRotate = false;
+function showImages(data) {
+  const name = data.name?.common || data.name || 'Este país';
+  toastr.clear();
+  toastr.info(`Imágenes de ${name}`);
+}
 
-    // Mover la cámara hacia el marcador con un poco de zoom
-    const zoomLevel = 1.2; // Ajusta el nivel de zoom
-    camera.position.set(
-      markerPosition.x * zoomLevel,
-      markerPosition.y * zoomLevel,
-      markerPosition.z * zoomLevel
+
+
+
+// ETIQUETAS EN EL MAPA
+
+
+
+
+function createLabel(text, position) {
+    const labelText = typeof text === 'string' ? text : text.name || 'Unknown';
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = '30px Arial';
+  context.fillStyle = 'white';
+  context.fillText(text, 0, 30);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  sprite.position.copy(position);
+  sprite.scale.set(0.5, 0.25, 1);
+  scene.add(sprite);
+}
+
+
+
+// BUSCADOR DE PAISES LLAMANDO A LA API REST Y CALCULO DE COORDENADAS
+
+
+
+
+async function searchCountryLocation(countryName) {
+  try {
+    searchButton.disabled = true;
+    const countryInfo = await restCountryInfo(countryName);
+    
+    if (!countryInfo) {
+      throw new Error('No se encontró información para este país');
+    }
+
+    saveVisitedCountry(countryInfo.name.common);
+
+    // coordenadas con api nominatim
+    const nominatimResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(countryInfo.name.common)}`);
+    const nominatimData = await nominatimResponse.json();
+    
+    if (nominatimData.length === 0) {
+      throw new Error('No se encontraron coordenadas para este país');
+    }
+
+    const { lat, lon } = nominatimData[0];
+    
+    // marcador en el mapa
+    createMarker(
+      parseFloat(lat),
+      parseFloat(lon),
+      countryInfo.name.common,
+      countryInfo,
+      0xff0000
     );
 
-    // Apuntar la cámara hacia el marcador
-    camera.lookAt(markerPosition);
+    // Mover cámara al país con animación suave
+    const markerPosition = latLonToVector3(parseFloat(lat), parseFloat(lon));
     
-    console.log(`Marcador creado para ${country} en latitud ${lat} y longitud ${lon}`);
-  } else {
-    alert('País no encontrado');
+    const zoomDistance = 1.8; 
+    orbitControls.autoRotate = false;
+    
+    // animacion encontrar pais
+    await new Promise(resolve => {
+          gsap.to(camera.position, {
+            x: markerPosition.x * zoomDistance,
+            y: markerPosition.y * zoomDistance,
+            z: markerPosition.z * zoomDistance,
+            duration: 2,
+            ease: "power2.inOut",
+            onUpdate: () => {
+              orbitControls.target.copy(markerPosition);
+              orbitControls.update();
+            },
+            onComplete: () => {
+              setTimeout(() => {
+                camera.lookAt(markerPosition);
+                resolve();
+              }, 300);
+            }
+          });
+      });
+  } catch (error) {
+    console.error('Error en la búsqueda:', error);
+    toastr.error(error.message, 'Error en la búsqueda');
+  } finally {
+    searchButton.disabled = false;
   }
 }
 
 
 
-// ESCRIBIR PAIS EN EL INPUT Y BUSCAR
+
+// BOTON DE BUSQUEDA E INGRESO DE TEXTO
 
 
 
-// Seleccionar el botón de búsqueda
+
 const searchButton = document.querySelector('#searchButton');
+const searchInput = document.querySelector('#input');
 
-// Agregar evento al botón de busqueda
 searchButton.addEventListener('click', () => {
-  const country = document.querySelector('#input').value; // Obtener el valor del input
-  if (country.trim() !== '') {
-    searchCountryLocation(country); // Llamar a la funcion de busqueda
+  const country = searchInput.value.trim();
+  if (country) {
+    searchCountryLocation(country);
   } else {
-    alert('Por favor, ingresa un país para buscar.');
+    alert('Por favor ingresa un nombre de país');
   }
 });
 
-// Seleccionar el campo de entrada
-const inputField = document.querySelector('#input');
-
-// Agregar evento al hacer clic en el campo de entrada
-inputField.addEventListener('focus', () => {
-  // Reanudar la rotación del mundo
-  orbitControls.autoRotate = true;
-
-  // Restablecer la posición y el zoom de la cámara
-  camera.position.set(0, 0, 3); // Ajusta la posición inicial de la cámara
-  camera.lookAt(0, 0, 0); // Apuntar al centro del mundo
-
-  // Eliminar el marcador del país seleccionado
-  removeMarkers();
+// buscar con enter
+searchInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const country = searchInput.value.trim();
+    if (country) {
+      removeMarkers();
+      searchCountryLocation(country);
+    }
+  }
 });
 
 
 
-// REMOVER MARCADORES Y ETIQUETAS AL HACER CLIC EN EL INPUT NUEVAMENTE
+
+// ELIMINAR MARCADORES Y ETIQUETAS DEL MAPA
+
 
 
 
@@ -270,31 +542,21 @@ function removeMarkers() {
   });
 }
 
+
+
+
+// ANIMACION DEL PLANETA
+
+
+
+
 window.requestAnimationFrame(animation);
 
-// CAMBIO ICONO PAIS VISITADO O NO VISITADO 
 
-// const visitToggle = document.getElementById('visitado');
-// const visitIcon = visitToggle.querySelector('img');
 
-// visitToggle.addEventListener('click', () => {
-//   if (visitIcon.src.includes('pendiente-visitar.png')) {
-//     visitIcon.src = '../static/img/check-visitado.png'; 
-//     visitIcon.alt = 'check visitado';
-//     if (visitIcon.classList.contains('visitado') {
-//       return;
 
-//     }) else {
-      
-//     } 
-//   } else {
-//     visitIcon.src = '../static/img/pendiente-visitar.png'; 
-//     visitIcon.alt = 'pendiente por visitar';
-//     visitIcon.classList.remove('visitado');
-//     visitIcon.classList.add('pendiente');
+// GENERAR PDF DE INFORMACION DEL PAIS
 
-//   }
-// });
 
 
 
@@ -311,26 +573,45 @@ function openInfoModal(countryName, countryInfo) {
   infoModal.innerHTML = `
     <div class="modal-content2">
       <span class="close" id="closeInfoModal">&times;</span>
-      <h2>${countryName}</h2>
-      <p>${countryInfo}</p>
+      <div id="exportOnly">
+        <h2>${countryName}</h2>
+        <p>${countryInfo}</p>
+      </div>
+      <button id="generatePDF">Descargar en PDF</button>
+
     </div>
   `;
 
   document.body.appendChild(infoModal);
   infoModal.style.display = 'flex';
+  document.getElementById('generatePDF').addEventListener('click', generatePDF);
 
   document.getElementById('closeInfoModal').addEventListener('click', () => {
+    gsap.fromTo(infoModal, { opacity: 1 }, { opacity: 0, duration: 0.5 });
     infoModal.remove();
   });
 
   window.addEventListener('click', (event) => {
     if (event.target === infoModal) {
-      infoModal.remove();
+      gsap.to(modal, {
+          opacity: 0,
+          duration: 0.5,
+          onComplete: () => {
+              infoModal.remove();
+          }
+      });      
     }
   });
 }
 
-// Mostrar informacion del pais 
+
+
+
+// MOSTRAR INFORMACION RECOGIDA DE API REST
+
+
+
+
 infoButton.addEventListener('click', async () => {
   const modal = document.getElementById('infoModalContent');
   if (modal) {
@@ -351,9 +632,109 @@ infoButton.addEventListener('click', async () => {
 });
 
 document.getElementById('closeImagesModal').addEventListener('click', () => {
-  document.querySelector('.images-container').classList.remove('active');
+  gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+  document.querySelector('.images-container').classList.remove('active'); 
 });
 
 document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+  gsap.fromTo(infoModal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
   document.getElementById('favoritosContainer').style.display = 'none';
+});
+
+
+
+
+// ALMACENAR PAISES EN LOCALSTORAGE 
+
+
+
+
+function saveVisitedCountry(country) {
+  let visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
+  if (!visitedCountries.includes(country)) {
+    visitedCountries.push(country);
+    localStorage.setItem('visitedCountries', JSON.stringify(visitedCountries));
+  }
+}
+
+
+
+
+// MOSTRAR PAISES DE BUSQUEDA RECIENTE EN EL MAPA (TU ACTIVIDAD)
+
+
+
+
+function showVisitedCountries() {
+  const visitedCountries = JSON.parse(localStorage.getItem('visitedCountries')) || [];
+  visitedCountries.forEach(async (country) => {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
+    const data = await response.json();
+    if (data.length > 0) {
+      const { lat, lon } = data[0];
+      createMarker(parseFloat(lat), parseFloat(lon), country, null, 0xffff00); 
+    } else {
+      console.warn(`No se pudo encontrar la ubicación para el país: ${country}`);
+    }
+  });
+}
+
+
+
+
+// ELIMINAR PAISES DE BUSQUEDA RECIENTE DEL MAPA (OCULTAR ACTIVIDAD)
+
+
+
+
+function removeVisitedMarkers() {
+  const visitedMarkers = [];
+  const visitedLabels = [];
+  
+  scene.traverse((object) => {
+    // Buscar marcadores (esferas amarillas)
+    if (object.isMesh && object.geometry.type === 'SphereGeometry' && object.material.color.getHex() === 0xffff00) {
+      visitedMarkers.push(object);
+    }
+
+    if (object.isSprite) {
+      visitedLabels.push(object);
+    }
+  });
+
+  // Eliminar marcadores
+  visitedMarkers.forEach((marker) => {
+    scene.remove(marker);
+  });
+
+  // Eliminar etiquetas
+  visitedLabels.forEach((label) => {
+    scene.remove(label);
+  });
+}
+loadToastr();
+
+
+
+
+// INTERCALAR MENSAJES DE ACTIVIDAD
+
+
+
+
+let showingVisited = false;
+const activityButton = document.getElementById('tuActividad');
+
+document.getElementById('tuActividad').addEventListener('click', () => {
+  if (!showingVisited) {
+    toastr.info('Mostrando actividad');
+    showVisitedCountries();
+    activityButton.textContent = 'Ocultar actividad';
+    showingVisited = true;
+  } else {
+    toastr.info('Ocultando actividad');
+    removeVisitedMarkers();
+    activityButton.textContent = 'Tu actividad';
+    showingVisited = false;
+  }
 });
