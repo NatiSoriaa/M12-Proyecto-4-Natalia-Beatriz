@@ -514,11 +514,6 @@ async function searchCountryLocation(countryName) {
   try {
     searchButton.disabled = true;
     const countryInfo = await restCountryInfo(countryName);
-    
-    if (!countryInfo) {
-      throw new Error('No se encontró información para este país');
-    }
-
     saveVisitedCountry(countryInfo.name.common);
 
     // coordenadas con api nominatim

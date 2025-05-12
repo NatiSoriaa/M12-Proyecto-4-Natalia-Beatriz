@@ -84,7 +84,7 @@ const searchByLocation = async (location) => {
             showImagesMessage('No se encontraron resultados', imagesGrid);
         }
     } catch (error) {
-        console.error("Error buscando imágenes:", error);
+        // console.error("Error buscando imágenes:", error);
         showImagesMessage('Error al buscar imágenes. Intente más tarde.', imagesGrid);
     }
 };

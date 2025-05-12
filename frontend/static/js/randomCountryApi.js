@@ -58,14 +58,14 @@ async function restCountryInfo(countryName) {
     }
     
     if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+      toastr.error("No se ha encontrado información del país");
     }
 
     const data = await response.json();
     return data[0]; 
 
   } catch (error) {
-    console.error('Error al obtener datos del país:', error);
+    toastr.error("Error del servidor");
     return null;
   }
 }
