@@ -279,30 +279,9 @@ async function logout() {
                 toastr.error('Error al cerrar sesión', 'Error');
             }
         } catch (error) {
-            console.error('Error en logout:', error);
             toastr.error('Error de conexión', 'Error');
         }
     }
-}
-
-function getToken() {
-    const userToken = localStorage.getItem('jwt');
-    const inputToken = document.getElementById('token').value;
-
-    if (!userToken || !inputToken) {
-        alert('Por favor, ingresa el token.');
-        return null;
-    }
-
-    if (userToken !== inputToken) {
-        alert('Token no válido.');
-        return null;
-    }
-
-    return {
-        'Authorization': `Bearer ${userToken}`,
-        'Content-Type': 'application/json',
-    };
 }
 
 
