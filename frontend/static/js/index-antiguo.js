@@ -3,8 +3,7 @@ import { OrbitControls } from "https://esm.sh/three/addons/controls/OrbitControl
 import { loadToastr } from "./toastr.js";
 import { restCountryInfo } from "./randomCountryApi.js";
 import { generatePDF } from "./llamada-apis.js";
-// import { Menu } from './menu.js';
-// Menu();
+import { checkSession } from "./login-register.js";
 // MAPA MUNDO 
 
 export function Menu() {
@@ -118,9 +117,13 @@ orbitControls.enableZoom = true;
 
 const animation = () => {
   orbitControls.update();
+  if (isMeteorShowerActive) {
+    animateMeteors();
+  }
   requestAnimationFrame(animation);
   renderer.render(scene, camera);
 };
+showMeteorBtn();
 requestAnimationFrame(animation);
 
 function latLonToVector3(lat, lon, radius = 1) {
@@ -221,6 +224,156 @@ function setupMarkerClick() {
 }
 
 setupMarkerClick();
+
+// global variables
+const meteors = [];
+let meteorInterval;
+let isMeteorShowerActive = false;
+
+// creates a meteor
+function createMeteor() {
+  const meteorGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+  const meteorMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xff4500,
+    emissive: 0xff4500,
+    emissiveIntensity: 0.5
+  });
+  const meteor = new THREE.Mesh(meteorGeometry, meteorMaterial);
+
+  // random position
+  const radius = 5 + Math.random() * 3;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.random() * Math.PI;
+  
+  meteor.position.x = radius * Math.sin(phi) * Math.cos(theta);
+  meteor.position.y = radius * Math.sin(phi) * Math.sin(theta);
+  meteor.position.z = radius * Math.cos(phi);
+  
+  // adds tail to meteor
+  const tailGeometry = new THREE.ConeGeometry(0.02, 0.2, 8);
+  const tailMaterial = new THREE.MeshBasicMaterial({ color: 0xff8c00 });
+  const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+  tail.position.y = -0.1; 
+  tail.rotation.x = Math.PI / 2;
+  meteor.add(tail);
+
+  // properties
+  meteor.userData = {
+    speed: 0.05 + Math.random() * 0.05,
+    direction: new THREE.Vector3().subVectors(mesh.position, meteor.position).normalize(),
+    tail: tail,
+    size: 0.05
+  };
+
+  scene.add(meteor);
+  meteors.push(meteor);
+  return meteor;
+}
+
+// animation for meteors
+function animateMeteors() {
+  for (let i = meteors.length - 1; i >= 0; i--) {
+    const meteor = meteors[i];
+    
+    // direction to earth
+    meteor.position.addScaledVector(meteor.userData.direction, meteor.userData.speed);
+    
+    // Hacer que la cola apunte en dirección opuesta al movimiento
+    if (meteor.userData.tail) {
+      meteor.userData.tail.lookAt(meteor.position.clone().add(meteor.userData.direction.clone().multiplyScalar(-1)));
+    }
+    
+    // increases meteor size
+    meteor.userData.size += 0.001;
+    meteor.scale.set(meteor.userData.size, meteor.userData.size, meteor.userData.size);
+    
+    // explosion when the meteor finds earth 
+    if (meteor.position.distanceTo(mesh.position) < 1.1) {
+          createExplosion(meteor.position);
+      
+      // remove meteor
+      scene.remove(meteor);
+      meteors.splice(i, 1);
+    }
+  }
+}
+
+// explosion
+function createExplosion(position) {
+  const explosionGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+  const explosionMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0xff4500,
+    transparent: true,
+    opacity: 0.8
+  });
+  const explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+  explosion.position.copy(position);
+  scene.add(explosion);
+  
+  gsap.to(explosion.scale, {
+    x: 0.5,
+    y: 0.5,
+    z: 0.5,
+    duration: 0.5,
+    onComplete: () => scene.remove(explosion)
+  });
+  
+  gsap.to(explosionMaterial, {
+    opacity: 0,
+    duration: 0.5
+  });
+}
+
+// meteor shower
+function toggleMeteorShower() {
+  isMeteorShowerActive = !isMeteorShowerActive;
+  const button = document.getElementById('meteor-btn');
+  const icon = button.querySelector('i');
+
+  if (isMeteorShowerActive) {
+    toastr.clear();
+    toastr.warning("¡Lluvia de meteoritos!");
+    icon.style.color = 'red';
+    icon.classList.add('blink');
+
+    meteorInterval = setInterval(() => {
+      createMeteor();
+    }, 500);
+  } else {
+    toastr.clear();
+    toastr.warning("Deteniendo lluvia de meteoritos.");
+
+    icon.style.animation = 'none';
+    icon.offsetHeight; 
+    icon.style.animation = ''; 
+    icon.style.color='';
+    icon.classList.remove('blink');
+
+    clearInterval(meteorInterval);
+    meteors.forEach(meteor => scene.remove(meteor));
+    meteors.length = 0;
+  }
+}
+
+(async function init() {
+  try {
+    const session = await checkSession();
+    showMeteorBtn(session);
+    } catch (error) {
+      console.error("error");
+      }
+})();
+
+// meteor btn
+function showMeteorBtn(session) {
+  if (session?.logged === true && session?.rol === 'admin') {
+    console.log("eres admin. puedes destruir el planeta.")
+    const button = document.querySelector('#meteor-btn');
+    button.style.display="flex";
+    button.addEventListener('click', toggleMeteorShower);
+    }
+}
+
 
 window.addEventListener('click', (event) => {
   const modal = document.getElementById('infoModal');

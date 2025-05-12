@@ -232,26 +232,34 @@ body.light-mode .modal-content {
   font-size: 18px;
 }
 
-.favorites-button.search-btn img, #random-country-btn i{
+.favorites-button.search-btn img, #random-country-btn i, #meteor-btn i{
   vertical-align: middle;
 }
 .menu-desplegable.active .menu-content {
   display: block;
 }
 
-.hamburger-menu i,#random-country-btn {
+.hamburger-menu i,#random-country-btn, #meteor-btn i{
   font-size: 24px;
   color: white;
   cursor: pointer;
 }
 
-#random-country-btn {
+#random-country-btn, #meteor-btn {
   font-size:27px;
   background:none;
   border:0;
   cursor: pointer
 }
 
+#meteor-btn {
+  align-self:center;
+  /* padding:5px; */
+  margin:0;
+}
+#meteor-btn i {
+  font-size:27px;
+}
 .menu-icon {
   width: 50px;
   height: 50px;
@@ -902,3 +910,14 @@ body.light-mode .modal-content {
     gap: 10px;
   }
 }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+#meteor-btn i.blink {
+  animation: blink 0.5s infinite;
+}
+
