@@ -14,7 +14,6 @@ class Usuari extends Model {
         } catch(PDOException $e) {
             return false;
         }
-        
     }
 
     // Obtencion del usuario por su email 

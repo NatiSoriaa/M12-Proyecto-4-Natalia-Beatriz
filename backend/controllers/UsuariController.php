@@ -1,7 +1,5 @@
 <?php
-// ini_set('display_errors', '1');
-// ini_set('display_startup_errors', '1');
-// error_reporting(E_ALL);
+
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
 
@@ -15,14 +13,11 @@ if (session_status() == PHP_SESSION_NONE) {
     ]);
 }
 
-// define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
-
 // Instanciamos la clase UsuariController que gestionará las solicitudes
 class UsuariController {
     private $usuariModel;
-    // private $twig;
 
-    // Constructor del modelo Usuari y el motor Twig
+    // Constructor del modelo Usuari
     public function __construct() {
         $this->usuariModel = new Usuari();
 
@@ -38,37 +33,6 @@ class UsuariController {
             $email = $data['email'];
             $contrasenya = password_hash($data['contrasenya'], PASSWORD_BCRYPT);
 
-            // if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
-
-            //instanciem la classe PHPMailer
-            // $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            // try {
-            //     //primer configurem PHPMailer per utilitzar SMTP
-            //     $mail->isSMTP(); //ús del protocol SMTP
-            //     $mail->Host = SMTP_HOST; //servidor SMTP
-            //     $mail->SMTPAuth = true; //autenticacio
-            //     $mail->Username = SMTP_USER; //username per a l'autenticacio
-            //     $mail->Password = SMTP_PASS; //contrassenya
-            //     //connexió segura amb STARTTLS
-            //     $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            //     $mail->Port = SMTP_PORT; //port SMTP per a STARTTLS
-                
-            //     //adreça del usuari com a remitent
-            //     $mail->setFrom($email, $nom);
-            //     $mail->addAddress('beatrizabadjim@gmail.com', 'bea');
-            //     $missatge = "Hey there $nom! You just registered to get the best experience";
-
-            //     //contingut del correu
-            //     $mail->isHTML(true); //format HTML
-            //     $mail->Subject = 'Welcome to Earth Explorer';
-            //     $mail->Body = $missatge; //missatge a l'user
-            //     $mail->send();
-             
-            // } catch (Exception $e) {
-            //     //es registra a error.log
-            //     error_log("Error al enviar el correu: " . $mail->ErrorInfo, 3, '.logs/error.log');
-            //     exit();
-            // }
             // Creación de usuario y redirigimos a login
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
                 // envia json al frontend
@@ -99,11 +63,7 @@ class UsuariController {
                 $_SESSION['usuari_id'] = $usuari['id'];
                 $_SESSION['nom'] = $usuari['nom'];
                 $_SESSION['rol'] = $usuari['rol'];
-            
-                // $redirect = ($_SESSION['rol'] === 'admin') 
-                //     ? BASE_URL . 'backend/public/admin.php'
-                //     : BASE_URL . 'backend/public/usuari.php';
-            
+          
                 echo json_encode([
                     'success' => true,
                     'id' => $_SESSION['usuari_id'],
