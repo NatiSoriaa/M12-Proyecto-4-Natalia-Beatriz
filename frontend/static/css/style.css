@@ -183,6 +183,7 @@ body.light-mode .modal-content {
 
 .menu{
   display:flex;
+  align-items:center;
   flex-direction:row;
   width:100%;
   background: linear-gradient(to bottom, #000000 90%, transparent);
@@ -253,8 +254,6 @@ body.light-mode .modal-content {
 }
 
 #meteor-btn {
-  align-self:center;
-  /* padding:5px; */
   margin:0;
 }
 #meteor-btn i {
