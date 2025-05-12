@@ -16,7 +16,7 @@ async function getCountryInfo(countryName) {
   
       return countryInfo || "No se encontró información para este país.";
     } catch (error) {
-      console.error("Error al obtener información del país:", error);
+      toastr.error("Error al obtener información del país:", error);
       return "Hubo un error al obtener la información.";
     }
   }
