@@ -59,7 +59,7 @@ APIs:
 
 ESTRUCTURA DEL PROYECTO
 
-![Captura de pantalla 2025-05-11 230158](https://github.com/user-attachments/assets/c3dac606-989e-4169-a790-db5215cda52c)
+<img width="128" alt="image" src="https://github.com/user-attachments/assets/08ac39c9-5665-4ef1-8074-c8e81d3cc23a" />
 
 
 
