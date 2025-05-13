@@ -60,6 +60,12 @@ El usuario puede:
 
 ---
 
+## Modelo de la web (componentes)
+
+![image](https://github.com/user-attachments/assets/c0699fbf-97ab-4968-9904-798cf322bb61)
+
+---
+
 ## 🛢️ Estructura de la Base de Datos
 
 ![Base de datos](https://github.com/user-attachments/assets/1dd38fba-21ce-4d03-93bc-7920e3efb0d5)
