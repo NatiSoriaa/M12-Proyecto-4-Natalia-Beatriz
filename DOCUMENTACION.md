@@ -30,13 +30,48 @@ El usuario puede:
 
 ---
 
-## 🧪 Tecnologías Utilizadas
+## 📐 Arquitectura
+
+La arquitectura de nuestro proyecto es de tipo Frontend-Backend desacoplado (SPA + API REST).
+
+![alt text](https://edteam-media.s3.amazonaws.com/blogs/original/a04ca961-f61d-4dc3-837c-55c06df42ce7.png)
+
+### 🔧 Backend
+
+- MVC donde la vista es el frontend
+- Se encarga de la lógica de la autenticación y las sesiones
+- Comunicación con el frontend via exposición de endpoints API RESTful
+- Persistencia de base de datos
+
+Lenguajes utilizados:
+
+- PHP
+
+## Autenticación
+
+El usuario puede registrarse e iniciar sesión. Por defecto se le asigna el rol 'normal'. En función del usuario se muestran unos datos u otros.
+
+## Sesión
+
+Las sesiones se guardan mediante la generación de cookies en el backend. El frontend envía la petición al servidor junto con la cookie almacenada en el navegador y el 
+servidor identifica qué usuario es. Así el usuario puede obtener respuestas sin salir de la sesión.
+
+## Países
+
+El usuario puede añadir la información de los paises a la base de datos. Se registra como país favorito y por defecto como visitado = 0. Cuando el usuario marca como visitado un país, este se añade a la base de datos o 
+actualiza (si ya ha sido añadido a favoritos) el campo visitado a 1. 
+
+Los campos de la base de datos user_favorites son rellenados mediante información recogida de apis externas.
+
+![alt text](image.png)
 
 ### 🔧 Frontend
 
 - HTML5  
 - CSS3  
 - JavaScript (Vanilla)
+
+## 🧪 Tecnologías Utilizadas
 
 ### 📚 Librerías
 
