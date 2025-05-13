@@ -3,7 +3,7 @@
 require_once '../models/Favoritos.php';
 require_once '../config/config.php';
 
-// Definimos la clase AnunciController que manejará las solicitudes 
+// Definimos la clase FavoritosController que manejará las solicitudes 
 class FavoritosController {
     private $favoritosModel;
 

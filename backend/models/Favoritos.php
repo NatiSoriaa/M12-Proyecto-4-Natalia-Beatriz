@@ -10,9 +10,10 @@ class Favoritos extends Model {
     }
 
     // Query SQL para obtener favoritos
-    public function obtenerFavoritos() {
-        $stmt = $this->pdo->query("SELECT * FROM user_favorites");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    public function obtenerFavoritosPorUsuario($usuari_id){
+        $stmt = $this->pdo->prepare('SELECT * from user_favorites where usuari_id = ?');
+        $stmt->execute([$usuari_id]); 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Query SQL para eliminar un favorito
