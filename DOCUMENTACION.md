@@ -63,7 +63,6 @@ actualiza (si ya ha sido añadido a favoritos) el campo visitado a 1.
 
 Los campos de la base de datos user_favorites son rellenados mediante información recogida de apis externas.
 
-![alt text](image.png)
 
 ### 🔧 Frontend
 
