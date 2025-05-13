@@ -908,6 +908,13 @@ body.light-mode .modal-content {
     flex-direction: column;
     gap: 10px;
   }
+  .search-bar{
+    display:flex;
+    justify-content: center;
+    margin-top: 100px;
+    position: absolute;
+    left: 25%;
+}
 }
 
 @keyframes blink {
@@ -919,4 +926,3 @@ body.light-mode .modal-content {
 #meteor-btn i.blink {
   animation: blink 0.5s infinite;
 }
-
