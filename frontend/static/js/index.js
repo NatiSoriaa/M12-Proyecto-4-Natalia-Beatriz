@@ -642,9 +642,10 @@ const searchInput = document.querySelector('#input');
 searchButton.addEventListener('click', () => {
   const country = searchInput.value.trim();
   if (country) {
+    removeMarkers();
     searchCountryLocation(country);
   } else {
-    alert('Por favor ingresa un nombre de país');
+    toastr.warning('Por favor ingresa un nombre de país');
   }
 });
 
