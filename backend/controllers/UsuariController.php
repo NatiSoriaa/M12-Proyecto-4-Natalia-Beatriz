@@ -86,14 +86,6 @@ class UsuariController {
         header("Access-Control-Allow-Origin: http://localhost");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
-        session_set_cookie_params([
-            'lifetime' => 3600,
-            'path' => '/',
-            'domain' => 'localhost',
-            'secure' => false,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
         
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
