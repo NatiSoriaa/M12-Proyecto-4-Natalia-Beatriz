@@ -1,13 +1,13 @@
 
-🌍 Earth Map - Documentación del Proyecto
+##🌍 Earth Map - Documentación del Proyecto
 
 
-Idea del Proyecto
+#Idea del Proyecto
 
 Earth Map es una plataforma web interactiva que permite visualizar información detallada de todos los países del mundo sobre un globo terráqueo 3D. El usuario puede buscar países, visualizar sus datos, marcarlos como visitados o favoritos, y almacenar imágenes de sus viajes. El objetivo es ofrecer una experiencia educativa, visual y divertida para explorar el mundo.
 
 
-Descripción General
+#Descripción General
 
 La aplicación simula un planeta Tierra 3D interactivo utilizando Three.js. El usuario puede:
 
@@ -24,7 +24,7 @@ La aplicación simula un planeta Tierra 3D interactivo utilizando Three.js. El u
 -Ver y subir imágenes en un álbum digital.
 
 
-Tecnologías Utilizadas
+#Tecnologías Utilizadas
 
 
 -Frontend:
@@ -36,7 +36,7 @@ Tecnologías Utilizadas
 --JavaScript
 
 
-Librerías:
+#Librerías:
 
 -Three.js: renderizado 3D.
 
@@ -48,8 +48,10 @@ Librerías:
 
 -html2pdf.js: exportar información como PDF.
 
+-loading.io: barra de carga al iniciar sesion o registrarse
 
-APIs:
+
+#APIs:
 
 -RestCountries API: información de países.
 
@@ -57,24 +59,24 @@ APIs:
 
 
 
-ESTRUCTURA DEL PROYECTO
+#ESTRUCTURA DEL PROYECTO
 
 <img width="128" alt="image" src="https://github.com/user-attachments/assets/08ac39c9-5665-4ef1-8074-c8e81d3cc23a" />
 
 
 
-ESTRUCTURA BASE DE DATOS
+#ESTRUCTURA BASE DE DATOS
 
 ![Captura de pantalla 2025-05-11 211511](https://github.com/user-attachments/assets/1dd38fba-21ce-4d03-93bc-7920e3efb0d5)
 
 
 
 
-🌍 Sitio Web Visualmente
+##🌍 Sitio Web Visualmente
 
 
 
-1. Menú de Navegación
+#1. Menú de Navegación
 
 -Qué hace: muestra submenús animados y modals con cada pais agregado.
 
@@ -82,7 +84,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-2. Búsqueda de Países
+#2. Búsqueda de Países
 
 -Barra superior para ingresar nombre del país.
 
@@ -90,7 +92,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-3. Modal de Información del País
+#3. Modal de Información del País
 
 -Muestra capital, región, población, idioma, bandera.
 
@@ -98,7 +100,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-4. Galería de Imágenes (Mi Álbum)
+#4. Galería de Imágenes (Mi Álbum)
 
 -Subida de imágenes por Drag & Drop.
 
@@ -106,7 +108,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-5. Modal de País Aleatorio
+#5. Modal de País Aleatorio
 
 -Botón aleatorio muestra país con datos básicos.
 
@@ -116,7 +118,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-6. Login y Registro de Usuario
+#6. Login y Registro de Usuario
 
 -Modal con dos formularios: Login / Register.
 
@@ -128,7 +130,7 @@ ESTRUCTURA BASE DE DATOS
 
 
 
-7. Actividad y Países Visitados
+#7. Actividad y Países Visitados
 
 -Muestra en el globo países amarillos como "busqueda reciente".
 
