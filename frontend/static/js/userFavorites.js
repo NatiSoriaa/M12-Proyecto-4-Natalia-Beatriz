@@ -1,7 +1,16 @@
-import {loadToastr} from './toastr.js';
+import { loadToastr } from './toastr.js';
 import { checkSession } from './login-register.js';
+
 loadToastr();
 const session = await checkSession();
+
+
+
+
+// FUNCIONES PRINCIPALES
+
+
+
 
 async function getFavorites() {
     if (session.logged == true) {
@@ -9,24 +18,19 @@ async function getFavorites() {
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
                 credentials: 'include',
-                cache: 'no-store' // no almacenar
+                cache: 'no-store'
             });
         
             const data = await response.json();
-            if(response.ok && data.success) {
-
-                // show images on modal
+            if (response.ok && data.success) {
                 const infoModal = document.getElementById('favoritosContainer');              
                 infoModal.style.display = 'flex';
-                
                 displayFavorites(data.data);
-                            
             } else {
                 toastr.warning('No tienes favoritos guardados');
             }
         } catch (error) {
             toastr.error('Error al cargar favoritos');
-            // console.error(error);
         }
     } else {
         toastr.warning('Debes iniciar sesión para ver tus favoritos');
@@ -50,10 +54,9 @@ function displayFavorites(favorites) {
         existingFavoritesContainer.remove();
     }
 
-    // nuevo contenedor favoritos
     const favoritesContainer = document.createElement('div');
     favoritesContainer.className = 'favorites-container';
-    
+
     favorites.forEach(fav => {
         const favElement = document.createElement('div');
         favElement.className = 'favorite-item';
@@ -64,15 +67,22 @@ function displayFavorites(favorites) {
         `;
         favoritesContainer.appendChild(favElement);
     });
-    
+
     modalContent.appendChild(favoritesContainer);
 }
+
+
+
+
+// EVENTOS: ABRIR/CERRAR MODAL FAVORITOS
+
+
+
 
 document.querySelector('#favoritos').addEventListener('click', () => {
     getFavorites();
 });
 
-// Cerrar al hacer click fuera
 const favoritosContainer = document.getElementById('favoritosContainer');
 favoritosContainer.addEventListener('click', (event) => {
     const modalContent = document.querySelector('.fav-content');
@@ -81,7 +91,13 @@ favoritosContainer.addEventListener('click', (event) => {
     }
 });
 
-// Añadir a favoritos 
+
+
+
+// AÑADIR A FAVORITOS
+
+
+
 
 const iconoFavoritos = document.getElementById('paises-favoritos');
 iconoFavoritos.addEventListener('click', async () => {
@@ -89,12 +105,13 @@ iconoFavoritos.addEventListener('click', async () => {
         toastr.warning('Debes iniciar sesión para guardar favoritos');
         return;
     }
+
     const country = document.querySelector('#input').value.trim();
     if (!country) {
-      toastr.warning('Debes ingresar un país');
-      return;
+        toastr.warning('Debes ingresar un país');
+        return;
     }
-    // IMÁGENES
+
     const imagesModal = document.getElementById('imagesModal');
     if (!imagesModal) return console.error('No se encontró el modal');
 
@@ -102,12 +119,12 @@ iconoFavoritos.addEventListener('click', async () => {
     const imgElement = imagesModal.querySelector('img');
     const imageUrl = imgElement?.src || null;
 
-    // NOMBRE PAIS
     const infoModal = document.getElementById('infoModal');
     if (!infoModal) return console.error("No se ha encontrado el modal");
     const countryDescription = document.querySelector('#infoModalContent').innerHTML;
 
     country.replace('Nombre del país: ', '');
+
     try {
         const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito', {
             method: 'POST',
@@ -128,6 +145,7 @@ iconoFavoritos.addEventListener('click', async () => {
         if (responseText.includes("Integrity constraint violation")) {
             toastr.warning("Ya está en tus favoritos!");
         }
+
         let result;
         try {
             result = JSON.parse(responseText);
@@ -151,68 +169,84 @@ iconoFavoritos.addEventListener('click', async () => {
     }
 });
 
-// DELETE FAVORITE 
+
+
+
+// ELIMINAR FAVORITO
+
+
+
+
 async function deleteFavorito(favoritoId) {
-  if (!confirm('¿Estás seguro de querer eliminar este favorito?')) {
-    return;
-}
-  try {
-      const response = await fetch(
-          `http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarFavorito`, 
-          {
-              method: 'DELETE',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json'
-              },
-              credentials: 'include',
-              body: JSON.stringify({ id: favoritoId })
-          }
-      );
+    if (!confirm('¿Estás seguro de querer eliminar este favorito?')) return;
 
-      if (response.status === 204) {
-          toastr.success('Favorito eliminado');
-          await getFavorites();
-          return;
-      }
+    try {
+        const response = await fetch(
+            `http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarFavorito`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ id: favoritoId })
+            }
+        );
 
-      const responseText = await response.text();
-      
-      if (!responseText) {
-          throw new Error('El servidor no respondió correctamente');
-      }
+        if (response.status === 204) {
+            toastr.success('Favorito eliminado');
+            await getFavorites();
+            return;
+        }
 
-      const result = JSON.parse(responseText);
-      
-      if (!response.ok) {
-          throw new Error(result.message || `Error ${response.status}`);
-      }
+        const responseText = await response.text();
+        if (!responseText) throw new Error('El servidor no respondió correctamente');
 
-      toastr.success(result.message || 'Favorito eliminado');
-      await getFavorites();
-      
-  } catch (error) {
-      console.error('Delete error:', error);
-      
-      if (error.message.includes('servidor')) {
-          toastr.error('Error del servidor. Intente más tarde.');
-      } else {
-          toastr.error(error.message || 'Error al eliminar favorito');
-      }
-      
-      if (confirm('¿Ver detalles del error?')) {
-          alert(`Error completo:\n${error.stack}`);
-      }
-  }
-}
+        const result = JSON.parse(responseText);
+        if (!response.ok) throw new Error(result.message || `Error ${response.status}`);
 
-export {deleteFavorito};
+        toastr.success(result.message || 'Favorito eliminado');
+        await getFavorites();
 
-document.addEventListener('click', function(event) {
-  if (event.target.classList.contains('delete-favorite')) {
-    const favoritoId = event.target.getAttribute('data-id');
-    if (favoritoId) {
-      deleteFavorito(favoritoId);
+    } catch (error) {
+        console.error('Delete error:', error);
+
+        if (error.message.includes('servidor')) {
+            toastr.error('Error del servidor. Intente más tarde.');
+        } else {
+            toastr.error(error.message || 'Error al eliminar favorito');
+        }
+
+        if (confirm('¿Ver detalles del error?')) {
+            alert(`Error completo:\n${error.stack}`);
+        }
     }
-  }
-})
+}
+
+
+
+
+// EVENTO CLICK PARA ELIMINAR
+
+
+
+
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('delete-favorite')) {
+        const favoritoId = event.target.getAttribute('data-id');
+        if (favoritoId) {
+            deleteFavorito(favoritoId);
+        }
+    }
+});
+
+
+
+
+// EXPORTS
+
+
+
+
+export { deleteFavorito };

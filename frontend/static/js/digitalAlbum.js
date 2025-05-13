@@ -1,4 +1,14 @@
+// IMPORTAR SESIÓN
+
 import { checkSession } from "./login-register.js";
+
+
+
+
+// CONFIGURACIÓN AL CARGAR EL DOM
+
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const session = await checkSession();
@@ -12,6 +22,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const previewContainer = document.getElementById("imagePreview");
 
   let myDropzone = null;
+
+
+
+
+  // ABRIR MODAL DEL ÁLBUM
+
+
+
 
   openBtn.addEventListener("click", () => {
     if (session.logged === false) {
@@ -28,10 +46,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+
+
+
+  // CERRAR MODAL DEL ÁLBUM
+
+
+
+
   closeBtn.addEventListener("click", () => {
     albumContainer.classList.remove("active");
     albumContent.classList.remove("active");
   });
+
+
+
+
+  // CARGAR IMÁGENES DEL USUARIO
+
+
+
 
   function loadUserImages() {
     previewContainer.innerHTML = "";
@@ -40,6 +74,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderImage(dataUrl, index);
     });
   }
+
+
+
+
+  // RENDERIZAR UNA IMAGEN
+
+
+
 
   function renderImage(dataUrl, index) {
     const img = document.createElement("img");
@@ -62,12 +104,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     previewContainer.appendChild(previewWrapper);
   }
 
+
+
+
+  // ELIMINAR UNA IMAGEN DEL ÁLBUM
+
+
+
+
   function removeImage(index) {
     const saved = JSON.parse(localStorage.getItem(storageKey)) || [];
     saved.splice(index, 1);
     localStorage.setItem(storageKey, JSON.stringify(saved));
     loadUserImages();
   }
+
+
+
+
+  // INICIALIZAR DROPZONE
+
+
+
 
   function initializeDropzone() {
     Dropzone.autoDiscover = false;
@@ -97,4 +155,5 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
+
 });

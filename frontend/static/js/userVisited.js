@@ -1,10 +1,29 @@
+
+
+
+
+// IMPORTACIONES Y CONFIGURACIÓN INICIAL
+
+
+
+
 import {loadToastr} from './toastr.js';
 import { checkSession } from './login-register.js';
 // import { initializeStarRating } from './starRating.js';
+
 const session = await checkSession();
 loadToastr();
+
 const visitToggle = document.getElementById('visitado');
 const visitIcon = visitToggle.querySelector('img');
+
+
+
+
+// EVENTO CLICK PARA MARCAR/QUITAR "VISITADO"
+
+
+
 
 visitToggle.addEventListener('click', async () => {
   if (!session?.logged) {
@@ -77,7 +96,15 @@ visitToggle.addEventListener('click', async () => {
       visitToggle.classList.remove('loading');
     }
 });
-  
+
+
+
+
+// FUNCIÓN PARA OBTENER LUGARES VISITADOS
+
+
+
+
 async function getVisited() {
   if (session.logged) {
       try {
@@ -88,13 +115,9 @@ async function getVisited() {
       
           const data = await response.json();
           if(response.ok && data.success) {
-
-              // show images on modal
               const infoModal = document.getElementById('favoritosContainer');              
               infoModal.style.display = 'flex';
-              
               displayVisited(data.data);
-            
           } else {
               toastr.warning('No tienes favoritos guardados');
           }
@@ -107,28 +130,35 @@ async function getVisited() {
   }
 }
 
+
+
+
+// FUNCIÓN PARA MOSTRAR VISITADOS EN MODAL
+
+
+
+
 async function displayVisited(visited) {
   const modalContent = document.querySelector('.fav-content');
   gsap.fromTo(modalContent, { opacity: 0 }, { opacity: 1, duration: 0.5 });
 
-    const title = modalContent.querySelector('.fav-title');
-    title.textContent = 'Mis visitados';
+  const title = modalContent.querySelector('.fav-title');
+  title.textContent = 'Mis visitados';
 
-    if (!visited || visited.length === 0) {
-        title.textContent = 'No tienes visitados';
-        return;
-    }
+  if (!visited || visited.length === 0) {
+      title.textContent = 'No tienes visitados';
+      return;
+  }
 
-    const existingFavoritesContainer = modalContent.querySelector('.favorites-container');
-    if (existingFavoritesContainer) {
-        existingFavoritesContainer.remove();
-    }
+  const existingFavoritesContainer = modalContent.querySelector('.favorites-container');
+  if (existingFavoritesContainer) {
+      existingFavoritesContainer.remove();
+  }
 
-    // contenedor visitados
-    const visitadosContainer = document.createElement('div');
-    visitadosContainer.className = 'favorites-container';
-    
-    visited.forEach(v => {
+  const visitadosContainer = document.createElement('div');
+  visitadosContainer.className = 'favorites-container';
+  
+  visited.forEach(v => {
     const visitedElement = document.createElement('div');
     visitedElement.className = 'visited-item';
     
@@ -149,24 +179,41 @@ async function displayVisited(visited) {
         <button class="delete-visitado" data-id="${v.id}" data-nom=${v.nom}>Eliminar</button>
     `;
 
-      visitadosContainer.appendChild(visitedElement);
+    visitadosContainer.appendChild(visitedElement);
   });
+
   modalContent.appendChild(visitadosContainer);
   setupEmojiListeners();
   setupDeleteVisitedListeners();
 }
 
+
+
+
+// EVENTO PARA ABRIR MODAL DE VISITADOS
+
+
+
+
 document.querySelector('#paisesVisitados').addEventListener('click', () => {
   getVisited();
 });
 
-// save rating to db
+
+
+
+// FUNCIÓN PARA GUARDAR RATING EMOJI EN DB
+
+
+
+
 function setupEmojiListeners() {
   document.querySelectorAll('.emoji-rating').forEach(container => {
     if (!session?.logged) {
-    toastr.warning('Debes iniciar sesión para calificar');
-    return;
-  }
+      toastr.warning('Debes iniciar sesión para calificar');
+      return;
+    }
+
     const id = container.getAttribute('data-id');
     const emojis = container.querySelectorAll('.emoji');
 
@@ -198,12 +245,12 @@ function setupEmojiListeners() {
           }
         })
         .then(data => {
-            console.log('Respuesta completa:', data);
-            if (data.status === 'success' || data.success) {
-                toastr.success(data.message || 'Puntuación guardada');
-            } else {
-                toastr.error(data.message || 'Error al guardar puntuación');
-            }
+          console.log('Respuesta completa:', data);
+          if (data.status === 'success' || data.success) {
+              toastr.success(data.message || 'Puntuación guardada');
+          } else {
+              toastr.error(data.message || 'Error al guardar puntuación');
+          }
         })
         .catch(err => {
           console.error(err);
@@ -214,42 +261,50 @@ function setupEmojiListeners() {
   });
 }
 
-// set visited to 0 if user presses 'eliminar'
+
+
+
+// FUNCIÓN PARA ELIMINAR VISITADO (desmarcar)
+
+
+
+
 function setupDeleteVisitedListeners() {
   document.querySelector('.fav-content').addEventListener('click', async (event) => {
-  if (event.target.classList.contains('delete-visitado')) {
-    const button = event.target;
-  if (!confirm('¿Estás seguro de querer eliminar este visitado?')) {
-      return;
-    }
-    try {
-      const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          nom: '',
-          visitado: 0
-        })
-      });
+    if (event.target.classList.contains('delete-visitado')) {
+      const button = event.target;
 
-      const result = await response.json();
-
-      if (!result.success) {
-        toastr.error(result.message || 'Error al eliminar visitado');
+      if (!confirm('¿Estás seguro de querer eliminar este visitado?')) {
         return;
       }
 
-      // remove form dom
-      button.closest('.visited-item').remove();
-      toastr.success('Desmarcado como visitado');
+      try {
+        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            nom: '',
+            visitado: 0
+          })
+        });
 
-    } catch (error) {
-      console.error(error);
-      toastr.error('Error al comunicarse con el servidor');
+        const result = await response.json();
+
+        if (!result.success) {
+          toastr.error(result.message || 'Error al eliminar visitado');
+          return;
+        }
+
+        button.closest('.visited-item').remove();
+        toastr.success('Desmarcado como visitado');
+
+      } catch (error) {
+        console.error(error);
+        toastr.error('Error al comunicarse con el servidor');
+      }
     }
-  }
-});
+  });
 }

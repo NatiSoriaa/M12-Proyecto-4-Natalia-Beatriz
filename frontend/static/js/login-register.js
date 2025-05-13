@@ -1,31 +1,58 @@
+// IMPORTAR TOASTR
+
 import { loadToastr } from "./toastr.js";
+
+
+
+
+// INICIALIZAR APP AL CARGAR DOM
+
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initializeApp();
 });
+
+
+
+
+// FUNCIÓN PRINCIPAL PARA INICIALIZAR
+
+
+
 
 async function initializeApp() {
     document.getElementById('usuario-nombre').style.visibility = 'hidden';
     document.getElementById('selectIniciarSesion').style.display = 'none';
     document.getElementById('selectCerrarSesion').style.display = 'none';
     document.getElementById('loginModal').style.display = 'none';
-    
+
     loadToastr();
-    
+
     try {
         const session = await checkAndHandleSession();
         setupFormEvents();
         setupModalEvents();
         setupLogoutButton();
-        
+
         setTimeout(() => {
             document.getElementById('usuario-nombre').style.visibility = 'visible';
         }, 300);
-        
+
     } catch (error) {
         console.error('Error inicializando app:', error);
     }
 }
+
+
+
+
+// COMPROBAR Y GESTIONAR SESIÓN
+
+
+
+
 async function checkAndHandleSession() {
     try {
         const session = await checkSession();
@@ -38,24 +65,23 @@ async function checkAndHandleSession() {
 
         if (session.logged) {
             modal.style.display = 'none';
-            
+
             gsap.fromTo(nombreUsuario, { opacity: 0, y: -20 }, { opacity: 1, y:0, duration: 0.5, ease:'power2.out', 
                 onStart: () => {
                     nombreUsuario.textContent = session.nom;
                     nombreUsuario.style.visibility = 'visible';
                 }
-             });
+            });
 
             iniciarSesionBtn.style.display = 'none';
             cerrarSesionBtn.style.display = 'block';
 
         } else {
-
             iniciarSesionBtn.style.display = 'block';
             cerrarSesionBtn.style.display = 'none';
             showModal();
         }
-        
+
         return session;
     } catch (error) {
         console.error('Error al verificar sesión:', error);
@@ -64,6 +90,15 @@ async function checkAndHandleSession() {
         return { logged: false };
     }
 }
+
+
+
+
+// CONFIGURAR EVENTOS DE FORMULARIOS
+
+
+
+
 function setupFormEvents() {
     document.querySelector('#loginForm').addEventListener('submit', (event) => {
         event.preventDefault();
@@ -83,6 +118,14 @@ function setupFormEvents() {
     });
 }
 
+
+
+
+// CONFIGURAR EVENTOS DEL MODAL
+
+
+
+
 function setupModalEvents() {
     const modal = document.getElementById('loginModal');
     const closeModalBtn = document.querySelector('.close');
@@ -90,8 +133,8 @@ function setupModalEvents() {
     const registerBtn = document.getElementById("showRegister");
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
-    
-    // login as default
+
+    // login por defecto
     loginForm.classList.add("active");
 
     loginBtn.addEventListener("click", () => {
@@ -126,18 +169,33 @@ function setupModalEvents() {
     });
 }
 
+
+
+
+// CONFIGURAR BOTÓN DE CERRAR SESIÓN
+
+
+
+
 function setupLogoutButton() {
     document.querySelector('#selectCerrarSesion').addEventListener('click', () => {
         showLoadingBar(() => logout());
     });
 }
 
+
+
+
+// MOSTRAR Y OCULTAR MODAL
+
+
+
+
 function showModal() {
     const modal = document.getElementById('loginModal');
     if (modal.style.display === 'flex') return;
     modal.style.display = 'flex';
     gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.5 });
-
 }
 
 function closeModal() {
@@ -152,6 +210,14 @@ function closeModal() {
     });
 }
 
+
+
+
+// MOSTRAR / OCULTAR CONTRASEÑA
+
+
+
+
 function showHidePasswd() {
     var password = document.getElementById("log-passw");
     if (password.type === "password") {
@@ -163,7 +229,15 @@ function showHidePasswd() {
 
 document.querySelector('.password-toggle-icon').addEventListener('click', () => {
     showHidePasswd();
-})
+});
+
+
+
+
+// FUNCIÓN DE LOGIN
+
+
+
 
 async function login(email, password) {
     const session = await checkSession();
@@ -189,7 +263,6 @@ async function login(email, password) {
             if (sessionCheck.logged) {
                 closeModal();
                 toastr.success(`Bienvenido/a, ${data.nom}`, 'Éxito');
-                // document.getElementById('usuario-nombre').textContent = data.nom;
 
                 if (data.redirect) {
                     window.location.href = data.redirect;
@@ -207,6 +280,14 @@ async function login(email, password) {
         toastr.error('Error de conexión', 'Error');
     }
 }
+
+
+
+
+// FUNCIÓN DE REGISTRO
+
+
+
 
 async function createUser(username, email, password) {
     try {
@@ -230,6 +311,14 @@ async function createUser(username, email, password) {
     }
 }
 
+
+
+
+// VERIFICAR SESIÓN ACTUAL
+
+
+
+
 async function checkSession() {
     try {
         const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=checkSession", {
@@ -248,12 +337,20 @@ async function checkSession() {
     }
 }
 
+
+
+
+// CERRAR SESIÓN
+
+
+
+
 async function logout() {
     const session = await checkSession();
     const nombreUsuario = document.getElementById('usuario-nombre');
 
     if (session.logged) {
-        try {    
+        try {
             const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=logout", {
                 method: 'POST',
                 credentials: 'include'
@@ -263,17 +360,17 @@ async function logout() {
 
             if (res.ok && data.success) {
                 toastr.success('Sesión cerrada correctamente', 'Éxito');
-                if (nombreUsuario) {
 
-                gsap.fromTo(nombreUsuario, 
-                    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 
-                    { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out', 
-                    
-                    onComplete: () => {
-                        nombreUsuario.style.visibility = 'hidden';
-                    }
-                });
-            }
+                if (nombreUsuario) {
+                    gsap.fromTo(nombreUsuario, 
+                        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 
+                        { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out', 
+                            onComplete: () => {
+                                nombreUsuario.style.visibility = 'hidden';
+                            }
+                        });
+                }
+
                 await checkAndHandleSession();
             } else {
                 toastr.error('Error al cerrar sesión', 'Error');
@@ -285,6 +382,13 @@ async function logout() {
 }
 
 
+
+
+// BARRA DE CARGA ANIMADA
+
+
+
+
 function showLoadingBar(asyncFunction, minDuration = 800) {
     const loadBar = document.querySelector('.ldBar');
     loadBar.style.width = '0%';
@@ -293,7 +397,7 @@ function showLoadingBar(asyncFunction, minDuration = 800) {
 
     const startTime = Date.now();
     let progress = 0;
-    
+
     const progressInterval = setInterval(() => {
         progress += 5;
         loadBar.style.width = `${Math.min(progress, 90)}%`;
@@ -307,12 +411,10 @@ function showLoadingBar(asyncFunction, minDuration = 800) {
     .then(() => {
         const elapsed = Date.now() - startTime;
         const remaining = minDuration - elapsed;
-        
-        // Completar al 100%
+
         loadBar.style.width = '100%';
         loadBar.classList.add('complete');
-        
-        // Ocultar después de un breve retraso
+
         setTimeout(() => {
             loadBar.style.display = 'none';
         }, remaining > 0 ? 300 : 0);
@@ -323,5 +425,13 @@ function showLoadingBar(asyncFunction, minDuration = 800) {
         clearInterval(progressInterval);
     });
 }
+
+
+
+
+// EXPORTACIONES
+
+
+
 
 export { showLoadingBar, checkSession };
