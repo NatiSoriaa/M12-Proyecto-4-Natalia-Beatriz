@@ -1,27 +1,41 @@
 import { checkSession } from './login-register.js';
 const session = await checkSession();
 
-// Función para obtener información del país desde Wikipedia
+
+
+
+// FUNCION PARA OBTENER INFORMACION DEL PAIS DESDE WIKIPEDIA
+
+
+
+
 async function getCountryInfo(countryName) {
     try {
-      const response = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&titles=${encodeURIComponent(countryName)}`
-      );
-      const data = await response.json();
-  
-      // Extraer la información del país
-      const pages = data.query.pages;
-      const pageId = Object.keys(pages)[0];
-      const countryInfo = pages[pageId].extract;
-  
-      return countryInfo || "No se encontró información para este país.";
+        const response = await fetch(
+            `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&titles=${encodeURIComponent(countryName)}`
+        );
+        const data = await response.json();
+
+        const pages = data.query.pages;
+        const pageId = Object.keys(pages)[0];
+        const countryInfo = pages[pageId].extract;
+
+        return countryInfo || "No se encontró información para este país.";
     } catch (error) {
-      toastr.error("Error al obtener información del país:", error);
-      return "Hubo un error al obtener la información.";
+        toastr.error("Error al obtener información del país:", error);
+        return "Hubo un error al obtener la información.";
     }
-  }
-  
+}
+
 export { getCountryInfo };
+
+
+
+
+// FUNCION PARA GENERAR PDF DE LA INFORMACION MOSTRADA
+
+
+
 
 function generatePDF() {
     const element = document.getElementById('exportOnly');
@@ -42,6 +56,14 @@ function generatePDF() {
 
 export { generatePDF };
 
+
+
+
+// BOTON DE BUSQUEDA DE IMAGENES (por nombre del pais)
+
+
+
+
 const imagesButton = document.getElementById('imagesButton');
 const searchInput = document.getElementById('input');
 imagesButton.addEventListener('click', () => {
@@ -49,14 +71,19 @@ imagesButton.addEventListener('click', () => {
     searchByLocation(location);
 });
 
-//busqueda de imagenes por commons
-// Función para buscar imágenes
+
+
+
+// FUNCION PARA BUSCAR IMAGENES DE UN PAIS EN WIKIMEDIA COMMONS
+
+
+
+
 const searchByLocation = async (location) => {
     const imagesModal = document.getElementById('imagesModal');
     const imagesGrid = document.querySelector('.images-grid');
     const imagesTitle = document.querySelector('.images-title');
-    
-    // Mostrar el contenedor
+
     imagesModal.classList.add('active');
     imagesTitle.textContent = `Imágenes de ${location}`;
     imagesGrid.innerHTML = '';
@@ -69,7 +96,7 @@ const searchByLocation = async (location) => {
 
         if (data.query?.pages) {
             let imagesFound = false;
-            
+
             Object.values(data.query.pages).forEach((page) => {
                 if (page.imageinfo?.[0]?.url) {
                     imagesFound = true;
@@ -84,12 +111,18 @@ const searchByLocation = async (location) => {
             showImagesMessage('No se encontraron resultados', imagesGrid);
         }
     } catch (error) {
-        // console.error("Error buscando imágenes:", error);
         showImagesMessage('Error al buscar imágenes. Intente más tarde.', imagesGrid);
     }
 };
 
-// Función para crear tarjetas de imagen
+
+
+
+// FUNCION PARA CREAR TARJETAS DE IMAGEN CON BOTONES DE ACCIONES
+
+
+
+
 function createImageCard(imageUrl, altText, container) {
     const card = document.createElement('div');
     card.className = 'image-card';
@@ -103,7 +136,6 @@ function createImageCard(imageUrl, altText, container) {
     const actions = document.createElement('div');
     actions.className = 'image-actions';
 
-    // Botón copiar
     const copyButton = createActionButton('📋', 'Copiar URL', () => {
         navigator.clipboard.writeText(imageUrl)
             .then(() => toastr.success('URL copiada al portapapeles'))
@@ -111,7 +143,6 @@ function createImageCard(imageUrl, altText, container) {
     });
     actions.appendChild(copyButton);
 
-    // Botón compartir
     const shareButton = createActionButton('🔗', 'Compartir', () => {
         if (navigator.share) {
             navigator.share({
@@ -124,7 +155,6 @@ function createImageCard(imageUrl, altText, container) {
     });
     actions.appendChild(shareButton);
 
-    // Botón pantalla completa
     const fullscreenButton = createActionButton('🔍', 'Pantalla completa', () => {
         if (img.requestFullscreen) {
             img.requestFullscreen();
@@ -134,7 +164,6 @@ function createImageCard(imageUrl, altText, container) {
     });
     actions.appendChild(fullscreenButton);
 
-    // Botón añadir a favoritos
     const addToFavoritesButton = createButton("🤍", "Añadir a favoritos", async () => {
         if (!session.logged) {
             toastr.warning('Debes iniciar sesión para guardar favoritos');
@@ -142,7 +171,6 @@ function createImageCard(imageUrl, altText, container) {
         }
 
         try {
-            
             const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito", {
                 method: 'POST',
                 headers: { 
@@ -157,28 +185,35 @@ function createImageCard(imageUrl, altText, container) {
                     url: imageUrl
                 })
             });
-    
+
             if (!response.ok) {
                 throw new Error('Request failed');
             }
 
             addToFavoritesButton.textContent = "❤️";
             toastr.success('Añadido a favoritos', 'Éxito');
-            
+
         } catch (error) {
             console.error('Error:', error);
             addToFavoritesButton.textContent = "🤍";
             toastr.error(error.message || 'Error al guardar favorito');
         }
     });
-    
+
     actions.appendChild(addToFavoritesButton);
 
     card.appendChild(actions);
     container.appendChild(card);
 }
 
-// Añadir acciones de botones
+
+
+
+// FUNCION PARA CREAR BOTONES DE ACCION
+
+
+
+
 function createActionButton(icon, tooltip, onClick) {
     const button = document.createElement('button');
     button.innerHTML = icon;
@@ -187,7 +222,14 @@ function createActionButton(icon, tooltip, onClick) {
     return button;
 }
 
-// Mostrar mensajes
+
+
+
+// FUNCION PARA MOSTRAR MENSAJES CUANDO NO HAY IMAGENES
+
+
+
+
 function showImagesMessage(message, container) {
     const messageElement = document.createElement('div');
     messageElement.className = 'images-message';
@@ -195,7 +237,14 @@ function showImagesMessage(message, container) {
     container.appendChild(messageElement);
 }
 
-// Verificar que hay un país ingresado
+
+
+
+// VERIFICAR QUE HAY UN PAIS INGRESADO
+
+
+
+
 document.getElementById('imagesButton').addEventListener('click', () => {
     const country = document.querySelector('#input').value;
     if (country) {
@@ -205,7 +254,13 @@ document.getElementById('imagesButton').addEventListener('click', () => {
     }
 });
 
-// Crear botones
+
+
+
+// FUNCION PARA CREAR BOTONES GENERALES
+
+
+
 
 function createButton(icon, tooltip, onClick) {
     const button = document.createElement("button");
@@ -214,4 +269,5 @@ function createButton(icon, tooltip, onClick) {
     button.addEventListener("click", onClick);
     return button;
 }
+
 export { searchByLocation };
