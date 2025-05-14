@@ -47,7 +47,7 @@ visitToggle.addEventListener('click', async () => {
 
     // update state
     const response = await fetch(
-      'http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', 
+      'https://m12uf4-backend.onrender.com/index.php?action=actualizarEstadoVisita', 
       {
         method: 'POST',
         headers: { 
@@ -108,7 +108,7 @@ visitToggle.addEventListener('click', async () => {
 async function getVisited() {
   if (session.logged) {
       try {
-          const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerVisitados", {
+          const response = await fetch("https://m12uf4-backend.onrender.com/index.php?action=obtenerVisitados", {
               method: 'GET',
               credentials: 'include'
           });
@@ -224,7 +224,7 @@ function setupEmojiListeners() {
         emojis.forEach(e => e.classList.remove('selected'));
         emoji.classList.add('selected');
 
-        fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=saveRating", {
+        fetch("https://m12uf4-backend.onrender.com/index.php?action=saveRating", {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -279,7 +279,7 @@ function setupDeleteVisitedListeners() {
       }
 
       try {
-        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=actualizarEstadoVisita', {
+        const response = await fetch('https://m12uf4-backend.onrender.com/index.php?action=actualizarEstadoVisita', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
