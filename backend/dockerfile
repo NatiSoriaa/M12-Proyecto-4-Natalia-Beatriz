@@ -1,0 +1,14 @@
+# Imagen base con Apache + PHP 8.2
+FROM php:8.2-apache
+
+# Copiar todo tu proyecto al servidor Apache
+COPY . /var/www/html/
+
+# Habilitar mod_rewrite (si usás .htaccess)
+RUN a2enmod rewrite
+
+# Dar permisos
+RUN chown -R www-data:www-data /var/www/html
+
+# Puerto expuesto
+EXPOSE 80
