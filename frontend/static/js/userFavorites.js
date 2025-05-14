@@ -15,7 +15,7 @@ const session = await checkSession();
 async function getFavorites() {
     if (session.logged == true) {
         try {
-            const response = await fetch("https://m12uf4-backend.onrender.com/index.php?action=obtenerFavoritos", {
+            const response = await fetch("https://m12-test-render-backend.onrender.com//backend/public/index.php?action=obtenerFavoritos", {
                 method: 'GET',
                 credentials: 'include',
                 cache: 'no-store'
@@ -126,7 +126,7 @@ iconoFavoritos.addEventListener('click', async () => {
     country.replace('Nombre del país: ', '');
 
     try {
-        const response = await fetch('https://m12uf4-backend.onrender.com/index.php?action=añadirFavorito', {
+        const response = await fetch('https://m12-test-render-backend.onrender.com//backend/public/index.php?action=añadirFavorito', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ async function deleteFavorito(favoritoId) {
 
     try {
         const response = await fetch(
-            `https://m12uf4-backend.onrender.com/index.php?action=eliminarFavorito`,
+            `https://m12-test-render-backend.onrender.com//backend/public/index.php?action=eliminarFavorito`,
             {
                 method: 'DELETE',
                 headers: {

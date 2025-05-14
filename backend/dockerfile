@@ -1,14 +1,20 @@
-# Imagen base con Apache + PHP 8.2
+# Imagen base con Apache y PHP 8.2
 FROM php:8.2-apache
 
-# Copiar todo tu proyecto al servidor Apache
-COPY . /var/www/html/
+# Instalar extensión para MySQL
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Habilitar mod_rewrite (si usás .htaccess)
+# Copiar todo el proyecto al contenedor
+COPY . /var/www/app/
+
+# Cambiar el DocumentRoot para que Apache sirva desde la carpeta 'backend/public'
+RUN sed -i 's!/var/www/html!/var/www/app/backend/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Habilitar mod_rewrite para .htaccess
 RUN a2enmod rewrite
 
-# Dar permisos
-RUN chown -R www-data:www-data /var/www/html
+# Asignar permisos al servidor
+RUN chown -R www-data:www-data /var/www/app
 
-# Puerto expuesto
+# Exponer el puerto HTTP
 EXPOSE 80

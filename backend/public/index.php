@@ -11,7 +11,7 @@ if (session_status() == PHP_SESSION_NONE) {
         'cookie_samesite' => 'Lax'
     ]);  
 }
-define('BASE_URL', 'http://localhost/M12-Proyecto-4-Natalia-Beatriz/');
+define('BASE_URL', 'https://m12-proyecto-4-natalia-beatriz.vercel.app/'); // Define la URL base de la aplicación
 
 // Incluye los controladores necesarios
 require_once '../controllers/UsuariController.php';  // Controlador de usuarios
@@ -87,7 +87,7 @@ switch ($action) {
         $favoritosController->guardarPuntuacion();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
-    header('Location: ' . BASE_URL . 'frontend/templates/index.html');
+    header('Location: ' . BASE_URL . 'frontend/index.html');
     exit();  // Evita que se siga ejecutando el código
 }
 ?>
