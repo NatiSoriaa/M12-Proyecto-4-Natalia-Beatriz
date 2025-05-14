@@ -171,7 +171,7 @@ function createImageCard(imageUrl, altText, container) {
         }
 
         try {
-            const response = await fetch("https://m12-test-render-backend.onrender.com//backend/public/index.php?action=añadirFavorito", {
+            const response = await fetch("https://m12-test-render-backend.onrender.com/backend/public/index.php?action=añadirFavorito", {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
