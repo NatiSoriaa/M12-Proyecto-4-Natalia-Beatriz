@@ -82,7 +82,6 @@ async function checkAndHandleSession() {
 
         return session;
     } catch (error) {
-        console.error('Error al verificar sesión:', error);
         document.getElementById('selectIniciarSesion').style.display = 'block';
         document.getElementById('selectCerrarSesion').style.display = 'none';
         return { logged: false };
