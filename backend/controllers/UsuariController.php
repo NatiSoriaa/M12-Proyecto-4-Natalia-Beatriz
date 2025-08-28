@@ -2,7 +2,7 @@
 
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app/");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -87,7 +87,7 @@ class UsuariController {
     // check if session is active
     public function checkSession() {
         if (ob_get_length()) ob_clean();
-        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app/");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
         
