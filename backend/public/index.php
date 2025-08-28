@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 if (session_status() == PHP_SESSION_NONE) {
     session_start([
         'cookie_lifetime' => 86400,
-        'cookie_secure' => false,
+        'cookie_secure' => true,
         'cookie_httponly' => true,
-        'cookie_samesite' => 'Lax'
+        'cookie_samesite' => 'None'
     ]);  
 }
 define('BASE_URL', 'https://earth-project-frontend.vercel.app'); // Define la URL base de la aplicación

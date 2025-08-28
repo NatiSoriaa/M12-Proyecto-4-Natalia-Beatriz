@@ -20,17 +20,10 @@ class FavoritosController {
     // lista favoritos por usuario
     public function obtenerFavoritos() {
         header('Content-Type: application/json');
-        if (session_status() == PHP_SESSION_NONE) {
-            session_set_cookie_params([
-                'lifetime' => 86400,
-                'path' => '/',
-                'domain' => 'localhost',
-                'secure' => false,
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]);
+        if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
-        }        
+        }
+
         if (!isset($_SESSION['usuari_id'])) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Usuario no autenticado']);
@@ -95,13 +88,9 @@ class FavoritosController {
         try {
             // Verify session
             if (session_status() !== PHP_SESSION_ACTIVE) {
-                session_start([
-                    'cookie_lifetime' => 86400,
-                    'cookie_secure' => false,
-                    'cookie_httponly' => true,
-                    'cookie_samesite' => 'Lax'
-                ]);
+                session_start();
             }
+
             
             if (!isset($_SESSION['usuari_id'])) {
                 throw new Exception('Usuario no autenticado', 401);
@@ -188,17 +177,9 @@ class FavoritosController {
 
     public function obtenerVisitados() {
         header('Content-Type: application/json');
-        if (session_status() == PHP_SESSION_NONE) {
-            session_set_cookie_params([
-                'lifetime' => 86400,
-                'path' => '/',
-                'domain' => 'localhost',
-                'secure' => false,
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]);
+        if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
-        }        
+        }      
 
         if (!isset($_SESSION['usuari_id'])) {
             http_response_code(401);
