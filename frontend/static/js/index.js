@@ -237,7 +237,6 @@ function setupMarkerClick() {
     
     if (intersects.length > 0) {
       const marker = intersects[0].object;
-      console.log('Marcador clickeado:', marker.userData);
       marker.callback();
       event.stopPropagation();
     }

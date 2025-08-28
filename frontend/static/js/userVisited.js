@@ -245,7 +245,6 @@ function setupEmojiListeners() {
           }
         })
         .then(data => {
-          console.log('Respuesta completa:', data);
           if (data.status === 'success' || data.success) {
               toastr.success(data.message || 'Puntuación guardada');
           } else {
