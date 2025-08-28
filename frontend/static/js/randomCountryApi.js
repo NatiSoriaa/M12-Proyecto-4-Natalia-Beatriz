@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function getRandomCountry() {
   try {
-      const response = await fetch('https://restcountries.com/v3.1/all');
+      const response = await fetch('https://restcountries.com/v3.1/all?fields=name,capital,region,flags');
       const countries = await response.json();
 
       const randomIndex = Math.floor(Math.random() * countries.length);
