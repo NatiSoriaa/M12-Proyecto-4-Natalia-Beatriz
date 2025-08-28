@@ -1,6 +1,6 @@
 <?php
 // cors config
-header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app/");
+header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, Cache-Control");

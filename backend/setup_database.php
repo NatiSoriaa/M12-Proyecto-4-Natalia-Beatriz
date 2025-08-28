@@ -50,7 +50,7 @@ try {
     )");
 
     echo "✅ Base de datos y tablas creadas correctamente!";
-    header('Location: https://earth-project-frontend.vercel.app/');
+    header('Location: https://earth-project-frontend.vercel.app');
     exit;
 
 } catch (PDOException $e) {

@@ -1,6 +1,6 @@
 <?php
-if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === "https://earth-project-frontend.vercel.app/") {
-    header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app/");
+if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === "https://earth-project-frontend.vercel.app") {
+    header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app");
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -9,12 +9,7 @@ if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === "https://earth
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit(0);
-}
-
-header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app/");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+};
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start([
@@ -24,7 +19,7 @@ if (session_status() == PHP_SESSION_NONE) {
         'cookie_samesite' => 'Lax'
     ]);  
 }
-define('BASE_URL', 'https://earth-project-frontend.vercel.app/'); // Define la URL base de la aplicación
+define('BASE_URL', 'https://earth-project-frontend.vercel.app'); // Define la URL base de la aplicación
 
 // Incluye los controladores necesarios
 require_once '../controllers/UsuariController.php';  // Controlador de usuarios
