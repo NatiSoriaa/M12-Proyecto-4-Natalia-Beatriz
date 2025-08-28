@@ -3,7 +3,7 @@ if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === "https://earth
     header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app");
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

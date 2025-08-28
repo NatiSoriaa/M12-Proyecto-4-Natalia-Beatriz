@@ -5,7 +5,8 @@ require_once '../config/config.php';
 header("Access-Control-Allow-Origin: https://earth-project-frontend.vercel.app");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control");
+
 
 // Definimos la clase FavoritosController que manejará las solicitudes 
 class FavoritosController {
