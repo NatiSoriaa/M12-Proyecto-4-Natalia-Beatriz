@@ -31,7 +31,7 @@ async function initializeApp() {
     loadToastr();
 
     try {
-        const session = await checkAndHandleSession();
+        // const session = await checkAndHandleSession();
         setupFormEvents();
         setupModalEvents();
         setupLogoutButton();
@@ -39,6 +39,14 @@ async function initializeApp() {
         setTimeout(() => {
             document.getElementById('usuario-nombre').style.visibility = 'visible';
         }, 300);
+        
+        checkAndHandleSession()
+        .then(session => {
+            console.log('Sesión verificada:', session);
+        })
+        .catch(error => {
+            console.error('Error al verificar sesión:', error);
+        });
 
     } catch (error) {
         console.error('Error inicializando app:', error);
