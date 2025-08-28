@@ -50,7 +50,7 @@ try {
     )");
 
     echo "✅ Base de datos y tablas creadas correctamente!";
-    header('Location: http://localhost/M12-Proyecto-4-Natalia-Beatriz/frontend/templates/index.html');
+    header('Location: https://earth-project-frontend.vercel.app/');
     exit;
 
 } catch (PDOException $e) {

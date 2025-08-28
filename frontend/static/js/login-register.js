@@ -56,8 +56,6 @@ async function initializeApp() {
 async function checkAndHandleSession() {
     try {
         const session = await checkSession();
-        console.log("Estado de sesión:", session); 
-
         const modal = document.getElementById('loginModal');
         const iniciarSesionBtn = document.getElementById('selectIniciarSesion');
         const cerrarSesionBtn = document.getElementById('selectCerrarSesion');
@@ -248,7 +246,7 @@ async function login(email, password) {
     }
 
     try {
-        const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login", {
+        const response = await fetch("https://earth-project-backend.onrender.com/index.php?action=login", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, contrasenya: password }),
@@ -291,7 +289,7 @@ async function login(email, password) {
 
 async function createUser(username, email, password) {
     try {
-        const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=register", {
+        const res = await fetch("https://earth-project-backend.onrender.com/index.php?action=register", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nom: username, email: email, contrasenya: password })
@@ -321,7 +319,7 @@ async function createUser(username, email, password) {
 
 async function checkSession() {
     try {
-        const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=checkSession", {
+        const res = await fetch("https://earth-project-backend.onrender.com/index.php?action=checkSession", {
             method: 'GET',
             credentials: 'include',
             headers: { 'Cache-Control': 'no-cache' }
@@ -351,7 +349,7 @@ async function logout() {
 
     if (session.logged) {
         try {
-            const res = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=logout", {
+            const res = await fetch("https://earth-project-backend.onrender.com/index.php?action=logout", {
                 method: 'POST',
                 credentials: 'include'
             });

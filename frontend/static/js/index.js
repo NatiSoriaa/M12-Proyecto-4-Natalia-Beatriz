@@ -235,8 +235,6 @@ function setupMarkerClick() {
     // Buscar intersecciones con los marcadores
     const intersects = raycaster.intersectObjects(markers, true);
     
-    console.log('Intersecciones:', intersects);
-
     if (intersects.length > 0) {
       const marker = intersects[0].object;
       console.log('Marcador clickeado:', marker.userData);
@@ -394,7 +392,6 @@ function toggleMeteorShower() {
 // meteor btn
 function showMeteorBtn(session) {
   if (session?.logged === true && session?.rol === 'admin') {
-    console.log("eres admin. puedes destruir el planeta.")
     const button = document.querySelector('#meteor-btn');
     button.style.display="flex";
     button.addEventListener('click', toggleMeteorShower);
@@ -524,7 +521,7 @@ window.addEventListener('click', (event) => {
 function showInfo(data) {
   const name = data.name?.common || data.name || 'Este país';
   toastr.clear();
-  toastr.info(`Información de ${name}`);  console.log(`Mostrando información de: ${data.name}`);
+  toastr.info(`Información de ${name}`); 
 }
 
 function showImages(data) {
@@ -747,7 +744,7 @@ function openInfoModal(countryName, countryInfo) {
 
   window.addEventListener('click', (event) => {
     if (event.target === infoModal) {
-      gsap.to(modal, {
+      gsap.to(infoModal, {
           opacity: 0,
           duration: 0.5,
           onComplete: () => {

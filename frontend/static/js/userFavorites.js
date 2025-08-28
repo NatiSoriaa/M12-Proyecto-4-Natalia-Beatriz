@@ -15,7 +15,7 @@ const session = await checkSession();
 async function getFavorites() {
     if (session.logged == true) {
         try {
-            const response = await fetch("http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=obtenerFavoritos", {
+            const response = await fetch("https://earth-project-backend.onrender.com/index.php?action=obtenerFavoritos", {
                 method: 'GET',
                 credentials: 'include',
                 cache: 'no-store'
@@ -126,7 +126,7 @@ iconoFavoritos.addEventListener('click', async () => {
     country.replace('Nombre del país: ', '');
 
     try {
-        const response = await fetch('http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=añadirFavorito', {
+        const response = await fetch('https://earth-project-backend.onrender.com/index.php?action=añadirFavorito', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -181,8 +181,7 @@ async function deleteFavorito(favoritoId) {
     if (!confirm('¿Estás seguro de querer eliminar este favorito?')) return;
 
     try {
-        const response = await fetch(
-            `http://localhost/M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=eliminarFavorito`,
+        const response = await fetch(`https://earth-project-backend.onrender.com/index.php?action=eliminarFavorito`,
             {
                 method: 'DELETE',
                 headers: {

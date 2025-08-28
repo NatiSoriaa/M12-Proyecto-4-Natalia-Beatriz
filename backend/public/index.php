@@ -2,7 +2,7 @@
 // ini_set('display_errors', '1');
 // ini_set('display_startup_errors', '1');
 // error_reporting(E_ALL);
-header("Access-Control-Allow-Origin: https://m12-proyecto-4-natalia-beatriz.vercel.app");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -15,7 +15,7 @@ if (session_status() == PHP_SESSION_NONE) {
         'cookie_samesite' => 'Lax'
     ]);  
 }
-define('BASE_URL', 'https://m12-proyecto-4-natalia-beatriz.vercel.app/'); // Define la URL base de la aplicación
+define('BASE_URL', 'https://earth-project-frontend.vercel.app/'); // Define la URL base de la aplicación
 
 // Incluye los controladores necesarios
 require_once '../controllers/UsuariController.php';  // Controlador de usuarios
@@ -91,7 +91,7 @@ switch ($action) {
         $favoritosController->guardarPuntuacion();
         break;
     default:  // Acción por defecto, redirige si no se encuentra ninguna acción
-    header('Location: ' . BASE_URL . 'frontend/index.html');
+    header('Location: ' . BASE_URL . '/');
     exit();  // Evita que se siga ejecutando el código
 }
 ?>

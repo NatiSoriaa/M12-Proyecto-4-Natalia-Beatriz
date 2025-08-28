@@ -2,7 +2,7 @@
 
 require_once '../models/Usuari.php';
 require_once '../config/config.php';
-header("Access-Control-Allow-Origin: https://m12-proyecto-4-natalia-beatriz.vercel.app");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -40,7 +40,7 @@ class UsuariController {
             // Creación de usuario y redirigimos a login
             if ($this->usuariModel->crearUsuari($nom, $email, $contrasenya)) {
                 // envia json al frontend
-                echo json_encode(['success' => true, 'redirect' =>'M12-Proyecto-4-Natalia-Beatriz/backend/public/index.php?action=login']);
+                echo json_encode(['success' => true, 'redirect' =>'https://earth-project-backend.onrender.com/index.php?action=login']);
                 } else {
                     echo json_encode(['success' => false, 'message' =>'El email ya está registrado en la base de datos.']);
             }
@@ -87,7 +87,7 @@ class UsuariController {
     // check if session is active
     public function checkSession() {
         if (ob_get_length()) ob_clean();
-        header("Access-Control-Allow-Origin: http://localhost");
+        header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Credentials: true");
         header('Content-Type: application/json');
         
